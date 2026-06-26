@@ -5,27 +5,36 @@
 
 using namespace geode::prelude;
 
+bool DCPPlayLayer::init(GJGameLevel* level, const bool useReplay, const bool dontCreateObject) {
+  if (level->m_levelType == GJLevelType::Main) {
+    SaveHandler::currentLevelID = Utils::getLevelID(level);
+    SaveHandler::loadSaveData();
+  }
+  return PlayLayer::init(level, useReplay, dontCreateObject);
+}
+
 void DCPPlayLayer::onExit() {
   SaveHandler::saveData();
   PlayLayer::onExit();
 }
 
 void DCPPlayLayer::resetLevel() {
+  PlayLayer::resetLevel();
   m_fields->isNoclipping = false;
   m_fields->runStartPercent = this->getCurrentPercentInt();
-
-  if (const auto level = this->m_level; level->m_levelType == GJLevelType::Main) {
-    SaveHandler::currentLevelID = Utils::getLevelID(level);
-    SaveHandler::loadSaveData();
-  }
-
-  PlayLayer::resetLevel();
+  m_fields->currentAttemptGameObject = nullptr;
 }
 
-void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
-  PlayLayer::destroyPlayer(player, object);
+void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
+  PlayLayer::destroyPlayer(player, gameObject);
 
-  if (!player->m_isDead) {
+  m_fields->currentAttemptGameObject = gameObject;
+
+  if (!player->m_isDead
+    && !m_fields->isNoclipping
+    && !m_levelEndAnimationStarted
+    && m_fields->currentAttemptGameObject != gameObject
+  ) {
     m_fields->isNoclipping = true;
   }
 

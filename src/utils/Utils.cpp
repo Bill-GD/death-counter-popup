@@ -13,8 +13,7 @@ const char* Utils::levelTypeToString(const GJLevelType type) {
 }
 
 bool Utils::isLevelCompleted(GJGameLevel* level) {
-  return level->m_levelType == GJLevelType::Saved
-    && level->m_newNormalPercent2.value() == 100;
+  return level->m_newNormalPercent2.value() == 100;
 }
 
 bool Utils::isGauntletLevel(GJGameLevel* level) {
