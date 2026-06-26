@@ -13,6 +13,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
     Fields() : winSize(CCDirector::get()->getWinSize()) {}
   };
 
+  void onExit() override;
   void resetLevel() override;
   void destroyPlayer(PlayerObject* player, GameObject* object) override;
 

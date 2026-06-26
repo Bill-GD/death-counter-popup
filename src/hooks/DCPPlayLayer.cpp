@@ -4,6 +4,11 @@
 
 using namespace geode::prelude;
 
+void DCPPlayLayer::onExit() {
+  SaveHandler::saveData();
+  PlayLayer::onExit();
+}
+
 void DCPPlayLayer::resetLevel() {
   PlayLayer::resetLevel();
 
@@ -51,9 +56,15 @@ void DCPPlayLayer::removeLabel() {
 
 CCLabelBMFont* DCPPlayLayer::getPopupLabel() {
   const auto currentPercent = this->getCurrentPercentInt();
-  const auto textFmt = m_fields->runStartPercent == 0
-                         ? fmt::format("{}", currentPercent)
-                         : fmt::format("{}-{}", m_fields->runStartPercent, currentPercent);
+
+  const auto key = m_fields->runStartPercent == 0
+                     ? std::to_string(currentPercent)
+                     : std::to_string(m_fields->runStartPercent) + "-" + std::to_string(currentPercent);
+
+  SaveHandler::updateDeath(key);
+  const auto textFmt = fmt::format("{}x{}", key, SaveHandler::deaths.at(key));
+
+  log::info("Died, key={}, val={}", key, SaveHandler::deaths.at(key));
 
   const auto label = CCLabelBMFont::create(textFmt.c_str(), "bigFont.fnt");
   label->setPosition(m_fields->winSize.width * 0.25, m_fields->winSize.height * 0.85);

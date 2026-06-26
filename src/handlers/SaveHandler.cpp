@@ -73,5 +73,31 @@ void SaveHandler::loadSaveData() {
     deaths = getDTSaveData(currentLevelID);
   }
 
+  saveData();
   log::info("Loaded saved deaths of level ID={}", currentLevelID);
+  // log::info("Loaded data: {}", deaths);
+}
+
+void SaveHandler::updateDeath(const std::string& death) {
+  deaths[death]++;
+}
+
+bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value, const int retries) {
+  for (int i = 0; i < retries; ++i) {
+    auto res = file::writeString(filePath, value.dump(matjson::NO_INDENTATION));
+    if (res.isOk()) {
+      return true;
+    }
+
+    log::warn("Write failed (attempt {}): {}", i + 1, res.unwrapErr());
+  }
+
+  return false;
+}
+
+void SaveHandler::saveData() {
+  const auto filePath = savePath / (currentLevelID + ".json");
+  if (const auto success = tryWrite(filePath, matjson::Value(deaths), 3); !success) {
+    log::warn("Failed to save for level ID={}", currentLevelID);
+  }
 }
