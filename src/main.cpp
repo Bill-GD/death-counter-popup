@@ -7,8 +7,15 @@ class $modify(HookedPlayLayer, PlayLayer) {
   struct Fields {
     CCSize winSize;
     CCLabelBMFont* label = nullptr;
+    int runStartPercent = 0;
     Fields() : winSize(CCDirector::get()->getWinSize()) {}
   };
+
+  void resetLevel() override {
+    PlayLayer::resetLevel();
+
+    m_fields->runStartPercent = this->getCurrentPercentInt();
+  }
 
   void destroyPlayer(PlayerObject* player, GameObject* object) override {
     PlayLayer::destroyPlayer(player, object);
@@ -22,8 +29,8 @@ class $modify(HookedPlayLayer, PlayLayer) {
       m_fields->label->runAction(
         CCSequence::create(
           CCEaseBackOut::create(CCScaleTo::create(0.15f, 1.5f)),
-          CCEaseBackOut::create(CCScaleTo::create(0.15f, 0.75f)),
-          CCDelayTime::create(1.3f),
+          CCEaseBackOut::create(CCScaleTo::create(0.2f, 0.75f)),
+          CCDelayTime::create(1.4f),
           // CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.0f)),
           CCSpawn::create(
             CCFadeOut::create(0.4f),
@@ -46,9 +53,12 @@ class $modify(HookedPlayLayer, PlayLayer) {
 
   CCLabelBMFont* getPopupLabel() {
     const auto currentPercent = this->getCurrentPercentInt();
+    const auto textFmt = m_fields->runStartPercent == 0
+                           ? fmt::format("{}", currentPercent)
+                           : fmt::format("{}-{}", m_fields->runStartPercent, currentPercent);
 
-    const auto label = CCLabelBMFont::create(fmt::format("{}", currentPercent).c_str(), "bigFont.fnt");
-    label->setPosition(m_fields->winSize.width * 0.15, m_fields->winSize.height * 0.85);
+    const auto label = CCLabelBMFont::create(textFmt.c_str(), "bigFont.fnt");
+    label->setPosition(m_fields->winSize.width * 0.2, m_fields->winSize.height * 0.85);
     label->setRotation(-15);
     label->setScale(0.0f);
 
