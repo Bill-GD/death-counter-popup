@@ -1,6 +1,6 @@
 #include <Geode/Geode.hpp>
+#include <handlers/SaveHandler.hpp>
 #include <hooks/DCPPlayLayer.hpp>
-#include <utils/Utils.hpp>
 
 using namespace geode::prelude;
 
@@ -9,8 +9,10 @@ void DCPPlayLayer::resetLevel() {
 
   m_fields->runStartPercent = this->getCurrentPercentInt();
 
-  const auto level = this->m_level;
-  log::info("Level: id={}, type={}", level->m_levelID, Utils::levelTypeToString(level->m_levelType));
+  if (const auto level = this->m_level; level->m_levelType == GJLevelType::Main) {
+    SaveHandler::currentLevelID = std::to_string(level->m_levelID.value()) + "-local";
+    SaveHandler::loadSaveData();
+  }
 }
 
 void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
