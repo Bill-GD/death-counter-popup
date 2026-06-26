@@ -80,6 +80,7 @@ void SaveHandler::loadSaveData() {
 
 void SaveHandler::updateDeath(const std::string& death) {
   deaths[death]++;
+  log::info("Logged death/run: {}x{}", death, deaths[death]);
 }
 
 bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value, const int retries) {

@@ -10,6 +10,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
     CCSize winSize;
     CCLabelBMFont* label = nullptr;
     int runStartPercent = 0;
+    bool isNoclipping = false;
     Fields() : winSize(CCDirector::get()->getWinSize()) {}
   };
 
@@ -18,5 +19,5 @@ class $modify(DCPPlayLayer, PlayLayer) {
   void destroyPlayer(PlayerObject* player, GameObject* object) override;
 
   void removeLabel();
-  CCLabelBMFont* getPopupLabel();
+  CCLabelBMFont* getPopupLabel(std::string deathKey);
 };

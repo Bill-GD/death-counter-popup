@@ -1,6 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <handlers/SaveHandler.hpp>
 #include <hooks/DCPPlayLayer.hpp>
+#include <utils/Utils.hpp>
 
 using namespace geode::prelude;
 
@@ -10,23 +11,42 @@ void DCPPlayLayer::onExit() {
 }
 
 void DCPPlayLayer::resetLevel() {
-  PlayLayer::resetLevel();
-
+  m_fields->isNoclipping = false;
   m_fields->runStartPercent = this->getCurrentPercentInt();
 
   if (const auto level = this->m_level; level->m_levelType == GJLevelType::Main) {
-    SaveHandler::currentLevelID = std::to_string(level->m_levelID.value()) + "-local";
+    SaveHandler::currentLevelID = Utils::getLevelID(level);
     SaveHandler::loadSaveData();
   }
+
+  PlayLayer::resetLevel();
 }
 
 void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* object) {
   PlayLayer::destroyPlayer(player, object);
 
-  if (player->m_isDead) {
+  if (!player->m_isDead) {
+    m_fields->isNoclipping = true;
+  }
+
+  if (player->m_isDead
+    && !this->m_level->isPlatformer()
+    && !m_fields->isNoclipping
+  ) {
     this->removeLabel();
 
-    m_fields->label = getPopupLabel();
+    const auto currentPercent = this->getCurrentPercentInt();
+    const auto runLabelStr = m_fields->runStartPercent == 0
+                               ? std::to_string(currentPercent)
+                               : std::to_string(m_fields->runStartPercent) + "-" + std::to_string(currentPercent);
+
+    SaveHandler::updateDeath(runLabelStr);
+
+    if (Utils::isLevelCompleted(this->m_level)) {
+      return;
+    }
+
+    m_fields->label = getPopupLabel(runLabelStr);
     this->getChildByID("UILayer")->addChild(m_fields->label);
 
     m_fields->label->runAction(
@@ -54,17 +74,8 @@ void DCPPlayLayer::removeLabel() {
   m_fields->label = nullptr;
 }
 
-CCLabelBMFont* DCPPlayLayer::getPopupLabel() {
-  const auto currentPercent = this->getCurrentPercentInt();
-
-  const auto key = m_fields->runStartPercent == 0
-                     ? std::to_string(currentPercent)
-                     : std::to_string(m_fields->runStartPercent) + "-" + std::to_string(currentPercent);
-
-  SaveHandler::updateDeath(key);
-  const auto textFmt = fmt::format("{}x{}", key, SaveHandler::deaths.at(key));
-
-  log::info("Died, key={}, val={}", key, SaveHandler::deaths.at(key));
+CCLabelBMFont* DCPPlayLayer::getPopupLabel(std::string deathKey) {
+  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey));
 
   const auto label = CCLabelBMFont::create(textFmt.c_str(), "bigFont.fnt");
   label->setPosition(m_fields->winSize.width * 0.25, m_fields->winSize.height * 0.85);
