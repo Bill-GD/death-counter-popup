@@ -1,7 +1,6 @@
 #include <Geode/Geode.hpp>
-
 #include <hooks/DCPLevelInfoLayer.hpp>
-#include "utils/Utils.hpp"
+#include <utils/Utils.hpp>
 
 bool DCPLevelInfoLayer::init(GJGameLevel* level, bool challenge) {
   if (!LevelInfoLayer::init(level, challenge)) {

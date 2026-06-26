@@ -1,7 +1,6 @@
 #include <Geode/Geode.hpp>
-
 #include <hooks/DCPPlayLayer.hpp>
-#include "utils/Utils.hpp"
+#include <utils/Utils.hpp>
 
 using namespace geode::prelude;
 
