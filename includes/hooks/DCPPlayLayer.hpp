@@ -9,7 +9,10 @@ class $modify(DCPPlayLayer, PlayLayer) {
   struct Fields {
     CCSize winSize;
     CCLabelBMFont* label = nullptr;
+
     int runStartPercent = 0;
+    int currentBest = 0;
+
     bool isNoclipping = false;
     CCObject* currentAttemptGameObject = nullptr;
     Fields() : winSize(CCDirector::get()->getWinSize()) {}
@@ -19,7 +22,10 @@ class $modify(DCPPlayLayer, PlayLayer) {
   void onExit() override;
   void resetLevel() override;
   void destroyPlayer(PlayerObject* player, GameObject* gameObject) override;
+  void levelComplete();
 
   void removeLabel();
-  CCLabelBMFont* getPopupLabel(std::string deathKey);
+  CCLabelBMFont* getPopupLabel(const std::string& deathKey);
+  void spawnLabel(const std::string& labelStr);
+  std::string getRunLabelString();
 };
