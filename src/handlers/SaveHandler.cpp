@@ -6,22 +6,15 @@ using namespace geode::prelude;
 std::string SaveHandler::currentLevelID{};
 DeathCounter SaveHandler::deaths{};
 
-bool SaveHandler::isSaveExists(const std::string& levelID) {
-  const auto filePath = savePath / (levelID + ".json");
-  return std::filesystem::exists(filePath);
-}
-
-bool SaveHandler::isDTSaveExists(const std::string& levelID) {
-  const auto dirPath = dtPath / levelID;
+bool SaveHandler::isDTSaveExists() {
+  const auto dirPath = dtPath / currentLevelID;
   return std::filesystem::exists(dirPath) && std::filesystem::exists(dirPath / DT_METADATA_FILENAME);
 }
 
-std::set<std::string> SaveHandler::getDTLinkedLevels(const std::string& levelID) {
-  if (!Utils::isModLoaded("elohmrow.death_tracker")) return {};
+std::set<std::string> SaveHandler::getDTLinkedLevels() {
+  if (!Utils::isModLoaded("elohmrow.death_tracker") || !isDTSaveExists()) return {};
 
-  const auto filePath = dtPath / levelID / DT_METADATA_FILENAME;
-
-  if (!isDTSaveExists(levelID)) return {};
+  const auto filePath = dtPath / currentLevelID / DT_METADATA_FILENAME;
 
   auto readRes = file::readJson(filePath);
   if (readRes.isErr()) return {};
@@ -48,20 +41,29 @@ DeathCounter SaveHandler::getDTDeaths(const std::string& levelID) {
 DeathCounter SaveHandler::mergeDTDeaths(const std::set<std::string>& levelIDs) {
   DeathCounter result = {};
   for (const auto& levelID : levelIDs) {
-    const auto levelDeaths = getDTDeaths(levelID);
-    result.insert(levelDeaths.begin(), levelDeaths.end());
+    for (
+      const auto levelDeaths = getDTDeaths(levelID);
+      const auto& [key, value] : levelDeaths
+    ) {
+      result[key] += value;
+    }
   }
   return result;
 }
 
-DeathCounter SaveHandler::getDTSaveData(const std::string& levelID) {
-  auto linkedLevels = getDTLinkedLevels(levelID);
-  linkedLevels.insert(levelID);
+DeathCounter SaveHandler::getDTSaveData() {
+  auto linkedLevels = getDTLinkedLevels();
+  linkedLevels.insert(currentLevelID);
   return mergeDTDeaths(linkedLevels);
 }
 
+bool SaveHandler::isSaveExists() {
+  const auto filePath = savePath / (currentLevelID + ".json");
+  return std::filesystem::exists(filePath);
+}
+
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
-  if (!isSaveExists(levelID)) return {};
+  if (!isSaveExists()) return {};
 
   const auto filePath = savePath / (levelID + ".json");
   auto readRes = file::readJson(filePath);
@@ -70,34 +72,51 @@ DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   return readRes.unwrap().as<DeathCounter>().unwrap();
 }
 
-void SaveHandler::loadSaveData() {
-  log::info("Loading deaths for level ID={}", currentLevelID);
-  const auto linkedLevels = getDTLinkedLevels(currentLevelID);
+DeathCounter SaveHandler::getLatestLinkedData() {
+  const auto linkedLevels = getDTLinkedLevels();
 
   std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
   for (const auto& linkedLevelID : linkedLevels) {
-    if (!isSaveExists(linkedLevelID)) continue;
+    if (!isSaveExists()) continue;
     const auto filePath = savePath / (linkedLevelID + ".json");
     linkedLevelFiles.emplace_back(linkedLevelID, std::filesystem::last_write_time(filePath));
   }
 
-  if (!linkedLevelFiles.empty()) {
-    std::ranges::sort(
-      linkedLevelFiles,
-      [](auto const& a, auto const& b) { return a.second > b.second; }
-    );
-    log::info("Use own save data of last modified linked level, chosen ID={}", linkedLevelFiles[0].first);
-    deaths = getSavedData(linkedLevelFiles[0].first);
-  } else {
-    log::info("No save data found, load from Death Tracker");
-    deaths = getDTSaveData(currentLevelID);
+  log::info("Linked level file found: {}", linkedLevelFiles.size());
+  if (linkedLevelFiles.empty()) return {};
+
+  std::ranges::sort(
+    linkedLevelFiles,
+    [](auto const& a, auto const& b) { return a.second > b.second; }
+  );
+
+  log::info("Got save data of last modified linked level, chosen ID={}", linkedLevelFiles[0].first);
+  return getSavedData(linkedLevelFiles[0].first);
+}
+
+void SaveHandler::loadSaveData() {
+  log::info("Loading deaths for level ID={}", currentLevelID);
+
+  auto otherData = getLatestLinkedData();
+  if (otherData.empty()) {
+    log::info("No linked level found, load from Death Tracker");
+    otherData = getDTSaveData();
   }
 
-  if (deaths.empty()) {
-    log::info("No other save data found, use own save data");
-    deaths = getSavedData(currentLevelID);
+  deaths = getSavedData(currentLevelID);
+  if (!otherData.empty()) {
+    bool changed = false;
+    for (const auto& [run, count] : otherData) {
+      if (!deaths.contains(run) || deaths[run] < count) {
+        deaths[run] = count;
+        changed = true;
+      }
+    }
+    if (changed) {
+      log::info("Updated save data");
+      saveData();
+    }
   }
-  saveData();
 }
 
 void SaveHandler::updateDeath(const std::string& death) {
@@ -123,4 +142,5 @@ void SaveHandler::saveData() {
   if (const auto success = tryWrite(filePath, matjson::Value(deaths)); !success) {
     log::warn("Failed to save for level ID={}", currentLevelID);
   }
+  log::info("Saved data for level ID={}", currentLevelID);
 }

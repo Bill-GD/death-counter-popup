@@ -11,13 +11,15 @@ class SaveHandler {
 
   const static inline auto dtPath = Mod::get()->getSaveDir().parent_path() / "elohmrow.death_tracker" / "levels";
 
-  static bool isSaveExists(const std::string& levelID);
-  static bool isDTSaveExists(const std::string& levelID);
-  static std::set<std::string> getDTLinkedLevels(const std::string& levelID);
+  static bool isDTSaveExists();
+  static std::set<std::string> getDTLinkedLevels();
   static std::map<std::string, int> getDTDeaths(const std::string& levelID);
   static DeathCounter mergeDTDeaths(const std::set<std::string>& levelIDs);
-  static DeathCounter getDTSaveData(const std::string& levelID);
+  static DeathCounter getDTSaveData();
+
+  static bool isSaveExists();
   static DeathCounter getSavedData(const std::string& levelID);
+  static DeathCounter getLatestLinkedData();
 
   static bool tryWrite(const std::filesystem::path& filePath, const matjson::Value& value);
 

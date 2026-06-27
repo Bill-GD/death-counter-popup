@@ -15,9 +15,9 @@ bool DCPPlayLayer::init(GJGameLevel* level, const bool useReplay, const bool don
   return PlayLayer::init(level, useReplay, dontCreateObject);
 }
 
-void DCPPlayLayer::onExit() {
+void DCPPlayLayer::onQuit() {
   SaveHandler::saveData();
-  PlayLayer::onExit();
+  PlayLayer::onQuit();
 }
 
 void DCPPlayLayer::resetLevel() {

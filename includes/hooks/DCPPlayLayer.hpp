@@ -19,7 +19,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
   };
 
   bool init(GJGameLevel* level, bool useReplay, bool dontCreateObject);
-  void onExit() override;
+  void onQuit();
   void resetLevel() override;
   void destroyPlayer(PlayerObject* player, GameObject* gameObject) override;
   void levelComplete();
