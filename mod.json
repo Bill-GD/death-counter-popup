@@ -11,6 +11,23 @@
   "version": "v1.0.0",
   "developer": "BillGD",
   "description": "Shows a popup of a death percentage counter",
+  "settings": {
+    "gold-new-best": {
+      "name": "Golden New Best",
+      "type": "bool",
+      "description": "The popup text will be golden if it's a new best (only applicable to runs from 0)",
+      "default": true
+    },
+    "show-for-completed": {
+      "name": "Show for Completed levels",
+      "type": "bool",
+      "description": "The popup text will be shown even if the level is completed",
+      "default": false
+    }
+  },
+  "resources": {
+    "sprites": ["resources/*.jpg"]
+  },
   "dependencies": {
     "geode.node-ids": ">=v1.23.3",
     "cvolton.level-id-api": ">=v2.0.0"
@@ -19,7 +36,8 @@
     "source": "https://github.com/Bill-GD/death-counter-popup"
   },
   "issues": {
-    "url": "https://github.com/Bill-GD/death-counter-popup/issues/new"
+    "url": "https://github.com/Bill-GD/death-counter-popup/issues/new",
+    "info": "Report any issue on the Github repo"
   },
   "tags": ["offline", "interface"]
 }

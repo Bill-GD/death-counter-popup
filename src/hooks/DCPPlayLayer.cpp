@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <handlers/SaveHandler.hpp>
+#include <handlers/Settings.hpp>
 #include <hooks/DCPPlayLayer.hpp>
 #include <utils/Utils.hpp>
 
@@ -46,9 +47,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     const auto runLabelStr = getRunLabelString();
     SaveHandler::updateDeath(runLabelStr);
 
-    if (Utils::isLevelCompleted(this->m_level)) {
-      return;
-    }
+    if (Utils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
 
     spawnLabel(runLabelStr);
     m_fields->currentBest = this->m_level->m_newNormalPercent2.value();
@@ -59,10 +58,14 @@ void DCPPlayLayer::levelComplete() {
   const auto runLabelStr = getRunLabelString();
   SaveHandler::updateDeath(runLabelStr);
 
+  auto shouldShow = true;
+  if (Utils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) shouldShow = false;
+
   PlayLayer::levelComplete();
 
   if (m_fields->isNoclipping) return;
-  spawnLabel(runLabelStr);
+
+  if (shouldShow) spawnLabel(runLabelStr);
 }
 
 void DCPPlayLayer::removeLabel() {
@@ -78,7 +81,10 @@ CCLabelBMFont* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
 
   const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey));
 
-  const auto label = CCLabelBMFont::create(textFmt.c_str(), isNewBest ? "goldFont.fnt" : "bigFont.fnt");
+  const auto label = CCLabelBMFont::create(
+    textFmt.c_str(),
+    isNewBest && Settings::isNewBestGolden() ? "goldFont.fnt" : "bigFont.fnt"
+  );
   label->setPosition(m_fields->winSize.width * 0.25, m_fields->winSize.height * 0.85);
   label->setRotation(-15);
   label->setScale(0.0f);
