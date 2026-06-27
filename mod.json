@@ -9,10 +9,17 @@
   "id": "billgd.death_counter_popup",
   "name": "Death Counter Popup",
   "version": "v1.0.0",
-  "developer": "billgd",
+  "developer": "BillGD",
   "description": "Shows a popup of a death percentage counter",
   "dependencies": {
     "geode.node-ids": ">=v1.23.3",
     "cvolton.level-id-api": ">=v2.0.0"
-  }
+  },
+  "links": {
+    "source": "https://github.com/Bill-GD/death-counter-popup"
+  },
+  "issues": {
+    "url": "https://github.com/Bill-GD/death-counter-popup/issues/new"
+  },
+  "tags": ["offline", "interface"]
 }
