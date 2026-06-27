@@ -7,6 +7,10 @@ $execute {
   (void)file::createDirectory(SaveHandler::savePath);
 }
 
+$on_game(Exiting) {
+  SaveHandler::saveData();
+}
+
 $on_mod(Loaded) {
   Settings::init();
 
