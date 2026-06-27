@@ -11,4 +11,5 @@ public:
   static bool isGauntletLevel(GJGameLevel* level);
   static bool isDailyLevel(GJGameLevel* level);
   static std::string getLevelID(GJGameLevel* level);
+  static bool isModLoaded(const std::string& modID);
 };

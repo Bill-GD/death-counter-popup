@@ -46,3 +46,7 @@ std::string Utils::getLevelID(GJGameLevel* level) {
   }
   return levelID;
 }
+
+bool Utils::isModLoaded(const std::string& modID) {
+  return Loader::get()->isModLoaded(modID);
+}

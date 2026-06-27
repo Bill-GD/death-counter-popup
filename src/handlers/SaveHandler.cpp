@@ -1,4 +1,5 @@
 #include <handlers/SaveHandler.hpp>
+#include <utils/Utils.hpp>
 
 using namespace geode::prelude;
 
@@ -16,6 +17,8 @@ bool SaveHandler::isDTSaveExists(const std::string& levelID) {
 }
 
 std::set<std::string> SaveHandler::getDTLinkedLevels(const std::string& levelID) {
+  if (!Utils::isModLoaded("elohmrow.death_tracker")) return {};
+
   const auto filePath = dtPath / levelID / DT_METADATA_FILENAME;
 
   if (!isDTSaveExists(levelID)) return {};
@@ -102,8 +105,8 @@ void SaveHandler::updateDeath(const std::string& death) {
   log::info("Logged death/run: {}x{}", death, deaths[death]);
 }
 
-bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value, const int retries) {
-  for (int i = 0; i < retries; ++i) {
+bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value) {
+  for (int i = 0; i < 3; ++i) {
     auto res = file::writeString(filePath, value.dump(matjson::NO_INDENTATION));
     if (res.isOk()) {
       return true;
@@ -117,7 +120,7 @@ bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson:
 
 void SaveHandler::saveData() {
   const auto filePath = savePath / (currentLevelID + ".json");
-  if (const auto success = tryWrite(filePath, matjson::Value(deaths), 3); !success) {
+  if (const auto success = tryWrite(filePath, matjson::Value(deaths)); !success) {
     log::warn("Failed to save for level ID={}", currentLevelID);
   }
 }
