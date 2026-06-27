@@ -23,7 +23,7 @@ std::set<std::string> SaveHandler::getDTLinkedLevels(const std::string& levelID)
   auto readRes = file::readJson(filePath);
   if (readRes.isErr()) return {};
 
-  auto json = readRes.unwrap();
+  const auto& json = readRes.unwrap();
   return json["LinkedLevels"].as<std::set<std::string>>().unwrap();
 }
 
@@ -32,7 +32,7 @@ DeathCounter SaveHandler::getDTDeaths(const std::string& levelID) {
   auto readRes = file::readJson(filePath);
   if (readRes.isErr()) return {};
 
-  auto json = readRes.unwrap();
+  const auto& json = readRes.unwrap();
 
   auto dtDeaths = json["deaths"].as<DeathCounter>().unwrap();
   const auto dtRuns = json["runs"].as<DeathCounter>().unwrap();
@@ -68,14 +68,33 @@ DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
 }
 
 void SaveHandler::loadSaveData() {
-  deaths = getSavedData(currentLevelID);
-  if (deaths.empty()) {
+  log::info("Loading deaths for level ID={}", currentLevelID);
+  const auto linkedLevels = getDTLinkedLevels(currentLevelID);
+
+  std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
+  for (const auto& linkedLevelID : linkedLevels) {
+    if (!isSaveExists(linkedLevelID)) continue;
+    const auto filePath = savePath / (linkedLevelID + ".json");
+    linkedLevelFiles.emplace_back(linkedLevelID, std::filesystem::last_write_time(filePath));
+  }
+
+  if (!linkedLevelFiles.empty()) {
+    std::ranges::sort(
+      linkedLevelFiles,
+      [](auto const& a, auto const& b) { return a.second > b.second; }
+    );
+    log::info("Use own save data of last modified linked level, chosen ID={}", linkedLevelFiles[0].first);
+    deaths = getSavedData(linkedLevelFiles[0].first);
+  } else {
+    log::info("No save data found, load from Death Tracker");
     deaths = getDTSaveData(currentLevelID);
   }
 
+  if (deaths.empty()) {
+    log::info("No other save data found, use own save data");
+    deaths = getSavedData(currentLevelID);
+  }
   saveData();
-  log::info("Loaded saved deaths of level ID={}", currentLevelID);
-  // log::info("Loaded data: {}", deaths);
 }
 
 void SaveHandler::updateDeath(const std::string& death) {
