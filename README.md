@@ -1,23 +1,16 @@
-# death-counter-popup
-This is where she makes a mod.
+# Death Counter Popup
 
-<img src="logo.png" width="150" alt="the mod's logo" />
+A simple mod to add a text popup when you die, showing how many times you got that run (including runs from 0).
 
-*Update logo.png to change your mod's icon (please)*
+This mod saves death counter per level, and will use data from Death Tracker if it's installed.
+One advantage of using alongside Death Tracker is the mod's level linking feature, which will be prioritized when loading deaths.
+This mod will NOT link levels, and the popup will be per level (daily/weekly, gauntlet, editor/copy, saved online levels are separated).
 
-## Getting started
-We recommend heading over to [the getting started section on our docs](https://docs.geode-sdk.org/getting-started/) for useful info on what to do next.
+Relations:
 
-## Build instructions
-For more info, see [our docs](https://docs.geode-sdk.org/getting-started/create-mod#build)
-```sh
-# Assuming you have the Geode CLI set up already
-geode build
-```
+<mod:elohmrow.death_tracker>
+<mod:cvolton.level-id-api>
 
-# Resources
-* [Geode SDK Documentation](https://docs.geode-sdk.org/)
-* [Geode SDK Source Code](https://github.com/geode-sdk/geode/)
-* [Geode CLI](https://github.com/geode-sdk/cli)
-* [Bindings](https://github.com/geode-sdk/bindings/)
-* [Dev Tools](https://github.com/geode-sdk/DevTools)
+Example:
+
+![example screenshot](./resources/example.jpg)
