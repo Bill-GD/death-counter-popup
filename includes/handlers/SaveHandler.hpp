@@ -17,7 +17,7 @@ class SaveHandler {
   static DeathCounter mergeDTDeaths(const std::set<std::string>& levelIDs);
   static DeathCounter getDTSaveData();
 
-  static bool isSaveExists();
+  static bool isSaveExists(const std::string& levelID);
   static DeathCounter getSavedData(const std::string& levelID);
   static DeathCounter getLatestLinkedData();
 

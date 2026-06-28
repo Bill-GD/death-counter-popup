@@ -57,13 +57,13 @@ DeathCounter SaveHandler::getDTSaveData() {
   return mergeDTDeaths(linkedLevels);
 }
 
-bool SaveHandler::isSaveExists() {
-  const auto filePath = savePath / (currentLevelID + ".json");
+bool SaveHandler::isSaveExists(const std::string& levelID) {
+  const auto filePath = savePath / (levelID + ".json");
   return std::filesystem::exists(filePath);
 }
 
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
-  if (!isSaveExists()) return {};
+  if (!isSaveExists(levelID)) return {};
 
   const auto filePath = savePath / (levelID + ".json");
   auto readRes = file::readJson(filePath);
@@ -77,7 +77,7 @@ DeathCounter SaveHandler::getLatestLinkedData() {
 
   std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
   for (const auto& linkedLevelID : linkedLevels) {
-    if (!isSaveExists()) continue;
+    if (!isSaveExists(linkedLevelID)) continue;
     const auto filePath = savePath / (linkedLevelID + ".json");
     linkedLevelFiles.emplace_back(linkedLevelID, std::filesystem::last_write_time(filePath));
   }
