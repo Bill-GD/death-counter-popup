@@ -4,7 +4,13 @@
 using namespace geode::prelude;
 
 std::string SaveHandler::currentLevelID{};
+std::string SaveHandler::currentLevelName{};
 DeathCounter SaveHandler::deaths{};
+
+void SaveHandler::setLevel(const std::string& id, const std::string& name) {
+  currentLevelID = id;
+  currentLevelName = name;
+}
 
 bool SaveHandler::isDTSaveExists() {
   const auto dirPath = dtPath / currentLevelID;
@@ -90,12 +96,15 @@ DeathCounter SaveHandler::getLatestLinkedData() {
     [](auto const& a, auto const& b) { return a.second > b.second; }
   );
 
-  log::info("Got save data of last modified linked level, chosen ID={}", linkedLevelFiles[0].first);
+  log::info(
+    "Got save data of last modified linked level, chosen (id={})",
+    linkedLevelFiles[0].first
+  );
   return getSavedData(linkedLevelFiles[0].first);
 }
 
 void SaveHandler::loadSaveData() {
-  log::info("Loading deaths for level ID={}", currentLevelID);
+  log::info("Loading deaths for level {} (id={})", currentLevelName, currentLevelID);
 
   auto otherData = getLatestLinkedData();
   if (otherData.empty()) {
@@ -140,7 +149,7 @@ bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson:
 void SaveHandler::saveData() {
   const auto filePath = savePath / (currentLevelID + ".json");
   if (const auto success = tryWrite(filePath, matjson::Value(deaths)); !success) {
-    log::warn("Failed to save for level ID={}", currentLevelID);
+    log::warn("Failed to save for level {} (id={})", currentLevelName, currentLevelID);
   }
-  log::info("Saved data for level ID={}", currentLevelID);
+  log::info("Saved data for level {} (id={})", currentLevelName, currentLevelID);
 }

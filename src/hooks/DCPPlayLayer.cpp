@@ -8,7 +8,7 @@ using namespace geode::prelude;
 
 bool DCPPlayLayer::init(GJGameLevel* level, const bool useReplay, const bool dontCreateObject) {
   if (level->m_levelType == GJLevelType::Main) {
-    SaveHandler::currentLevelID = Utils::getLevelID(level);
+    SaveHandler::setLevel(Utils::getLevelID(level), level->m_levelName);
     SaveHandler::loadSaveData();
   }
   m_fields->currentBest = level->m_newNormalPercent2.value();
@@ -85,17 +85,21 @@ CCLabelBMFont* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
     textFmt.c_str(),
     isNewBest && Settings::isNewBestGolden() ? "goldFont.fnt" : "bigFont.fnt"
   );
-  label->setPosition(m_fields->winSize.width * 0.25, m_fields->winSize.height * 0.85);
-  label->setRotation(-15);
+  label->setPosition(Settings::getLabelPosition());
+  label->setRotation(Settings::getRotation());
   label->setScale(0.0f);
 
   return label;
 }
 
 void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
+  if (!Settings::isEnabled()) return;
+
   this->removeLabel();
   m_fields->label = getPopupLabel(labelStr);
   this->getChildByID("UILayer")->addChild(m_fields->label);
+
+  log::info("Spawned label at {}, {}°", m_fields->label->getPosition(), m_fields->label->getRotation());
 
   m_fields->label->runAction(
     CCSequence::create(

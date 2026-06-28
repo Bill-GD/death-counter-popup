@@ -12,17 +12,67 @@
   "developer": "BillGD",
   "description": "Shows a popup of a death percentage counter",
   "settings": {
-    "gold-new-best": {
-      "name": "Golden New Best",
+    "general-title": {
+      "type": "title",
+      "name": "General"
+    },
+    "enable": {
       "type": "bool",
+      "name": "Enable",
+      "description": "Whether to show label at all",
+      "default": true
+    },
+    "gold-new-best": {
+      "type": "bool",
+      "name": "Golden New Best",
       "description": "The popup text will be golden if it's a new best (only applicable to runs from 0)",
       "default": true
     },
     "show-for-completed": {
-      "name": "Show for Completed levels",
       "type": "bool",
+      "name": "Show for Completed levels",
       "description": "The popup text will be shown even if the level is completed",
       "default": false
+    },
+    "label-title": {
+      "type": "title",
+      "name": "Label"
+    },
+    "x-position": {
+      "type": "int",
+      "name": "Pos X",
+      "description": "The horizontal position for the label. Lower = left, higher = right. Default is 100, min is 0",
+      "default": 100,
+      "min": 0,
+      "max": 9999,
+      "controls": {
+        "slider": true,
+        "slider-step": 10,
+        "big-arrows": true,
+        "big-arrow-step": 100
+      }
+    },
+    "y-position": {
+      "type": "int",
+      "name": "Pos Y",
+      "description": "The vertical position for the label. Lower = low, higher = high. Default is 270, min is 0",
+      "default": 270,
+      "min": 0,
+      "max": 9999,
+      "controls": {
+        "slider": true,
+        "slider-step": 10,
+        "big-arrows": true,
+        "big-arrow-step": 100
+      }
+    },
+    "rotation": {
+      "type": "int",
+      "name": "Rotation",
+      "description": "The rotation of the label. Range is -180 to 180, positive turns clockwise, negative turns counter-clockwise",
+      "default": -15,
+      "min": -180,
+      "max": 180
     }
   },
   "resources": {

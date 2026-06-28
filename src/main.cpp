@@ -14,17 +14,10 @@ $on_game(Exiting) {
 $on_mod(Loaded) {
   Settings::init();
 
-  listenForSettingChanges<bool>(
-    "gold-new-best",
-    [](const bool value) {
-      Settings::setGoldenNewBest(value);
-    }
-  );
-
-  listenForSettingChanges<bool>(
-    "show-for-completed",
-    [](const bool value) {
-      Settings::setShowForCompleted(value);
-    }
-  );
+  listenForSettingChanges<bool>("enable", Settings::setEnable);
+  listenForSettingChanges<bool>("gold-new-best", Settings::setGoldenNewBest);
+  listenForSettingChanges<bool>("show-for-completed", Settings::setShowForCompleted);
+  listenForSettingChanges<int>("x-position", Settings::setLabelXPos);
+  listenForSettingChanges<int>("y-position", Settings::setLabelYPos);
+  listenForSettingChanges<int>("rotation", Settings::setRotation);
 }

@@ -8,7 +8,7 @@ bool DCPLevelInfoLayer::init(GJGameLevel* level, bool challenge) {
     return false;
   }
 
-  SaveHandler::currentLevelID = Utils::getLevelID(level);
+  SaveHandler::setLevel(Utils::getLevelID(level), level->m_levelName);
   if (level->m_levelType != GJLevelType::Main) {
     SaveHandler::loadSaveData();
   }
