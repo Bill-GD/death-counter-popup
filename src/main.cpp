@@ -20,4 +20,5 @@ $on_mod(Loaded) {
   listenForSettingChanges<int>("x-position", Settings::setLabelXPos);
   listenForSettingChanges<int>("y-position", Settings::setLabelYPos);
   listenForSettingChanges<int>("rotation", Settings::setRotation);
+  listenForSettingChanges<float>("scale", Settings::setScale);
 }

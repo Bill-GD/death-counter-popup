@@ -75,36 +75,43 @@ void DCPPlayLayer::removeLabel() {
   m_fields->label = nullptr;
 }
 
-CCLabelBMFont* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
+std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
   const auto isRun = deathKey.contains('-');
   const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
+  const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
   const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey));
 
   const auto label = CCLabelBMFont::create(
     textFmt.c_str(),
-    isNewBest && Settings::isNewBestGolden() ? "goldFont.fnt" : "bigFont.fnt"
+    useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
   );
   label->setPosition(Settings::getLabelPosition());
-  label->setRotation(Settings::getRotation());
+  label->setRotation(static_cast<float>(Settings::getRotation()));
   label->setScale(0.0f);
 
-  return label;
+  constexpr auto popScale = 1.25f;
+  auto endScale = 0.65f;
+  if (useGoldFont) endScale += 0.2f;
+
+  return {label, {popScale * Settings::getScale(), endScale * Settings::getScale()}};
 }
 
 void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   if (!Settings::isEnabled()) return;
 
   this->removeLabel();
-  m_fields->label = getPopupLabel(labelStr);
+  const auto [label, scales] = getPopupLabel(labelStr);
+  const auto [popScale, endScale] = scales;
+  m_fields->label = label;
   this->getChildByID("UILayer")->addChild(m_fields->label);
 
   log::info("Spawned label at {}, {}°", m_fields->label->getPosition(), m_fields->label->getRotation());
 
   m_fields->label->runAction(
     CCSequence::create(
-      CCEaseBackOut::create(CCScaleTo::create(0.15f, 1.25f)),
-      CCEaseBackOut::create(CCScaleTo::create(0.2f, 0.75f)),
+      CCEaseBackOut::create(CCScaleTo::create(0.15f, popScale)),
+      CCEaseBackOut::create(CCScaleTo::create(0.2f, endScale)),
       CCDelayTime::create(1.4f),
       // CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.0f)),
       CCSpawn::create(

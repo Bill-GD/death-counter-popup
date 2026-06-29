@@ -25,7 +25,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
   void levelComplete();
 
   void removeLabel();
-  CCLabelBMFont* getPopupLabel(const std::string& deathKey);
+  std::pair<CCLabelBMFont*, std::pair<float, float>> getPopupLabel(const std::string& deathKey);
   void spawnLabel(const std::string& labelStr);
   std::string getRunLabelString();
 };

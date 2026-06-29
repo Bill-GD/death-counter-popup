@@ -73,6 +73,14 @@
       "default": -15,
       "min": -180,
       "max": 180
+    },
+    "scale": {
+      "type": "float",
+      "name": "Scale factor",
+      "description": "The scale factor of the label. Range is 0 to 2",
+      "default": 1,
+      "min": 0,
+      "max": 2
     }
   },
   "resources": {

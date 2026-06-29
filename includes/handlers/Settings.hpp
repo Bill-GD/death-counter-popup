@@ -9,6 +9,7 @@ class Settings {
   static int labelXPos;
   static int labelYPos;
   static int rotation;
+  static float scale;
 
 public:
   static void init();
@@ -19,10 +20,12 @@ public:
   static void setLabelXPos(int value);
   static void setLabelYPos(int value);
   static void setRotation(int value);
+  static void setScale(float value);
 
   static bool isEnabled();
   static bool isNewBestGolden();
   static bool isShownForCompleted();
   static CCPoint getLabelPosition();
   static int getRotation();
+  static float getScale();
 };
