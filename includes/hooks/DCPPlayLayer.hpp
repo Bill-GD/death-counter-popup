@@ -27,5 +27,5 @@ class $modify(DCPPlayLayer, PlayLayer) {
   void removeLabel();
   std::pair<CCLabelBMFont*, std::pair<float, float>> getPopupLabel(const std::string& deathKey);
   void spawnLabel(const std::string& labelStr);
-  std::string getRunLabelString();
+  std::string getRunLabelString(const int& currentPercent);
 };

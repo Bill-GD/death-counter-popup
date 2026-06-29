@@ -50,3 +50,35 @@ std::string Utils::getLevelID(GJGameLevel* level) {
 bool Utils::isModLoaded(const std::string& modID) {
   return Loader::get()->isModLoaded(modID);
 }
+
+void Utils::logLevelInfo(GJGameLevel* level) {
+  log::info("===== GJGameLevel =====");
+
+  log::info("ID               : {}", level->m_levelID);
+  log::info("Name             : {}", level->m_levelName);
+  log::info("Creator          : {}", level->m_creatorName);
+  log::info("Creator ID       : {}", level->m_userID);
+
+  log::info("Attempts         : {}", level->m_attempts);
+  log::info("Jumps            : {}", level->m_jumps);
+  log::info("Clicks           : {}", level->m_clicks);
+  log::info("Normal %         : {}", level->m_normalPercent);
+  log::info("Practice %       : {}", level->m_practicePercent);
+  log::info("New Normal %     : {}", level->m_newNormalPercent2);
+  log::info("Working Time 1   : {}", level->m_workingTime);
+  log::info("Working Time 2   : {}", level->m_workingTime2);
+  log::info("Attempt Time     : {}", level->m_attemptTime);
+
+  log::info("Stars            : {}", level->m_stars);
+  log::info("Orbs             : {}", level->m_orbCompletion);
+  log::info("Coins            : {}", level->m_coins);
+
+  log::info("Difficulty       : {}", static_cast<int>(level->m_difficulty));
+  log::info("Level Type       : {}", levelTypeToString(level->m_levelType));
+  log::info("Length           : {}", level->m_levelLength);
+
+  log::info("Auto             : {}", level->m_autoLevel);
+  log::info("Demon            : {}", level->m_demon);
+  log::info("Epic             : {}", level->m_isEpic);
+  log::info("Featured         : {}", level->m_featured);
+}

@@ -6,6 +6,7 @@ This mod saves death counter per level, and will use data from Death Tracker if 
 One advantage of using alongside Death Tracker is the mod's level linking feature, which will be prioritized when loading deaths.
 
 This mod will NOT link levels, and the popup will be per level (daily/weekly, gauntlet, editor/copy, saved online levels are separated).
+The percentage can be inaccurate if the level has different end points (like end trigger).
 
 Relations:
 
