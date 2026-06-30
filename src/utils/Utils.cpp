@@ -16,7 +16,7 @@ bool Utils::isLevelCompleted(GJGameLevel* level) {
   return level->m_newNormalPercent2.value() == 100;
 }
 
-bool Utils::isGauntletLevel(GJGameLevel* level) {
+bool Utils::isGauntletLevel(const GJGameLevel* level) {
   return level->m_gauntletLevel;
 }
 
@@ -51,7 +51,7 @@ bool Utils::isModLoaded(const std::string& modID) {
   return Loader::get()->isModLoaded(modID);
 }
 
-void Utils::logLevelInfo(GJGameLevel* level) {
+void Utils::dumpLevelInfo(GJGameLevel* level) {
   log::info("===== GJGameLevel =====");
 
   log::info("ID               : {}", level->m_levelID);
@@ -76,9 +76,4 @@ void Utils::logLevelInfo(GJGameLevel* level) {
   log::info("Difficulty       : {}", static_cast<int>(level->m_difficulty));
   log::info("Level Type       : {}", levelTypeToString(level->m_levelType));
   log::info("Length           : {}", level->m_levelLength);
-
-  log::info("Auto             : {}", level->m_autoLevel);
-  log::info("Demon            : {}", level->m_demon);
-  log::info("Epic             : {}", level->m_isEpic);
-  log::info("Featured         : {}", level->m_featured);
 }

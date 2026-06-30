@@ -8,9 +8,9 @@ class Utils {
 public:
   static const char* levelTypeToString(GJLevelType type);
   static bool isLevelCompleted(GJGameLevel* level);
-  static bool isGauntletLevel(GJGameLevel* level);
+  static bool isGauntletLevel(const GJGameLevel* level);
   static bool isDailyLevel(GJGameLevel* level);
   static std::string getLevelID(GJGameLevel* level);
   static bool isModLoaded(const std::string& modID);
-  static void logLevelInfo(GJGameLevel* level);
+  static void dumpLevelInfo(GJGameLevel* level);
 };
