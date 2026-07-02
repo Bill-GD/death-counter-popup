@@ -29,10 +29,10 @@ void SaveHandler::updateDeath(const std::string& death) {
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!isSaveExists(levelID)) return {};
 
-  auto readRes = file::readJson(getLevelPath(levelID));
-  if (readRes.isErr()) return {};
+  const auto [success, val] = Utils::tryRead(getLevelPath(levelID));
+  if (!success) return {};
 
-  return readRes.unwrap().as<DeathCounter>().unwrap();
+  return Utils::tryParse<DeathCounter>(val);
 }
 
 DeathCounter SaveHandler::getLatestLinkedData() {
@@ -87,20 +87,9 @@ void SaveHandler::loadSaveData() {
   }
 }
 
-bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value) {
-  for (int i = 0; i < 3; ++i) {
-    auto res = file::writeString(filePath, value.dump(matjson::NO_INDENTATION));
-    if (res.isOk()) {
-      return true;
-    }
-    log::warn("Write failed (attempt {}): {}", i + 1, res.unwrapErr());
-  }
-  return false;
-}
-
 void SaveHandler::saveData() {
   if (
-    const auto success = tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
+    const auto success = Utils::tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
     !success
   ) {
     log::warn("Failed to save for level {} (id={})", currentLevelName, currentLevelID);

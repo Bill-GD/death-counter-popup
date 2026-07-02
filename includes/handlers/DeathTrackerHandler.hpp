@@ -10,11 +10,6 @@ class DeathTrackerHandler {
   const static inline auto METADATA_FILENAME = "metadata";
   const static inline auto GENERAL_FILENAME = "general.dt";
 
-  static std::pair<bool, matjson::Value> tryRead(const std::filesystem::path& filePath);
-
-  template <typename T>
-  static T tryParse(const matjson::Value& value);
-
 public:
   static bool isSaveExists(const std::string& levelID);
   static std::set<std::string> getLinkedLevels(const std::string& levelID);

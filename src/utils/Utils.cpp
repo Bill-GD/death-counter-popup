@@ -51,6 +51,28 @@ bool Utils::isModLoaded(const std::string& modID) {
   return Loader::get()->isModLoaded(modID);
 }
 
+bool Utils::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value) {
+  for (int i = 0; i < 3; ++i) {
+    auto res = file::writeString(filePath, value.dump(matjson::NO_INDENTATION));
+    if (res.isOk()) {
+      return true;
+    }
+    log::warn("Write failed (attempt {}): {}", i + 1, res.unwrapErr());
+  }
+  return false;
+}
+
+std::pair<bool, matjson::Value> Utils::tryRead(const std::filesystem::path& filePath) {
+  for (int i = 0; i < 3; ++i) {
+    auto res = file::readJson(filePath);
+    if (res.isOk()) {
+      return {true, res.unwrap()};
+    }
+    log::warn("Read failed (attempt {}): {}", i + 1, res.unwrapErr());
+  }
+  return {false, {}};
+}
+
 void Utils::dumpLevelInfo(GJGameLevel* level) {
   log::info("===== GJGameLevel =====");
 

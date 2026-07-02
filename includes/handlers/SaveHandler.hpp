@@ -15,7 +15,6 @@ class SaveHandler {
   static DeathCounter getSavedData(const std::string& levelID);
   static DeathCounter getLatestLinkedData();
 
-  static bool tryWrite(const std::filesystem::path& filePath, const matjson::Value& value);
 
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels"; // .json
