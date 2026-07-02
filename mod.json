@@ -8,7 +8,7 @@
   },
   "id": "billgd.death_counter_popup",
   "name": "Death Counter Popup",
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "developer": "BillGD",
   "description": "Shows a popup of a death percentage counter",
   "settings": {

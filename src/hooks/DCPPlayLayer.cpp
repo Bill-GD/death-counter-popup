@@ -8,7 +8,7 @@ using namespace geode::prelude;
 
 bool DCPPlayLayer::init(GJGameLevel* level, const bool useReplay, const bool dontCreateObject) {
   if (level->m_levelType == GJLevelType::Main) {
-    SaveHandler::setLevel(Utils::getLevelID(level), level->m_levelName);
+    SaveHandler::setLevel(level);
     SaveHandler::loadSaveData();
   }
   m_fields->currentBest = level->m_newNormalPercent2.value();

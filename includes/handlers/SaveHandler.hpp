@@ -31,7 +31,7 @@ public:
 
   static DeathCounter deaths;
 
-  static void setLevel(const std::string& id, const std::string& name);
+  static void setLevel(GJGameLevel* level);
   static void loadSaveData();
   static void updateDeath(const std::string& death);
   static void saveData();

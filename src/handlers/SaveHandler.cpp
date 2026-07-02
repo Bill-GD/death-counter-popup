@@ -7,9 +7,9 @@ std::string SaveHandler::currentLevelID{};
 std::string SaveHandler::currentLevelName{};
 DeathCounter SaveHandler::deaths{};
 
-void SaveHandler::setLevel(const std::string& id, const std::string& name) {
-  currentLevelID = id;
-  currentLevelName = name;
+void SaveHandler::setLevel(GJGameLevel* level) {
+  currentLevelID = Utils::getLevelID(level);
+  currentLevelName = level->m_levelName;
 }
 
 bool SaveHandler::isDTSaveExists() {

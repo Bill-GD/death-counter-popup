@@ -8,7 +8,7 @@ bool DCPEditLevelLayer::init(GJGameLevel* level) {
     return false;
   }
 
-  SaveHandler::setLevel(Utils::getLevelID(level), level->m_levelName);
+  SaveHandler::setLevel(level);
   if (level->m_levelType != GJLevelType::Main) {
     SaveHandler::loadSaveData();
   }
