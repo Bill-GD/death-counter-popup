@@ -1,3 +1,4 @@
+#include <handlers/DeathTrackerHandler.hpp>
 #include <handlers/SaveHandler.hpp>
 #include <utils/Utils.hpp>
 
@@ -12,80 +13,38 @@ void SaveHandler::setLevel(GJGameLevel* level) {
   currentLevelName = level->m_levelName;
 }
 
-bool SaveHandler::isDTSaveExists() {
-  const auto dirPath = dtPath / currentLevelID;
-  return std::filesystem::exists(dirPath) && std::filesystem::exists(dirPath / DT_METADATA_FILENAME);
-}
-
-std::set<std::string> SaveHandler::getDTLinkedLevels() {
-  if (!Utils::isModLoaded("elohmrow.death_tracker") || !isDTSaveExists()) return {};
-
-  const auto filePath = dtPath / currentLevelID / DT_METADATA_FILENAME;
-
-  auto readRes = file::readJson(filePath);
-  if (readRes.isErr()) return {};
-
-  const auto& json = readRes.unwrap();
-  return json["LinkedLevels"].as<std::set<std::string>>().unwrap();
-}
-
-DeathCounter SaveHandler::getDTDeaths(const std::string& levelID) {
-  const auto filePath = dtPath / levelID / DT_LEVEL_GENERAL_FILENAME;
-  auto readRes = file::readJson(filePath);
-  if (readRes.isErr()) return {};
-
-  const auto& json = readRes.unwrap();
-
-  auto dtDeaths = json["deaths"].as<DeathCounter>().unwrap();
-  const auto dtRuns = json["runs"].as<DeathCounter>().unwrap();
-
-  dtDeaths.insert(dtRuns.begin(), dtRuns.end());
-
-  return dtDeaths;
-}
-
-DeathCounter SaveHandler::mergeDTDeaths(const std::set<std::string>& levelIDs) {
-  DeathCounter result = {};
-  for (const auto& levelID : levelIDs) {
-    for (
-      const auto levelDeaths = getDTDeaths(levelID);
-      const auto& [key, value] : levelDeaths
-    ) {
-      result[key] += value;
-    }
-  }
-  return result;
-}
-
-DeathCounter SaveHandler::getDTSaveData() {
-  auto linkedLevels = getDTLinkedLevels();
-  linkedLevels.insert(currentLevelID);
-  return mergeDTDeaths(linkedLevels);
+std::filesystem::path SaveHandler::getLevelPath(const std::string& levelID) {
+  return PATH / (levelID + ".json");
 }
 
 bool SaveHandler::isSaveExists(const std::string& levelID) {
-  const auto filePath = savePath / (levelID + ".json");
-  return std::filesystem::exists(filePath);
+  return std::filesystem::exists(getLevelPath(levelID));
+}
+
+void SaveHandler::updateDeath(const std::string& death) {
+  deaths[death]++;
+  log::info("Logged death/run: {}x{}", death, deaths[death]);
 }
 
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!isSaveExists(levelID)) return {};
 
-  const auto filePath = savePath / (levelID + ".json");
-  auto readRes = file::readJson(filePath);
+  auto readRes = file::readJson(getLevelPath(levelID));
   if (readRes.isErr()) return {};
 
   return readRes.unwrap().as<DeathCounter>().unwrap();
 }
 
 DeathCounter SaveHandler::getLatestLinkedData() {
-  const auto linkedLevels = getDTLinkedLevels();
+  const auto linkedLevels = DeathTrackerHandler::getLinkedLevels(currentLevelID);
 
   std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
   for (const auto& linkedLevelID : linkedLevels) {
     if (!isSaveExists(linkedLevelID)) continue;
-    const auto filePath = savePath / (linkedLevelID + ".json");
-    linkedLevelFiles.emplace_back(linkedLevelID, std::filesystem::last_write_time(filePath));
+    linkedLevelFiles.emplace_back(
+      linkedLevelID,
+      std::filesystem::last_write_time(getLevelPath(linkedLevelID))
+    );
   }
 
   log::info("Linked level file found: {}", linkedLevelFiles.size());
@@ -109,7 +68,7 @@ void SaveHandler::loadSaveData() {
   auto otherData = getLatestLinkedData();
   if (otherData.empty()) {
     log::info("No linked level found, load from Death Tracker");
-    otherData = getDTSaveData();
+    otherData = DeathTrackerHandler::getSaveData(currentLevelID);
   }
 
   deaths = getSavedData(currentLevelID);
@@ -128,27 +87,22 @@ void SaveHandler::loadSaveData() {
   }
 }
 
-void SaveHandler::updateDeath(const std::string& death) {
-  deaths[death]++;
-  log::info("Logged death/run: {}x{}", death, deaths[death]);
-}
-
 bool SaveHandler::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value) {
   for (int i = 0; i < 3; ++i) {
     auto res = file::writeString(filePath, value.dump(matjson::NO_INDENTATION));
     if (res.isOk()) {
       return true;
     }
-
     log::warn("Write failed (attempt {}): {}", i + 1, res.unwrapErr());
   }
-
   return false;
 }
 
 void SaveHandler::saveData() {
-  const auto filePath = savePath / (currentLevelID + ".json");
-  if (const auto success = tryWrite(filePath, matjson::Value(deaths)); !success) {
+  if (
+    const auto success = tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
+    !success
+  ) {
     log::warn("Failed to save for level {} (id={})", currentLevelName, currentLevelID);
   }
   log::info("Saved data for level {} (id={})", currentLevelName, currentLevelID);

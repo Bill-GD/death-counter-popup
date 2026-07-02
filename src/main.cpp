@@ -4,7 +4,7 @@
 using namespace geode::prelude;
 
 $execute {
-  (void)file::createDirectory(SaveHandler::savePath);
+  (void)file::createDirectory(SaveHandler::PATH);
 }
 
 $on_game(Exiting) {
