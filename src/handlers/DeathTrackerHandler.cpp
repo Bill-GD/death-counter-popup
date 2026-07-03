@@ -18,7 +18,9 @@ std::set<std::string> DeathTrackerHandler::getLinkedLevels(const std::string& le
     log::info("Failed to read DT metadata from {}", filePath);
     return {};
   }
-
+  // checking for keye explicitly
+  // although the value would be null matjson::Value if key doesn't exist, thus can't be parsed -> tryParse returns empty value
+  if (!val.contains("LinkedLevels")) return {};
   return Utils::tryParse<std::set<std::string>>(val["LinkedLevels"]);
 }
 
@@ -31,8 +33,9 @@ DeathCounter DeathTrackerHandler::getDeaths(const std::string& levelID) {
     return {};
   }
 
-  auto dtDeaths = Utils::tryParse<DeathCounter>(val["deaths"]);
-  const auto dtRuns = Utils::tryParse<DeathCounter>(val["runs"]);
+  // explicitly check for key
+  auto dtDeaths = val.contains("deaths") ? Utils::tryParse<DeathCounter>(val["deaths"]) : DeathCounter{};
+  const auto dtRuns = val.contains("runs") ? Utils::tryParse<DeathCounter>(val["runs"]) : DeathCounter{};
 
   dtDeaths.insert(dtRuns.begin(), dtRuns.end());
   return dtDeaths;

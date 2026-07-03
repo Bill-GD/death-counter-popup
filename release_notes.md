@@ -1,2 +1,1 @@
-- Separate DT handler from own mod save handler.
-- Add some file reading & parsing guards.
+- Add explicit checks for JSON key.
