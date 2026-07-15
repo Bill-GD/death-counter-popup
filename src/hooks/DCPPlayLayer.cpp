@@ -44,7 +44,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     && !this->m_level->isPlatformer()
     && !m_fields->isNoclipping
   ) {
-    const auto runLabelStr = getRunLabelString(this->getCurrentPercentInt());
+    const auto runLabelStr = getRunLabelString(this->getCurrentPercent());
     SaveHandler::updateDeath(runLabelStr);
 
     if (Utils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
@@ -55,7 +55,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
 }
 
 void DCPPlayLayer::levelComplete() {
-  const auto runLabelStr = getRunLabelString(100);
+  const auto runLabelStr = getRunLabelString(100.f);
   SaveHandler::updateDeath(runLabelStr);
 
   auto shouldShow = true;
@@ -125,17 +125,12 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   );
 }
 
-std::string DCPPlayLayer::getRunLabelString(const int& currentPercent) {
-  const auto clampedPercent = std::max(0, currentPercent);
+std::string DCPPlayLayer::getRunLabelString(const float& currentPercent) {
   std::string labelStr;
 
-  if (m_fields->runStartPercent <= 0.0f) {
-    labelStr = std::to_string(clampedPercent);
-  } else {
-    labelStr = m_fields->runStartPercent < 1.0f
-                 ? fmt::format("{:.2}", m_fields->runStartPercent)
-                 : fmt::format("{:.0}", m_fields->runStartPercent);
-    labelStr += "-" + std::to_string(clampedPercent);
+  if (m_fields->runStartPercent > 0.f) {
+    labelStr = Utils::formatPercent(m_fields->runStartPercent) + "-";
   }
+  labelStr += Utils::formatPercent(currentPercent);
   return labelStr;
 }

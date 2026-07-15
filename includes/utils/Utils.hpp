@@ -7,6 +7,7 @@ using namespace geode::prelude;
 class Utils {
 public:
   static const char* levelTypeToString(GJLevelType type);
+  static std::string formatPercent(const float& percent);
 
   static bool isLevelCompleted(GJGameLevel* level);
   static bool isGauntletLevel(const GJGameLevel* level);

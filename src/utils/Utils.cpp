@@ -14,6 +14,13 @@ const char* Utils::levelTypeToString(const GJLevelType type) {
   }
 }
 
+std::string Utils::formatPercent(const float& percent) {
+  const auto clampedPercent = std::max(0.f, percent);
+  return clampedPercent < 1.f
+           ? fmt::format("{:.2}", clampedPercent)
+           : std::to_string(static_cast<int>(std::trunc(clampedPercent)));
+}
+
 bool Utils::isLevelCompleted(GJGameLevel* level) {
   return level->m_newNormalPercent2.value() == 100;
 }

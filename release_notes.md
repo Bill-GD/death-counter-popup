@@ -1,1 +1,2 @@
-- Fix runs starting from before 1% count as from 0 (decimal issue)
+- Improve label for percentages between 0 and 1 (e.g. `0.45-0.79x1`)
+- Update description & README

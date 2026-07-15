@@ -2,7 +2,8 @@
 
 ## 1.0.3
 
-- Fix runs starting from before 1% count as from 0 regardless of decimal.
+- Improve label for percentages between 0 and 1 (decimals).
+- Update description & README.
 
 ## 1.0.2
 
