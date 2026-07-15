@@ -10,7 +10,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
     CCSize winSize;
     CCLabelBMFont* label = nullptr;
 
-    int runStartPercent = 0;
+    float runStartPercent = 0;
     int currentBest = 0;
 
     bool isNoclipping = false;

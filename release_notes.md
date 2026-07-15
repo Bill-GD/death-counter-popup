@@ -1,1 +1,1 @@
-- Add explicit checks for JSON key.
+- Fix runs starting from before 1% count as from 0 (decimal issue)

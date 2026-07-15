@@ -1,6 +1,8 @@
 #include <cvolton.level-id-api/include/EditorIDs.hpp>
 #include <utils/Utils.hpp>
 
+// using namespace geode::prelude;
+
 const char* Utils::levelTypeToString(const GJLevelType type) {
   switch (type) {
     case GJLevelType::Main: return "Main";
@@ -29,7 +31,11 @@ std::string Utils::getLevelID(GJGameLevel* level) {
 
   switch (level->m_levelType) {
     case GJLevelType::Editor: {
+      // auto original = level->m_originalLevel;
       const auto editorID = EditorIDs::getID(level);
+      // return original.value() > 0
+      //          ? std::to_string(original.value())
+      //          : std::to_string(editorID) + "-editor";
       return std::to_string(editorID) + "-editor";
     }
     case GJLevelType::Main: {
@@ -78,6 +84,7 @@ void Utils::dumpLevelInfo(GJGameLevel* level) {
 
   log::info("ID               : {}", level->m_levelID);
   log::info("Name             : {}", level->m_levelName);
+  log::info("Original         : {}", level->m_originalLevel);
   log::info("Creator          : {}", level->m_creatorName);
   log::info("Creator ID       : {}", level->m_userID);
 

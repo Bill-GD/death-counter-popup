@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Fix runs starting from before 1% count as from 0 regardless of decimal.
+
 ## 1.0.2
 
 - Add explicit checks for JSON key.

@@ -1,7 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <handlers/SaveHandler.hpp>
 #include <hooks/DCPLevelInfoLayer.hpp>
-#include <utils/Utils.hpp>
+// #include <utils/Utils.hpp>
 
 bool DCPLevelInfoLayer::init(GJGameLevel* level, bool challenge) {
   if (!LevelInfoLayer::init(level, challenge)) {
@@ -12,6 +12,8 @@ bool DCPLevelInfoLayer::init(GJGameLevel* level, bool challenge) {
   if (level->m_levelType != GJLevelType::Main) {
     SaveHandler::loadSaveData();
   }
+
+  // Utils::dumpLevelInfo(level);
 
   return true;
 }

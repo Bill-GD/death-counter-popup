@@ -23,7 +23,7 @@ void DCPPlayLayer::onQuit() {
 void DCPPlayLayer::resetLevel() {
   PlayLayer::resetLevel();
   m_fields->isNoclipping = false;
-  m_fields->runStartPercent = this->getCurrentPercentInt();
+  m_fields->runStartPercent = this->getCurrentPercent();
   m_fields->currentAttemptGameObject = nullptr;
 }
 
@@ -127,7 +127,15 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
 
 std::string DCPPlayLayer::getRunLabelString(const int& currentPercent) {
   const auto clampedPercent = std::max(0, currentPercent);
-  return m_fields->runStartPercent == 0
-           ? std::to_string(clampedPercent)
-           : std::to_string(m_fields->runStartPercent) + "-" + std::to_string(clampedPercent);
+  std::string labelStr;
+
+  if (m_fields->runStartPercent <= 0.0f) {
+    labelStr = std::to_string(clampedPercent);
+  } else {
+    labelStr = m_fields->runStartPercent < 1.0f
+                 ? fmt::format("{:.2}", m_fields->runStartPercent)
+                 : fmt::format("{:.0}", m_fields->runStartPercent);
+    labelStr += "-" + std::to_string(clampedPercent);
+  }
+  return labelStr;
 }
