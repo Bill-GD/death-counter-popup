@@ -1,5 +1,10 @@
 # Death Counter Popup
 
+![Mod Version](https://api.geode-sdk.org/v1/mods/billgd.death_counter_popup/status_badge?stat=version)
+![Downloads](https://api.geode-sdk.org/v1/mods/billgd.death_counter_popup/status_badge?stat=downloads)
+![GD Version](https://api.geode-sdk.org/v1/mods/billgd.death_counter_popup/status_badge?stat=gd_version)
+![Geode Version](https://api.geode-sdk.org/v1/mods/billgd.death_counter_popup/status_badge?stat=geode_version)
+
 A simple mod to add a text popup when you die, showing how many times you got that run (including runs from 0 and to 100).  
 The percentage can be inaccurate if the level has different end points (like end trigger).
 
