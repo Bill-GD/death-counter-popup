@@ -8,6 +8,10 @@ std::string SaveHandler::currentLevelID{};
 std::string SaveHandler::currentLevelName{};
 DeathCounter SaveHandler::deaths{};
 
+bool SaveHandler::isLevelSet() {
+  return !currentLevelID.empty();
+}
+
 void SaveHandler::setLevel(GJGameLevel* level) {
   currentLevelID = Utils::getLevelID(level);
   currentLevelName = level->m_levelName;

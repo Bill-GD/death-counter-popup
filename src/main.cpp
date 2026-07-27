@@ -8,7 +8,9 @@ $execute {
 }
 
 $on_game(Exiting) {
-  SaveHandler::saveData();
+  if (SaveHandler::isLevelSet()) {
+    SaveHandler::saveData();
+  }
 }
 
 $on_mod(Loaded) {

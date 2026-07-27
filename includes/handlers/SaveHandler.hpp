@@ -20,6 +20,7 @@ public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels"; // .json
   static DeathCounter deaths;
 
+  static bool isLevelSet();
   static void setLevel(GJGameLevel* level);
   static void updateDeath(const std::string& death);
   static void loadSaveData();
