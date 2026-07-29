@@ -20,13 +20,23 @@ void Settings::init() {
   scale = Mod::get()->getSettingValue<float>("scale");
 }
 
+void Settings::addListeners() {
+  listenForSettingChanges<bool>("enable", setEnable);
+  listenForSettingChanges<bool>("gold-new-best", setGoldenNewBest);
+  listenForSettingChanges<bool>("show-for-completed", setShowForCompleted);
+  listenForSettingChanges<int>("x-position", setLabelXPos);
+  listenForSettingChanges<int>("y-position", setLabelYPos);
+  listenForSettingChanges<int>("rotation", setRotation);
+  listenForSettingChanges<float>("scale", setScale);
+}
+
 void Settings::setEnable(const bool value) { enabled = value; }
 void Settings::setGoldenNewBest(const bool value) { goldenNewBest = value; }
 void Settings::setShowForCompleted(const bool value) { showForCompleted = value; }
 void Settings::setLabelXPos(const int value) { labelXPos = value; }
 void Settings::setLabelYPos(const int value) { labelYPos = value; }
 void Settings::setRotation(const int value) { rotation = value; }
-void Settings::setScale(float value) { scale = value; }
+void Settings::setScale(const float value) { scale = value; }
 
 bool Settings::isEnabled() { return enabled; }
 bool Settings::isNewBestGolden() { return goldenNewBest; }

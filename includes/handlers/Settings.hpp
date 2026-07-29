@@ -1,5 +1,7 @@
 #pragma once
 
+#include <types/types.hpp>
+
 using namespace geode::prelude;
 
 class Settings {
@@ -13,6 +15,7 @@ class Settings {
 
 public:
   static void init();
+  static void addListeners();
 
   static void setEnable(bool value);
   static void setGoldenNewBest(bool value);
