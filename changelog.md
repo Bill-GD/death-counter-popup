@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Fix saving on exit even if no level was loaded.
+
 ## 1.0.3
 
 - Improve label for percentages between 0 and 1 (decimals).
