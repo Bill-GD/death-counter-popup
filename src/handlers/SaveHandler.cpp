@@ -76,18 +76,18 @@ void SaveHandler::loadSaveData() {
   }
 
   deaths = getSavedData(currentLevelID);
-  if (!otherData.empty()) {
-    bool changed = false;
-    for (const auto& [run, count] : otherData) {
-      if (!deaths.contains(run) || deaths[run] < count) {
-        deaths[run] = count;
-        changed = true;
-      }
+  if (otherData.empty()) return;
+
+  bool changed = false;
+  for (const auto& [run, count] : otherData) {
+    if (!deaths.contains(run) || deaths[run] < count) {
+      deaths[run] = count;
+      changed = true;
     }
-    if (changed) {
-      log::info("Updated save data");
-      saveData();
-    }
+  }
+  if (changed) {
+    log::info("Updated save data");
+    saveData();
   }
 }
 

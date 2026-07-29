@@ -15,7 +15,6 @@ class SaveHandler {
   static DeathCounter getSavedData(const std::string& levelID);
   static DeathCounter getLatestLinkedData();
 
-
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels"; // .json
   static DeathCounter deaths;
