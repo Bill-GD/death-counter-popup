@@ -38,6 +38,18 @@
       "type": "title",
       "name": "Label"
     },
+    "label-precision": {
+      "type": "int",
+      "name": "Label Precision",
+      "description": "The number of decimal places to display in the label. For example: '13.56-78.11'. Default is 0, min is 0, max is 2.",
+      "default": 0,
+      "min": 0,
+      "max": 2,
+      "controls": {
+        "slider": false,
+        "big-arrows": false
+      }
+    },
     "x-position": {
       "type": "int",
       "name": "Pos X",
