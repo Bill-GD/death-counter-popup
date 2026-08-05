@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geode/Geode.hpp>
+#include "Geode/Geode.hpp"
 
 using namespace geode::prelude;
 
@@ -16,9 +16,6 @@ public:
   static std::string getLevelID(GJGameLevel* level);
 
   static bool isModLoaded(const std::string& modID);
-
-  static bool tryWrite(const std::filesystem::path& filePath, const matjson::Value& value);
-  static std::pair<bool, matjson::Value> tryRead(const std::filesystem::path& filePath);
 
   template <typename T>
   static T tryParse(const matjson::Value& value) {
