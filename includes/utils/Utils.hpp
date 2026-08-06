@@ -6,17 +6,6 @@ using namespace geode::prelude;
 
 class Utils {
 public:
-  static const char* levelTypeToString(GJLevelType type);
-  static std::string formatPercent(const float& percent);
-
-  static bool isLevelCompleted(GJGameLevel* level);
-  static bool isGauntletLevel(const GJGameLevel* level);
-  static bool isDailyLevel(GJGameLevel* level);
-
-  static std::string getLevelID(GJGameLevel* level);
-
-  static bool isModLoaded(const std::string& modID);
-
   template <typename T>
   static T tryParse(const matjson::Value& value) {
     const auto parseRes = value.as<T>();
@@ -27,5 +16,5 @@ public:
     return T{};
   }
 
-  static void dumpLevelInfo(GJGameLevel* level);
+  static std::pair<std::string, std::string> split(std::string str, const char delimiter);
 };
