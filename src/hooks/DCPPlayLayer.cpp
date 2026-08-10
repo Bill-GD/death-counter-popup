@@ -1,8 +1,9 @@
-#include <Geode/Geode.hpp>
-#include <handlers/SaveHandler.hpp>
-#include <handlers/Settings.hpp>
-#include <hooks/DCPPlayLayer.hpp>
-#include <utils/Utils.hpp>
+#include "hooks/DCPPlayLayer.hpp"
+
+#include "Geode/Geode.hpp"
+#include "handlers/SaveHandler.hpp"
+#include "handlers/Settings.hpp"
+#include "utils/LevelUtils.hpp"
 
 using namespace geode::prelude;
 
@@ -47,7 +48,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     const auto runLabelStr = getRunLabelString(this->getCurrentPercent());
     SaveHandler::updateDeath(runLabelStr);
 
-    if (Utils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
+    if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
 
     spawnLabel(runLabelStr);
     m_fields->currentBest = this->m_level->m_newNormalPercent2.value();
@@ -59,7 +60,7 @@ void DCPPlayLayer::levelComplete() {
   SaveHandler::updateDeath(runLabelStr);
 
   auto shouldShow = true;
-  if (Utils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) shouldShow = false;
+  if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) shouldShow = false;
 
   PlayLayer::levelComplete();
 
@@ -129,8 +130,8 @@ std::string DCPPlayLayer::getRunLabelString(const float& currentPercent) {
   std::string labelStr;
 
   if (m_fields->runStartPercent > 0.f) {
-    labelStr = Utils::formatPercent(m_fields->runStartPercent) + "-";
+    labelStr = LevelUtils::formatPercent(m_fields->runStartPercent) + "-";
   }
-  labelStr += Utils::formatPercent(currentPercent);
+  labelStr += LevelUtils::formatPercent(currentPercent);
   return labelStr;
 }

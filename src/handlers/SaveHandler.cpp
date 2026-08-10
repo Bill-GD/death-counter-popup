@@ -1,6 +1,9 @@
-#include <handlers/DeathTrackerHandler.hpp>
-#include <handlers/SaveHandler.hpp>
-#include <utils/Utils.hpp>
+#include "handlers/SaveHandler.hpp"
+
+#include "handlers/DeathTrackerHandler.hpp"
+#include "utils/FileUtils.hpp"
+#include "utils/LevelUtils.hpp"
+#include "utils/Utils.hpp"
 
 using namespace geode::prelude;
 
@@ -13,7 +16,7 @@ bool SaveHandler::isLevelSet() {
 }
 
 void SaveHandler::setLevel(GJGameLevel* level) {
-  currentLevelID = Utils::getLevelID(level);
+  currentLevelID = LevelUtils::getLevelID(level);
   currentLevelName = level->m_levelName;
 }
 
@@ -33,7 +36,7 @@ void SaveHandler::updateDeath(const std::string& death) {
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!isSaveExists(levelID)) return {};
 
-  const auto [success, val] = Utils::tryRead(getLevelPath(levelID));
+  const auto [success, val] = FileUtils::tryRead(getLevelPath(levelID));
   if (!success) return {};
 
   return Utils::tryParse<DeathCounter>(val);
@@ -93,7 +96,7 @@ void SaveHandler::loadSaveData() {
 
 void SaveHandler::saveData() {
   if (
-    const auto success = Utils::tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
+    const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value());
     !success
   ) {
     log::warn("Failed to save for level {} (id={})", currentLevelName, currentLevelID);
