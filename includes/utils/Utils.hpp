@@ -17,4 +17,6 @@ public:
   }
 
   static std::pair<std::string, std::string> split(std::string str, const char delimiter);
+  static std::string padToPrecision(std::string str, int len);
+  static std::pair<std::string, std::string> computeRunKeys(const std::string& key);
 };

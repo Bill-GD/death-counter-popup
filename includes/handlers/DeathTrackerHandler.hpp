@@ -13,7 +13,7 @@ class DeathTrackerHandler {
 public:
   static bool isSaveExists(const std::string& levelID);
   static std::set<std::string> getLinkedLevels(const std::string& levelID);
-  static std::map<std::string, int> getDeaths(const std::string& levelID);
-  static DeathCounter mergeDeaths(const std::set<std::string>& levelIDs);
-  static DeathCounter getSaveData(const std::string& levelID);
+  static OldDeathCounter getDeaths(const std::string& levelID);
+  static OldDeathCounter mergeDeaths(const std::set<std::string>& levelIDs);
+  static OldDeathCounter getSaveData(const std::string& levelID);
 };

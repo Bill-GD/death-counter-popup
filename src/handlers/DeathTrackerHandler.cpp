@@ -27,7 +27,7 @@ std::set<std::string> DeathTrackerHandler::getLinkedLevels(const std::string& le
   return Utils::tryParse<std::set<std::string>>(val["LinkedLevels"]);
 }
 
-DeathCounter DeathTrackerHandler::getDeaths(const std::string& levelID) {
+OldDeathCounter DeathTrackerHandler::getDeaths(const std::string& levelID) {
   const auto filePath = PATH / levelID / GENERAL_FILENAME;
   auto [success, val] = FileUtils::tryRead(filePath);
 
@@ -37,15 +37,15 @@ DeathCounter DeathTrackerHandler::getDeaths(const std::string& levelID) {
   }
 
   // explicitly check for key
-  auto dtDeaths = val.contains("deaths") ? Utils::tryParse<DeathCounter>(val["deaths"]) : DeathCounter{};
-  const auto dtRuns = val.contains("runs") ? Utils::tryParse<DeathCounter>(val["runs"]) : DeathCounter{};
+  auto dtDeaths = val.contains("deaths") ? Utils::tryParse<OldDeathCounter>(val["deaths"]) : OldDeathCounter{};
+  const auto dtRuns = val.contains("runs") ? Utils::tryParse<OldDeathCounter>(val["runs"]) : OldDeathCounter{};
 
   dtDeaths.insert(dtRuns.begin(), dtRuns.end());
   return dtDeaths;
 }
 
-DeathCounter DeathTrackerHandler::mergeDeaths(const std::set<std::string>& levelIDs) {
-  DeathCounter result = {};
+OldDeathCounter DeathTrackerHandler::mergeDeaths(const std::set<std::string>& levelIDs) {
+  OldDeathCounter result = {};
   for (const auto& levelID : levelIDs) {
     for (
       const auto levelDeaths = getDeaths(levelID);
@@ -57,7 +57,7 @@ DeathCounter DeathTrackerHandler::mergeDeaths(const std::set<std::string>& level
   return result;
 }
 
-DeathCounter DeathTrackerHandler::getSaveData(const std::string& levelID) {
+OldDeathCounter DeathTrackerHandler::getSaveData(const std::string& levelID) {
   auto linkedLevels = getLinkedLevels(levelID);
   linkedLevels.insert(levelID);
   return mergeDeaths(linkedLevels);

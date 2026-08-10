@@ -1,3 +1,4 @@
 #pragma once
 
-typedef std::map<std::string, int> DeathCounter;
+typedef std::string RunKey;
+typedef std::map<RunKey, int> OldDeathCounter;
