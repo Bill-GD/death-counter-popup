@@ -9,7 +9,7 @@ using namespace geode::prelude;
 
 std::string SaveHandler::currentLevelID{};
 std::string SaveHandler::currentLevelName{};
-DeathCounter SaveHandler::deaths{};
+OldDeathCounter SaveHandler::deaths{};
 
 bool SaveHandler::isLevelSet() {
   return !currentLevelID.empty();
@@ -33,16 +33,16 @@ void SaveHandler::updateDeath(const std::string& death) {
   log::info("Logged death/run: {}x{}", death, deaths[death]);
 }
 
-DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
+OldDeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!isSaveExists(levelID)) return {};
 
   const auto [success, val] = FileUtils::tryRead(getLevelPath(levelID));
   if (!success) return {};
 
-  return Utils::tryParse<DeathCounter>(val);
+  return Utils::tryParse<OldDeathCounter>(val);
 }
 
-DeathCounter SaveHandler::getLatestLinkedData() {
+OldDeathCounter SaveHandler::getLatestLinkedData() {
   const auto linkedLevels = DeathTrackerHandler::getLinkedLevels(currentLevelID);
 
   std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
