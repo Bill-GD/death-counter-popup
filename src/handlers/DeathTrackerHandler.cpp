@@ -1,5 +1,8 @@
-#include <handlers/DeathTrackerHandler.hpp>
-#include <utils/Utils.hpp>
+#include "handlers/DeathTrackerHandler.hpp"
+
+#include "utils/FileUtils.hpp"
+#include "utils/LevelUtils.hpp"
+#include "utils/Utils.hpp"
 
 using namespace geode::prelude;
 
@@ -9,10 +12,10 @@ bool DeathTrackerHandler::isSaveExists(const std::string& levelID) {
 }
 
 std::set<std::string> DeathTrackerHandler::getLinkedLevels(const std::string& levelID) {
-  if (!Utils::isModLoaded("elohmrow.death_tracker") || !isSaveExists(levelID)) return {};
+  if (!LevelUtils::isModLoaded("elohmrow.death_tracker") || !isSaveExists(levelID)) return {};
 
   const auto filePath = PATH / levelID / METADATA_FILENAME;
-  auto [success, val] = Utils::tryRead(filePath);
+  auto [success, val] = FileUtils::tryRead(filePath);
 
   if (!success) {
     log::info("Failed to read DT metadata from {}", filePath);
@@ -26,7 +29,7 @@ std::set<std::string> DeathTrackerHandler::getLinkedLevels(const std::string& le
 
 DeathCounter DeathTrackerHandler::getDeaths(const std::string& levelID) {
   const auto filePath = PATH / levelID / GENERAL_FILENAME;
-  auto [success, val] = Utils::tryRead(filePath);
+  auto [success, val] = FileUtils::tryRead(filePath);
 
   if (!success) {
     log::info("Failed to read DT deaths from {}", filePath);
