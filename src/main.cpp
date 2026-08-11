@@ -1,3 +1,4 @@
+#include "handlers/DataMigrationHandler.hpp"
 #include "handlers/SaveHandler.hpp"
 #include "handlers/Settings.hpp"
 
@@ -17,4 +18,6 @@ $on_game(Exiting) {
 $on_mod(Loaded) {
   Settings::init();
   Settings::addListeners();
+
+  DataMigrationHandler::migrateAll();
 }

@@ -69,8 +69,28 @@ void DataMigrationHandler::migrateLevel(const std::string& levelID) {
   const auto writeSuccess = FileUtils::tryWrite(newPath / "data", parseOldData(oldData));
   log::info("Migration of level '{}': {}", levelID, writeSuccess ? "Success" : "Fail");
 
-  const auto& backupPath = SaveHandler::PATH / "backups" / (levelID + ".json");\
+  const auto& backupPath = SaveHandler::PATH / "backups" / (levelID + ".json");
   if (const auto success = FileUtils::tryMove(oldPath, backupPath); !success) {
     log::info("Move to backup failed, file will be left in place");
+  }
+}
+
+void DataMigrationHandler::migrateAll() {
+  const auto files = FileUtils::getAllFiles(SaveHandler::PATH);
+  const std::vector<std::filesystem::path> jsonFiles = ranges::filter(
+    files,
+    [](auto const& file) {
+      return file.extension().string() == ".json";
+    }
+  );
+
+  if (jsonFiles.empty()) {
+    log::info("No files left to migrate in '{}'", SaveHandler::PATH.string());
+    return;
+  }
+
+  for (const auto& filePath : jsonFiles) {
+    const auto levelID = filePath.stem().string();
+    migrateLevel(levelID);
   }
 }
