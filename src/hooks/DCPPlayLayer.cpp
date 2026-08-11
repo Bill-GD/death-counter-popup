@@ -56,7 +56,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
 }
 
 void DCPPlayLayer::levelComplete() {
-  const auto runLabelStr = getRunLabelString(100.f);
+  const auto runLabelStr = getRunLabelString(100.00f);
   SaveHandler::incrementRun(runLabelStr);
 
   auto shouldShow = true;

@@ -104,6 +104,18 @@
         "migrate-all": "Migrate all"
       },
       "description": "If the mod failed to migrate all on load"
+    },
+    "test-title": {
+      "type": "title",
+      "name": "Dev test"
+    },
+    "test-actions": {
+      "type": "button",
+      "buttons": {
+        "test-button-1": "Test 1",
+        "test-button-2": "Test 2"
+      },
+      "description": "For testing only, does nothing on release build"
     }
   },
   "resources": {
