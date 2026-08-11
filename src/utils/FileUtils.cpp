@@ -22,6 +22,17 @@ std::pair<bool, matjson::Value> FileUtils::tryRead(const std::filesystem::path& 
   return {false, {}};
 }
 
+bool FileUtils::tryMove(const std::filesystem::path& oldPath, const std::filesystem::path& newPath) {
+  std::error_code ec;
+  std::filesystem::rename(oldPath, newPath, ec);
+
+  if (ec) {
+    log::error("Failed to move file: {}", ec.message());
+    return false;
+  }
+  return true;
+}
+
 std::vector<std::filesystem::path> FileUtils::getAllFiles(const std::filesystem::path& directoryPath) {
   const auto res = file::readDirectory(directoryPath);
   if (res.isErr()) {

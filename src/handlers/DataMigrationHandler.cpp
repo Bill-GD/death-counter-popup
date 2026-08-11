@@ -61,6 +61,10 @@ void DataMigrationHandler::migrateLevelData(const std::string& levelID) {
   }
 
   const auto writeSuccess = FileUtils::tryWrite(newPath / "data", levelDeathData);
-  log::info("Migration of '{}': {}", levelID, writeSuccess ? "Success" : "Fail");
-  // delete old file
+  log::info("Migration of level '{}': {}", levelID, writeSuccess ? "Success" : "Fail");
+
+  const auto& backupPath = SaveHandler::PATH / "backups" / (levelID + ".json");\
+  if (const auto success = FileUtils::tryMove(oldPath, backupPath); !success) {
+    log::info("Move to backup failed, file will be left in place");
+  }
 }
