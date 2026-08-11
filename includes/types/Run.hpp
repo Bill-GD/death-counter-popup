@@ -5,21 +5,38 @@
 using namespace geode::prelude;
 
 struct Run {
+private:
+  static Run init(const std::string& key) {
+    return Run{
+      .count = 0,
+      .parentKey = Utils::getParentKey(key),
+      .parent = nullptr,
+    };
+  }
+
+public:
   int count = 0;
   std::string parentKey;
   Run* parent = nullptr;
 
-  // static Run init(const std::string& key) {
-  //   const auto& parentKeys = Utils::getAllParentKeys(key);
-  //   for (
-  //     auto parentKey : parentKeys
-  //   ) {}
-  //
-  //   return Run{
-  //     .count = 1,
-  //     .parentKey = parentKeys.back()
-  //   };
-  // }
+  static Run& init(std::map<std::string, Run>& runs, const std::string& key) {
+    if (const auto it = runs.find(key); it != runs.end()) {
+      auto& run = it->second;
+      if (!run.parentKey.empty() && run.parent == nullptr) {
+        run.parent = &init(runs, run.parentKey);
+      }
+      return run;
+    }
+
+    auto [it, inserted] = runs.emplace(key, init(key));
+    auto& run = it->second;
+
+    if (!run.parentKey.empty()) {
+      run.parent = &init(runs, run.parentKey);
+    }
+
+    return run;
+  }
 
   void addDeath() {
     auto* node = this;

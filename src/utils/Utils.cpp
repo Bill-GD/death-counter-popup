@@ -16,7 +16,7 @@ std::string Utils::padToPrecision(std::string str, const int len) {
 }
 
 std::pair<std::string, std::string> Utils::computeRunKeys(const std::string& key) {
-  if (key.empty()) return {std::string{}, std::string{}};
+  if (key.empty()) return {"", ""};
   if (key.contains('-')) {
     const auto [start, end] = split(key, '-');
     const auto [startLeft, startRight] = split(start, '.');
@@ -59,6 +59,43 @@ std::pair<std::string, std::string> Utils::computeRunKeys(const std::string& key
   }
 
   return {key, ""};
+}
+
+std::string Utils::getParentKey(const std::string& key) {
+  if (key.empty()) return "";
+  if (key.contains('-')) {
+    const auto [start, end] = split(key, '-');
+    const auto [startLeft, startRight] = split(start, '.');
+    const auto [endLeft, endRight] = split(end, '.');
+
+    const int precision = std::max(startRight.size(), endRight.size());
+    const auto paddedStartRight = padToPrecision(startRight, precision);
+    const auto paddedEndRight = padToPrecision(endRight, precision);
+
+    if (precision > 0) {
+      std::string parentStart = startLeft;
+      if (paddedStartRight.size() > 1) {
+        parentStart += "." + paddedStartRight.substr(0, paddedStartRight.size() - 1);
+      }
+      std::string parentEnd = endLeft;
+      if (paddedEndRight.size() > 1) {
+        parentEnd += "." + paddedEndRight.substr(0, paddedEndRight.size() - 1);
+      }
+      return parentStart + "-" + parentEnd;
+    }
+    return "";
+  }
+
+  if (key.contains('.')) {
+    const auto [left, right] = split(key, '.');
+    std::string parent = left;
+    if (right.size() > 1) {
+      parent += "." + right.substr(0, right.size() - 1);
+    }
+    return parent;
+  }
+
+  return "";
 }
 
 std::vector<std::string> Utils::getAllParentKeys(const std::string& key) {
