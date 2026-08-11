@@ -46,7 +46,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     && !m_fields->isNoclipping
   ) {
     const auto runLabelStr = getRunLabelString(this->getCurrentPercent());
-    SaveHandler::updateDeath(runLabelStr);
+    SaveHandler::incrementRun(runLabelStr);
 
     if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
 
@@ -57,7 +57,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
 
 void DCPPlayLayer::levelComplete() {
   const auto runLabelStr = getRunLabelString(100.f);
-  SaveHandler::updateDeath(runLabelStr);
+  SaveHandler::incrementRun(runLabelStr);
 
   auto shouldShow = true;
   if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) shouldShow = false;
@@ -81,7 +81,7 @@ std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(c
   const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
   const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
-  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::oldDeaths.at(deathKey));
+  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey).count);
 
   const auto label = CCLabelBMFont::create(
     textFmt.c_str(),
