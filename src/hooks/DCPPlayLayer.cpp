@@ -81,7 +81,7 @@ std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(c
   const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
   const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
-  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey));
+  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::oldDeaths.at(deathKey));
 
   const auto label = CCLabelBMFont::create(
     textFmt.c_str(),

@@ -17,7 +17,8 @@ class SaveHandler {
 
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels";
-  static OldDeathCounter deaths;
+  static OldDeathCounter oldDeaths;
+  static DeathCounter deaths;
 
   static bool isLevelSet();
   static void setLevel(GJGameLevel* level);
