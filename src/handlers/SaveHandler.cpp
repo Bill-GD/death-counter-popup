@@ -1,5 +1,6 @@
 #include "handlers/SaveHandler.hpp"
 
+#include "handlers/DataMigrationHandler.hpp"
 #include "handlers/DeathTrackerHandler.hpp"
 #include "utils/FileUtils.hpp"
 #include "utils/LevelUtils.hpp"
@@ -9,7 +10,6 @@ using namespace geode::prelude;
 
 std::string SaveHandler::currentLevelID{};
 std::string SaveHandler::currentLevelName{};
-OldDeathCounter SaveHandler::oldDeaths{};
 DeathCounter SaveHandler::deaths{};
 
 bool SaveHandler::isLevelSet() {
@@ -22,28 +22,38 @@ void SaveHandler::setLevel(GJGameLevel* level) {
 }
 
 std::filesystem::path SaveHandler::getLevelPath(const std::string& levelID) {
-  return PATH / (levelID + ".json");
+  return PATH / levelID / "data";
 }
 
 bool SaveHandler::isSaveExists(const std::string& levelID) {
   return std::filesystem::exists(getLevelPath(levelID));
 }
 
-void SaveHandler::updateDeath(const std::string& death) {
-  oldDeaths[death]++;
-  log::info("Logged death/run: {}x{}", death, oldDeaths[death]);
+void SaveHandler::incrementRun(const std::string& runKey) {
+  auto key = runKey;
+  while (!key.empty()) {
+    if (!deaths.contains(key)) {
+      deaths[key] = RunData{
+        .count = 0,
+        .parent = Utils::getParentKey(key),
+      };
+    }
+    deaths[key].count++;
+    key = deaths[key].parent;
+  }
+  log::info("Logged death/run: {}x{}", runKey, deaths[runKey].count);
 }
 
-OldDeathCounter SaveHandler::getSavedData(const std::string& levelID) {
+DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!isSaveExists(levelID)) return {};
 
   const auto [success, val] = FileUtils::tryRead(getLevelPath(levelID));
   if (!success) return {};
 
-  return Utils::tryParse<OldDeathCounter>(val);
+  return Utils::tryParse<DeathCounter>(val);
 }
 
-OldDeathCounter SaveHandler::getLatestLinkedData() {
+DeathCounter SaveHandler::getLatestLinkedData() {
   const auto linkedLevels = DeathTrackerHandler::getLinkedLevels(currentLevelID);
 
   std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
@@ -76,16 +86,16 @@ void SaveHandler::loadSaveData() {
   auto otherData = getLatestLinkedData();
   if (otherData.empty()) {
     log::info("No linked level found, load from Death Tracker");
-    otherData = DeathTrackerHandler::getSaveData(currentLevelID);
+    otherData = DataMigrationHandler::parseOldData(DeathTrackerHandler::getSaveData(currentLevelID));
   }
 
-  oldDeaths = getSavedData(currentLevelID);
+  deaths = getSavedData(currentLevelID);
   if (otherData.empty()) return;
 
   bool changed = false;
-  for (const auto& [run, count] : otherData) {
-    if (!oldDeaths.contains(run) || oldDeaths[run] < count) {
-      oldDeaths[run] = count;
+  for (const auto& [runKey, runData] : otherData) {
+    if (!deaths.contains(runKey) || deaths[runKey].count < runData.count) {
+      deaths[runKey] = runData;
       changed = true;
     }
   }
@@ -97,7 +107,7 @@ void SaveHandler::loadSaveData() {
 
 void SaveHandler::saveData() {
   if (
-    const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value(oldDeaths));
+    const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
     !success
   ) {
     log::warn("Failed to save for level {} (id={})", currentLevelName, currentLevelID);

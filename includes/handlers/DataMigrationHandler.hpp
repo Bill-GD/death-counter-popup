@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types/Run.hpp"
+#include "types/RunData.hpp"
 #include "types/types.hpp"
 
 using namespace geode::prelude;

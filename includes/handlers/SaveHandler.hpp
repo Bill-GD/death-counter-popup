@@ -12,17 +12,16 @@ class SaveHandler {
   static std::filesystem::path getLevelPath(const std::string& levelID);
   static bool isSaveExists(const std::string& levelID);
 
-  static OldDeathCounter getSavedData(const std::string& levelID);
-  static OldDeathCounter getLatestLinkedData();
+  static DeathCounter getSavedData(const std::string& levelID);
+  static DeathCounter getLatestLinkedData();
 
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels";
-  static OldDeathCounter oldDeaths;
   static DeathCounter deaths;
 
   static bool isLevelSet();
   static void setLevel(GJGameLevel* level);
-  static void updateDeath(const std::string& death);
+  static void incrementRun(const std::string& runKey);
   static void loadSaveData();
   static void saveData();
 };
