@@ -97,7 +97,7 @@ void SaveHandler::loadSaveData() {
 
 void SaveHandler::saveData() {
   if (
-    const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value());
+    const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value(oldDeaths));
     !success
   ) {
     log::warn("Failed to save for level {} (id={})", currentLevelName, currentLevelID);
