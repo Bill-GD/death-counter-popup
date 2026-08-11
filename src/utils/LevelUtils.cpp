@@ -1,6 +1,7 @@
 #include "utils/LevelUtils.hpp"
 
 #include "cvolton.level-id-api/include/EditorIDs.hpp"
+#include "utils/Constants.hpp"
 
 const char* LevelUtils::levelTypeToString(const GJLevelType type) {
   switch (type) {
@@ -14,10 +15,10 @@ const char* LevelUtils::levelTypeToString(const GJLevelType type) {
 }
 
 std::string LevelUtils::formatPercent(const float& percent) {
-  const auto clampedPercent = std::max(0.f, percent);
-  return clampedPercent < 1.f
-           ? fmt::format("{:.2}", clampedPercent)
-           : std::to_string(static_cast<int>(std::trunc(clampedPercent)));
+  const auto clampedPercent = std::min(std::max(0.f, percent), 100.f);
+  const auto num = std::pow(10.f, Constants::MAX_PRECISION);
+  const auto truncated = std::trunc(clampedPercent * num) / num;
+  return fmt::format("{}", truncated);
 }
 
 bool LevelUtils::isLevelCompleted(GJGameLevel* level) {

@@ -42,6 +42,12 @@ void Settings::addListeners() {
       }
     }
   ).leak();
+
+  ButtonSettingPressedEventV3(Mod::get(), "test-actions").listen(
+    [](auto buttonKey) {
+      if (buttonKey == "test-button-1") {} else if (buttonKey == "test-button-2") {}
+    }
+  ).leak();
 }
 
 void Settings::setEnable(const bool value) { enabled = value; }

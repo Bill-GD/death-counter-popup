@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Run.hpp"
+#include "RunData.hpp"
 
 typedef std::string RunKey;
 typedef std::map<RunKey, RunData> DeathCounter;
