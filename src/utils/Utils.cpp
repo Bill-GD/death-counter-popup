@@ -17,7 +17,8 @@ std::string Utils::padToPrecision(std::string str, const int len) {
 
 std::pair<std::string, std::string> Utils::computeRunKeys(const std::string& key) {
   if (key.empty()) return {"", ""};
-  if (key.contains('-')) {
+  // filters negative progress (still dont know how they exist)
+  if (key.contains('-') && !key.starts_with('-')) {
     const auto [start, end] = split(key, '-');
     const auto [startLeft, startRight] = split(start, '.');
     const auto [endLeft, endRight] = split(end, '.');
@@ -63,7 +64,7 @@ std::pair<std::string, std::string> Utils::computeRunKeys(const std::string& key
 
 std::string Utils::getParentKey(const std::string& key) {
   if (key.empty()) return "";
-  if (key.contains('-')) {
+  if (key.contains('-') && !key.starts_with('-')) {
     const auto [start, end] = split(key, '-');
     const auto [startLeft, startRight] = split(start, '.');
     const auto [endLeft, endRight] = split(end, '.');
@@ -101,7 +102,7 @@ std::string Utils::getParentKey(const std::string& key) {
 std::vector<std::string> Utils::getAllParentKeys(const std::string& key) {
   if (key.empty()) return {};
 
-  if (key.contains('-')) {
+  if (key.contains('-') && !key.starts_with('-')) {
     const auto [start, end] = split(key, '-');
     const auto [startLeft, startRight] = split(start, '.');
     const auto [endLeft, endRight] = split(end, '.');
