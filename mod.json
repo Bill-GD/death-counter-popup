@@ -93,6 +93,17 @@
       "default": 1,
       "min": 0,
       "max": 2
+    },
+    "save-data-title": {
+      "type": "title",
+      "name": "Save data"
+    },
+    "save-data-actions": {
+      "type": "button",
+      "buttons": {
+        "migrate-all": "Migrate all"
+      },
+      "description": "If the mod failed to migrate all on load"
     }
   },
   "resources": {
