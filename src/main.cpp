@@ -5,6 +5,7 @@ using namespace geode::prelude;
 
 $execute {
   (void)file::createDirectory(SaveHandler::PATH);
+  (void)file::createDirectory(SaveHandler::PATH / "backups");
 }
 
 $on_game(Exiting) {

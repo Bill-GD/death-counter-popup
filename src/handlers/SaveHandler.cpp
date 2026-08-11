@@ -9,7 +9,8 @@ using namespace geode::prelude;
 
 std::string SaveHandler::currentLevelID{};
 std::string SaveHandler::currentLevelName{};
-OldDeathCounter SaveHandler::deaths{};
+OldDeathCounter SaveHandler::oldDeaths{};
+DeathCounter SaveHandler::deaths{};
 
 bool SaveHandler::isLevelSet() {
   return !currentLevelID.empty();
@@ -29,8 +30,8 @@ bool SaveHandler::isSaveExists(const std::string& levelID) {
 }
 
 void SaveHandler::updateDeath(const std::string& death) {
-  deaths[death]++;
-  log::info("Logged death/run: {}x{}", death, deaths[death]);
+  oldDeaths[death]++;
+  log::info("Logged death/run: {}x{}", death, oldDeaths[death]);
 }
 
 OldDeathCounter SaveHandler::getSavedData(const std::string& levelID) {
@@ -78,13 +79,13 @@ void SaveHandler::loadSaveData() {
     otherData = DeathTrackerHandler::getSaveData(currentLevelID);
   }
 
-  deaths = getSavedData(currentLevelID);
+  oldDeaths = getSavedData(currentLevelID);
   if (otherData.empty()) return;
 
   bool changed = false;
   for (const auto& [run, count] : otherData) {
-    if (!deaths.contains(run) || deaths[run] < count) {
-      deaths[run] = count;
+    if (!oldDeaths.contains(run) || oldDeaths[run] < count) {
+      oldDeaths[run] = count;
       changed = true;
     }
   }
