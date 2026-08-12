@@ -45,7 +45,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     && !this->m_level->isPlatformer()
     && !m_fields->isNoclipping
   ) {
-    const auto runLabelStr = getRunLabelString(this->getCurrentPercent(), 99.99f);
+    const auto runLabelStr = getRunLabelString(this->getCurrentPercent(), 99.999999f);
     SaveHandler::incrementRun(runLabelStr);
 
     if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
@@ -56,7 +56,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
 }
 
 void DCPPlayLayer::levelComplete() {
-  const auto runLabelStr = getRunLabelString(100.00f);
+  const auto runLabelStr = getRunLabelString(100.f);
   SaveHandler::incrementRun(runLabelStr);
 
   auto shouldShow = true;
