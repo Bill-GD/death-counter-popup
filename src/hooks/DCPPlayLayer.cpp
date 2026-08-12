@@ -45,7 +45,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     && !this->m_level->isPlatformer()
     && !m_fields->isNoclipping
   ) {
-    const auto runLabelStr = getRunLabelString(this->getCurrentPercent());
+    const auto runLabelStr = getRunLabelString(this->getCurrentPercent(), 99.99f);
     SaveHandler::incrementRun(runLabelStr);
 
     if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
@@ -76,28 +76,6 @@ void DCPPlayLayer::removeLabel() {
   m_fields->label = nullptr;
 }
 
-std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
-  const auto isRun = deathKey.contains('-');
-  const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
-  const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
-
-  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey).count);
-
-  const auto label = CCLabelBMFont::create(
-    textFmt.c_str(),
-    useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
-  );
-  label->setPosition(Settings::getLabelPosition());
-  label->setRotation(static_cast<float>(Settings::getRotation()));
-  label->setScale(0.0f);
-
-  constexpr auto popScale = 1.25f;
-  auto endScale = 0.65f;
-  if (useGoldFont) endScale += 0.2f;
-
-  return {label, {popScale * Settings::getScale(), endScale * Settings::getScale()}};
-}
-
 void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   if (!Settings::isEnabled()) return;
 
@@ -126,12 +104,33 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   );
 }
 
-std::string DCPPlayLayer::getRunLabelString(const float& currentPercent) {
-  std::string labelStr;
+std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
+  const auto isRun = deathKey.contains('-');
+  const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
+  const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
+  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey).count);
+
+  const auto label = CCLabelBMFont::create(
+    textFmt.c_str(),
+    useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
+  );
+  label->setPosition(Settings::getLabelPosition());
+  label->setRotation(static_cast<float>(Settings::getRotation()));
+  label->setScale(0.0f);
+
+  constexpr auto popScale = 1.25f;
+  auto endScale = 0.65f;
+  if (useGoldFont) endScale += 0.2f;
+
+  return {label, {popScale * Settings::getScale(), endScale * Settings::getScale()}};
+}
+
+std::string DCPPlayLayer::getRunLabelString(const float& currentPercent, const float& maxClamp) {
+  std::string labelStr;
   if (m_fields->runStartPercent > 0.f) {
-    labelStr = LevelUtils::formatPercent(m_fields->runStartPercent) + "-";
+    labelStr = LevelUtils::formatPercent(m_fields->runStartPercent, maxClamp) + "-";
   }
-  labelStr += LevelUtils::formatPercent(currentPercent);
+  labelStr += LevelUtils::formatPercent(currentPercent, maxClamp);
   return labelStr;
 }
