@@ -35,7 +35,7 @@ void SaveHandler::incrementRun(const std::string& runKey) {
     if (!deaths.contains(key)) {
       deaths[key] = RunData{
         .count = 0,
-        .parent = Utils::getParentKey(key),
+        .parent = LevelUtils::getParentKey(key),
       };
     }
     deaths[key].count++;
