@@ -92,7 +92,7 @@ DeathCounter SaveHandler::getLatestLinkedData() {
 }
 
 void SaveHandler::loadSaveData() {
-  log::info("Loading deaths for level {} (id={})", currentLevelName, currentLevelID);
+  log::info("Loading deaths for level '{}' (id={})", currentLevelName, currentLevelID);
 
   auto otherData = getLatestLinkedData();
   if (otherData.empty()) {
@@ -121,7 +121,7 @@ void SaveHandler::saveData() {
     const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
     !success
   ) {
-    log::warn("Failed to save for level {} (id={})", currentLevelName, currentLevelID);
+    log::warn("Failed to save for level '{}' (id={})", currentLevelName, currentLevelID);
   }
-  log::info("Saved data for level {} (id={})", currentLevelName, currentLevelID);
+  log::info("Saved data for level '{}' (id={})", currentLevelName, currentLevelID);
 }
