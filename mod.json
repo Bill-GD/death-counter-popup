@@ -10,7 +10,7 @@
   "name": "Death Counter Popup",
   "version": "v1.1.0",
   "developer": "BillGD",
-  "description": "Shows a popup of a death percentage counter",
+  "description": "Shows a text popup of a run counter",
   "settings": {
     "general-title": {
       "type": "title",
