@@ -14,8 +14,8 @@ const char* LevelUtils::levelTypeToString(const GJLevelType type) {
   }
 }
 
-std::string LevelUtils::formatPercent(const float& percent) {
-  const auto clampedPercent = std::min(std::max(0.f, percent), 100.f);
+std::string LevelUtils::formatPercent(const float& percent, const float& maxClamp) {
+  const auto clampedPercent = std::min(std::max(0.f, percent), maxClamp);
   const auto num = std::pow(10.f, Constants::MAX_PRECISION);
   const auto truncated = std::trunc(clampedPercent * num) / num;
   return fmt::format("{}", truncated);
