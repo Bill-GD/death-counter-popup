@@ -13,6 +13,7 @@ std::map<RunKey, RunData> DataMigrationHandler::parseOldData(const OldDeathCount
     const auto& [newKey, parentKey] = LevelUtils::computeRunKeys(key);
     newData[newKey] = RunData{
       .count = count,
+      .precision = LevelUtils::getKeyPrecision(newKey),
       .parent = parentKey,
     };
   }
@@ -29,7 +30,7 @@ std::map<RunKey, RunData> DataMigrationHandler::parseOldData(const OldDeathCount
     const auto& runDataIt = newData.find(key);
     if (runDataIt == newData.end()) continue;
 
-    const auto& [count, parentKey] = runDataIt->second;
+    const auto& [count, precision, parentKey] = runDataIt->second;
     if (parentKey.empty()) continue;
 
     if (auto parentIt = newData.find(parentKey); parentIt != newData.end()) {
@@ -39,6 +40,7 @@ std::map<RunKey, RunData> DataMigrationHandler::parseOldData(const OldDeathCount
         parentKey,
         RunData{
           .count = count,
+          .precision = precision - 1,
           .parent = LevelUtils::getParentKey(parentKey),
         }
       );
