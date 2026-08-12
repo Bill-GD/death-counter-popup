@@ -2,6 +2,7 @@
 
 #include "handlers/SaveHandler.hpp"
 #include "utils/FileUtils.hpp"
+#include "utils/LevelUtils.hpp"
 #include "utils/Utils.hpp"
 
 std::map<RunKey, RunData> DataMigrationHandler::parseOldData(const OldDeathCounter& oldData) {
@@ -9,7 +10,7 @@ std::map<RunKey, RunData> DataMigrationHandler::parseOldData(const OldDeathCount
 
   // parse all the old runs into new format
   for (const auto& [key, count] : oldData) {
-    const auto& [newKey, parentKey] = Utils::computeRunKeys(key);
+    const auto& [newKey, parentKey] = LevelUtils::computeRunKeys(key);
     newData[newKey] = RunData{
       .count = count,
       .parent = parentKey,
@@ -38,7 +39,7 @@ std::map<RunKey, RunData> DataMigrationHandler::parseOldData(const OldDeathCount
         parentKey,
         RunData{
           .count = count,
-          .parent = Utils::getParentKey(parentKey),
+          .parent = LevelUtils::getParentKey(parentKey),
         }
       );
       keys.push_back(parentKey);

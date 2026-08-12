@@ -2,6 +2,7 @@
 
 #include "cvolton.level-id-api/include/EditorIDs.hpp"
 #include "utils/Constants.hpp"
+#include "utils/Utils.hpp"
 
 const char* LevelUtils::levelTypeToString(const GJLevelType type) {
   switch (type) {
@@ -19,6 +20,133 @@ std::string LevelUtils::formatPercent(const float& percent, const float& maxClam
   const auto num = std::pow(10.f, Constants::MAX_PRECISION);
   const auto truncated = std::trunc(clampedPercent * num) / num;
   return fmt::format("{}", truncated);
+}
+
+std::pair<std::string, std::string> LevelUtils::computeRunKeys(const std::string& key) {
+  if (key.empty()) return {"", ""};
+  // filters negative progress (still dont know how they exist)
+  if (key.contains('-') && !key.starts_with('-')) {
+    const auto [start, end] = Utils::split(key, '-');
+    const auto [startLeft, startRight] = Utils::split(start, '.');
+    const auto [endLeft, endRight] = Utils::split(end, '.');
+
+    const int precision = std::max(startRight.size(), endRight.size());
+    const auto paddedStartRight = Utils::padToPrecision(startRight, precision);
+    const auto paddedEndRight = Utils::padToPrecision(endRight, precision);
+
+    std::string newKey = startLeft;
+    if (precision > 0) {
+      newKey += "." + paddedStartRight;
+    }
+    newKey += "-" + endLeft;
+    if (precision > 0) {
+      newKey += "." + paddedEndRight;
+    }
+
+    if (precision > 0) {
+      std::string parentStart = startLeft;
+      if (paddedStartRight.size() > 1) {
+        parentStart += "." + paddedStartRight.substr(0, paddedStartRight.size() - 1);
+      }
+      std::string parentEnd = endLeft;
+      if (paddedEndRight.size() > 1) {
+        parentEnd += "." + paddedEndRight.substr(0, paddedEndRight.size() - 1);
+      }
+      return {newKey, parentStart + "-" + parentEnd};
+    }
+    return {newKey, ""};
+  }
+
+  if (key.contains('.')) {
+    const auto [left, right] = Utils::split(key, '.');
+    std::string parent = left;
+    if (right.size() > 1) {
+      parent += "." + right.substr(0, right.size() - 1);
+    }
+    return {key, parent};
+  }
+
+  return {key, ""};
+}
+
+std::string LevelUtils::getParentKey(const std::string& key) {
+  if (key.empty()) return "";
+  if (key.contains('-') && !key.starts_with('-')) {
+    const auto [start, end] = Utils::split(key, '-');
+    const auto [startLeft, startRight] = Utils::split(start, '.');
+    const auto [endLeft, endRight] = Utils::split(end, '.');
+
+    const int precision = std::max(startRight.size(), endRight.size());
+    const auto paddedStartRight = Utils::padToPrecision(startRight, precision);
+    const auto paddedEndRight = Utils::padToPrecision(endRight, precision);
+
+    if (precision > 0) {
+      std::string parentStart = startLeft;
+      if (paddedStartRight.size() > 1) {
+        parentStart += "." + paddedStartRight.substr(0, paddedStartRight.size() - 1);
+      }
+      std::string parentEnd = endLeft;
+      if (paddedEndRight.size() > 1) {
+        parentEnd += "." + paddedEndRight.substr(0, paddedEndRight.size() - 1);
+      }
+      return parentStart + "-" + parentEnd;
+    }
+    return "";
+  }
+
+  if (key.contains('.')) {
+    const auto [left, right] = Utils::split(key, '.');
+    std::string parent = left;
+    if (right.size() > 1) {
+      parent += "." + right.substr(0, right.size() - 1);
+    }
+    return parent;
+  }
+
+  return "";
+}
+
+std::vector<std::string> LevelUtils::getAllParentKeys(const std::string& key) {
+  if (key.empty()) return {};
+
+  if (key.contains('-') && !key.starts_with('-')) {
+    const auto [start, end] = Utils::split(key, '-');
+    const auto [startLeft, startRight] = Utils::split(start, '.');
+    const auto [endLeft, endRight] = Utils::split(end, '.');
+
+    const int precision = std::max(startRight.size(), endRight.size());
+    const auto paddedStartRight = Utils::padToPrecision(startRight, precision);
+    const auto paddedEndRight = Utils::padToPrecision(endRight, precision);
+
+    std::vector list = {startLeft + "-" + endLeft};
+
+    int i = 1;
+    while (i < precision) {
+      std::string parentKey = startLeft;
+      parentKey += "." + paddedStartRight.substr(0, paddedStartRight.size() - precision + i);
+      parentKey += "-" + endLeft;
+      parentKey += "." + paddedEndRight.substr(0, paddedEndRight.size() - precision + i);
+      list.push_back(parentKey);
+      i++;
+    }
+
+    return list;
+  }
+
+  if (key.contains('.')) {
+    const auto [left, right] = Utils::split(key, '.');
+    std::vector list = {left};
+    const int precision = right.size();
+
+    int i = 1;
+    while (i < precision) {
+      list.push_back(left + "." + right.substr(0, right.size() - precision + i));
+      i++;
+    }
+    return list;
+  }
+
+  return {};
 }
 
 bool LevelUtils::isLevelCompleted(GJGameLevel* level) {
