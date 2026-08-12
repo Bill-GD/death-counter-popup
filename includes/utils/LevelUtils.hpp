@@ -16,6 +16,7 @@ public:
    * @param precision The target precision, clamped to [0, MAX_PRECISION]
    */
   static std::string getKeyByPrecision(const std::string& key, const int& precision);
+  static int getKeyPrecision(const std::string& key);
 
   static bool isLevelCompleted(GJGameLevel* level);
   static bool isGauntletLevel(const GJGameLevel* level);

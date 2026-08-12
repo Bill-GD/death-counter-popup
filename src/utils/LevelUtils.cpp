@@ -22,6 +22,9 @@ std::string LevelUtils::formatPercent(const float& percent, const float& maxClam
   return fmt::format("{:.{}f}", truncated, Constants::MAX_PRECISION);
 }
 
+/**
+ * @return Pair: 1st - formatted run key, 2nd - parent key
+ */
 std::pair<std::string, std::string> LevelUtils::computeRunKeys(const std::string& key) {
   if (key.empty()) return {"", ""};
   // filters negative progress (still dont know how they exist)
@@ -154,6 +157,18 @@ std::string LevelUtils::getKeyByPrecision(const std::string& key, const int& pre
   auto allKeys = getAllParentKeys(key);
   allKeys.push_back(key);
   return allKeys.at(clampedPrecision);
+}
+
+int LevelUtils::getKeyPrecision(const std::string& key) {
+  std::string part = key;
+
+  if (key.contains('-') && !key.starts_with('-')) {
+    part = Utils::split(key, '-').first;
+  }
+  if (!part.contains('.')) { return 0; }
+
+  const auto [_, right] = Utils::split(part, '.');
+  return right.size();
 }
 
 bool LevelUtils::isLevelCompleted(GJGameLevel* level) {

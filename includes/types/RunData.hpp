@@ -6,6 +6,7 @@ using namespace geode::prelude;
 
 struct RunData {
   int count = 0;
+  int precision = 0;
   std::string parent;
 };
 
@@ -15,6 +16,7 @@ struct matjson::Serialize<RunData> {
     return makeObject(
       {
         {"count", nodeData.count},
+        {"precision", nodeData.precision},
         {"parent", nodeData.parent},
       }
     );
@@ -23,6 +25,7 @@ struct matjson::Serialize<RunData> {
   static Result<RunData> fromJson(const Value& value) {
     RunData nodeData;
     nodeData.count = value["count"].asInt().unwrapOr(0);
+    nodeData.precision = value["precision"].asInt().unwrapOr(0);
     nodeData.parent = value["parent"].asString().unwrapOr("");
     return Ok(nodeData);
   }
