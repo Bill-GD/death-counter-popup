@@ -9,5 +9,5 @@ class DataMigrationHandler {
 public:
   static std::map<RunKey, RunData> parseOldData(const OldDeathCounter& oldData);
   static void migrateLevel(const std::string& levelID);
-  static void migrateAll();
+  static bool migrateAll();
 };

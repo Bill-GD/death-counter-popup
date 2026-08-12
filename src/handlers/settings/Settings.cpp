@@ -1,6 +1,4 @@
-#include "handlers/Settings.hpp"
-
-#include "handlers/DataMigrationHandler.hpp"
+#include "handlers/settings/Settings.hpp"
 
 using namespace geode::prelude;
 
@@ -33,15 +31,6 @@ void Settings::addListeners() {
   listenForSettingChanges<int>("y-position", setLabelYPos);
   listenForSettingChanges<int>("rotation", setRotation);
   listenForSettingChanges<float>("scale", setScale);
-
-  ButtonSettingPressedEventV3(Mod::get(), "save-data-actions").listen(
-    [](auto buttonKey) {
-      if (buttonKey == "migrate-all") {
-        DataMigrationHandler::migrateAll();
-        Notification::create("Migrated all", NotificationIcon::Success)->show();
-      }
-    }
-  ).leak();
 
   ButtonSettingPressedEventV3(Mod::get(), "test-actions").listen(
     [](auto buttonKey) {

@@ -76,7 +76,7 @@ void DataMigrationHandler::migrateLevel(const std::string& levelID) {
   }
 }
 
-void DataMigrationHandler::migrateAll() {
+bool DataMigrationHandler::migrateAll() {
   const auto files = FileUtils::getAllFiles(SaveHandler::PATH);
   const std::vector<std::filesystem::path> jsonFiles = ranges::filter(
     files,
@@ -87,11 +87,12 @@ void DataMigrationHandler::migrateAll() {
 
   if (jsonFiles.empty()) {
     log::info("No files left to migrate in '{}'", SaveHandler::PATH.string());
-    return;
+    return false;
   }
 
   for (const auto& filePath : jsonFiles) {
     const auto levelID = filePath.stem().string();
     migrateLevel(levelID);
   }
+  return true;
 }

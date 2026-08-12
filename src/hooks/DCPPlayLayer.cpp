@@ -2,7 +2,7 @@
 
 #include "Geode/Geode.hpp"
 #include "handlers/SaveHandler.hpp"
-#include "handlers/Settings.hpp"
+#include "handlers/settings/Settings.hpp"
 #include "utils/LevelUtils.hpp"
 
 using namespace geode::prelude;
