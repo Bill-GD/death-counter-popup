@@ -19,20 +19,22 @@
     "enable": {
       "type": "bool",
       "name": "Enable",
-      "description": "Whether to show label at all",
+      "description": "Whether to show label at all. The run counter is still saved.",
       "default": true
     },
     "gold-new-best": {
       "type": "bool",
       "name": "Golden New Best",
       "description": "The popup text will be golden if it's a new best (only applicable to runs from 0)",
-      "default": true
+      "default": true,
+      "enable-if": "enable"
     },
     "show-for-completed": {
       "type": "bool",
       "name": "Show for Completed levels",
       "description": "The popup text will be shown even if the level is completed",
-      "default": false
+      "default": false,
+      "enable-if": "enable"
     },
     "label-title": {
       "type": "title",
@@ -48,7 +50,8 @@
       "controls": {
         "slider": false,
         "big-arrows": false
-      }
+      },
+      "enable-if": "enable"
     },
     "x-position": {
       "type": "int",
@@ -62,7 +65,8 @@
         "slider-step": 10,
         "big-arrows": true,
         "big-arrow-step": 100
-      }
+      },
+      "enable-if": "enable"
     },
     "y-position": {
       "type": "int",
@@ -76,7 +80,8 @@
         "slider-step": 10,
         "big-arrows": true,
         "big-arrow-step": 100
-      }
+      },
+      "enable-if": "enable"
     },
     "rotation": {
       "type": "int",
@@ -84,7 +89,8 @@
       "description": "The rotation of the label. Range is -180 to 180, positive turns clockwise, negative turns counter-clockwise",
       "default": -15,
       "min": -180,
-      "max": 180
+      "max": 180,
+      "enable-if": "enable"
     },
     "scale": {
       "type": "float",
@@ -92,18 +98,17 @@
       "description": "The scale factor of the label. Range is 0 to 2",
       "default": 1,
       "min": 0,
-      "max": 2
+      "max": 2,
+      "enable-if": "enable"
     },
     "save-data-title": {
       "type": "title",
       "name": "Save data"
     },
-    "save-data-actions": {
-      "type": "button",
-      "buttons": {
-        "migrate-all": "Migrate all"
-      },
-      "description": "If the mod failed to migrate all on load"
+    "migrate-all": {
+      "type": "custom:dcp-migrate-button",
+      "name": "Migrate save data",
+      "description": "For manual migration if the mod failed to migrate all on load"
     },
     "test-title": {
       "type": "title",
@@ -111,6 +116,7 @@
     },
     "test-actions": {
       "type": "button",
+      "name": "Test actions",
       "buttons": {
         "test-button-1": "Test 1",
         "test-button-2": "Test 2"

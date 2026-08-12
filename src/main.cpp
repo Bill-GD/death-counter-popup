@@ -1,6 +1,6 @@
 #include "handlers/DataMigrationHandler.hpp"
 #include "handlers/SaveHandler.hpp"
-#include "handlers/Settings.hpp"
+#include "handlers/settings/Settings.hpp"
 
 using namespace geode::prelude;
 
