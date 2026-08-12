@@ -29,12 +29,23 @@ bool SaveHandler::isSaveExists(const std::string& levelID) {
   return std::filesystem::exists(getLevelPath(levelID));
 }
 
+/** @param runKey This key is the most precise variant */
 void SaveHandler::incrementRun(const std::string& runKey) {
   auto key = runKey;
+  int newRunDataCount = 0;
+
+  // completion, already clamped to 100.00f -> reuse integer variant (if present)
+  // only if most precise variant is missing
+  if (key.starts_with("100")) {
+    if (const auto& it = deaths.find("100"); it != deaths.end()) {
+      newRunDataCount = it->second.count;
+    }
+  }
+
   while (!key.empty()) {
     if (!deaths.contains(key)) {
       deaths[key] = RunData{
-        .count = 0,
+        .count = newRunDataCount,
         .parent = LevelUtils::getParentKey(key),
       };
     }

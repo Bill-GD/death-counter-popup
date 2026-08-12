@@ -19,7 +19,7 @@ std::string LevelUtils::formatPercent(const float& percent, const float& maxClam
   const auto clampedPercent = std::clamp(percent, 0.f, maxClamp);
   const auto num = std::pow(10.f, Constants::MAX_PRECISION);
   const auto truncated = std::trunc(clampedPercent * num) / num;
-  return fmt::format("{}", truncated);
+  return fmt::format("{:.{}f}", truncated, Constants::MAX_PRECISION);
 }
 
 std::pair<std::string, std::string> LevelUtils::computeRunKeys(const std::string& key) {
