@@ -11,6 +11,11 @@ public:
   static std::pair<std::string, std::string> computeRunKeys(const std::string& key);
   static std::string getParentKey(const std::string& key);
   static std::vector<std::string> getAllParentKeys(const std::string& key);
+  /**
+   * @param key The max precision key, provided by [formatPercent]
+   * @param precision The target precision, clamped to [0, MAX_PRECISION]
+   */
+  static std::string getKeyByPrecision(const std::string& key, const int& precision);
 
   static bool isLevelCompleted(GJGameLevel* level);
   static bool isGauntletLevel(const GJGameLevel* level);

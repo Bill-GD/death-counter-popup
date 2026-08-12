@@ -50,7 +50,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
 
     if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
 
-    spawnLabel(runLabelStr);
+    spawnLabel(LevelUtils::getKeyByPrecision(runLabelStr, Settings::getLabelPrecision()));
     m_fields->currentBest = this->m_level->m_newNormalPercent2.value();
   }
 }
@@ -66,7 +66,7 @@ void DCPPlayLayer::levelComplete() {
 
   if (m_fields->isNoclipping) return;
 
-  if (shouldShow) spawnLabel(runLabelStr);
+  if (shouldShow) spawnLabel(LevelUtils::getKeyByPrecision(runLabelStr, Settings::getLabelPrecision()));
 }
 
 void DCPPlayLayer::removeLabel() {

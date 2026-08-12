@@ -16,7 +16,7 @@ const char* LevelUtils::levelTypeToString(const GJLevelType type) {
 }
 
 std::string LevelUtils::formatPercent(const float& percent, const float& maxClamp) {
-  const auto clampedPercent = std::min(std::max(0.f, percent), maxClamp);
+  const auto clampedPercent = std::clamp(percent, 0.f, maxClamp);
   const auto num = std::pow(10.f, Constants::MAX_PRECISION);
   const auto truncated = std::trunc(clampedPercent * num) / num;
   return fmt::format("{}", truncated);
@@ -147,6 +147,13 @@ std::vector<std::string> LevelUtils::getAllParentKeys(const std::string& key) {
   }
 
   return {};
+}
+
+std::string LevelUtils::getKeyByPrecision(const std::string& key, const int& precision) {
+  const auto clampedPrecision = std::clamp(precision, 0, Constants::MAX_PRECISION);
+  auto allKeys = getAllParentKeys(key);
+  allKeys.push_back(key);
+  return allKeys.at(clampedPrecision);
 }
 
 bool LevelUtils::isLevelCompleted(GJGameLevel* level) {
