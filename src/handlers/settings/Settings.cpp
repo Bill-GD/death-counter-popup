@@ -31,12 +31,6 @@ void Settings::addListeners() {
   listenForSettingChanges<int>("y-position", setLabelYPos);
   listenForSettingChanges<int>("rotation", setRotation);
   listenForSettingChanges<float>("scale", setScale);
-
-  ButtonSettingPressedEventV3(Mod::get(), "test-actions").listen(
-    [](auto buttonKey) {
-      if (buttonKey == "test-button-1") {} else if (buttonKey == "test-button-2") {}
-    }
-  ).leak();
 }
 
 void Settings::setEnable(const bool value) { enabled = value; }

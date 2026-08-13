@@ -109,19 +109,6 @@
       "type": "custom:dcp-migrate-button",
       "name": "Migrate save data",
       "description": "For manual migration if the mod failed to migrate all on load"
-    },
-    "test-title": {
-      "type": "title",
-      "name": "Dev test"
-    },
-    "test-actions": {
-      "type": "button",
-      "name": "Test actions",
-      "buttons": {
-        "test-button-1": "Test 1",
-        "test-button-2": "Test 2"
-      },
-      "description": "For testing only, does nothing on release build"
     }
   },
   "resources": {
