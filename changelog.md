@@ -11,7 +11,7 @@
 - This update also <cr>changed the save data format</cr>, the mod will update the data, but if it fails,
   try the migrate button in the mod setting.
 - Percentage in label will be properly clamped to 0-100,
-  any run that isn't completion but have progress bar already at 100 will be clamped to 99.999900 (similar to vanilla).
+  any run that isn't completion but have progress bar already at 100 will be clamped to 99.999 (similar to vanilla).
 - Fix saving on exit even if no level was loaded.
 
 ## 1.0.3
