@@ -3,5 +3,5 @@
 class Constants {
 public:
   /// Manually updated to match settings
-  static constexpr int MAX_PRECISION = 2;
+  static constexpr int MAX_PRECISION = 3;
 };
