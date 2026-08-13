@@ -84,3 +84,7 @@ MigrateButtonSettingNode* MigrateButtonSettingNode::create(
 std::shared_ptr<MigrateButtonSetting> MigrateButtonSettingNode::getSetting() const {
   return std::static_pointer_cast<MigrateButtonSetting>(SettingNodeV3::getSetting());
 }
+
+$on_mod(Loaded) {
+  (void)Mod::get()->registerCustomSettingType("dcp-migrate-button", &MigrateButtonSetting::parse);
+}

@@ -40,7 +40,3 @@ public:
   bool hasUncommittedChanges() const override { return false; }
   bool hasNonDefaultValue() const override { return false; }
 };
-
-$on_mod(Loaded) {
-  (void)Mod::get()->registerCustomSettingType("dcp-migrate-button", &MigrateButtonSetting::parse);
-}

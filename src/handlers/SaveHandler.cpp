@@ -46,6 +46,7 @@ void SaveHandler::incrementRun(const std::string& runKey) {
     if (!deaths.contains(key)) {
       deaths[key] = RunData{
         .count = newRunDataCount,
+        .precision = LevelUtils::getKeyPrecision(key),
         .parent = LevelUtils::getParentKey(key),
       };
     }
@@ -56,7 +57,10 @@ void SaveHandler::incrementRun(const std::string& runKey) {
 }
 
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
-  if (!isSaveExists(levelID)) return {};
+  if (!isSaveExists(levelID)) {
+    (void)file::createDirectory(PATH / levelID);
+    return {};
+  }
 
   const auto [success, val] = FileUtils::tryRead(getLevelPath(levelID));
   if (!success) return {};
@@ -122,6 +126,7 @@ void SaveHandler::saveData() {
     !success
   ) {
     log::warn("Failed to save for level '{}' (id={})", currentLevelName, currentLevelID);
+    return;
   }
   log::info("Saved data for level '{}' (id={})", currentLevelName, currentLevelID);
 }
