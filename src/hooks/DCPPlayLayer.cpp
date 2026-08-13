@@ -94,7 +94,7 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
       CCDelayTime::create(1.4f),
       // CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.0f)),
       CCSpawn::create(
-        CCFadeOut::create(0.4f),
+        CCFadeTo::create(0.4f, 0),
         CCMoveBy::create(0.4f, CCPoint(0, 20)),
         nullptr
       ),
@@ -117,6 +117,7 @@ std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(c
   );
   label->setPosition(Settings::getLabelPosition());
   label->setRotation(static_cast<float>(Settings::getRotation()));
+  label->setOpacity(Settings::getOpacity());
   label->setScale(0.0f);
 
   constexpr auto popScale = 1.25f;

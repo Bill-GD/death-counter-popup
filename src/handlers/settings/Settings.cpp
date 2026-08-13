@@ -10,6 +10,7 @@ int Settings::labelXPos{};
 int Settings::labelYPos{};
 int Settings::rotation{};
 float Settings::scale{};
+float Settings::opacity{};
 
 void Settings::init() {
   enabled = Mod::get()->getSettingValue<bool>("enable");
@@ -20,6 +21,7 @@ void Settings::init() {
   labelYPos = Mod::get()->getSettingValue<int>("y-position");
   rotation = Mod::get()->getSettingValue<int>("rotation");
   scale = Mod::get()->getSettingValue<float>("scale");
+  opacity = Mod::get()->getSettingValue<float>("opacity");
 }
 
 void Settings::addListeners() {
@@ -31,6 +33,7 @@ void Settings::addListeners() {
   listenForSettingChanges<int>("y-position", setLabelYPos);
   listenForSettingChanges<int>("rotation", setRotation);
   listenForSettingChanges<float>("scale", setScale);
+  listenForSettingChanges<float>("opacity", setOpacity);
 }
 
 void Settings::setEnable(const bool value) { enabled = value; }
@@ -41,6 +44,7 @@ void Settings::setLabelXPos(const int value) { labelXPos = value; }
 void Settings::setLabelYPos(const int value) { labelYPos = value; }
 void Settings::setRotation(const int value) { rotation = value; }
 void Settings::setScale(const float value) { scale = value; }
+void Settings::setOpacity(const float value) { opacity = value; }
 
 bool Settings::isEnabled() { return enabled; }
 bool Settings::isNewBestGolden() { return goldenNewBest; }
@@ -49,3 +53,4 @@ int Settings::getLabelPrecision() { return labelPrecision; }
 CCPoint Settings::getLabelPosition() { return {static_cast<float>(labelXPos), static_cast<float>(labelYPos)}; }
 int Settings::getRotation() { return rotation; }
 float Settings::getScale() { return scale; }
+GLubyte Settings::getOpacity() { return static_cast<GLubyte>(opacity * 255); }

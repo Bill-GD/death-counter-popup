@@ -1,6 +1,6 @@
 #pragma once
 
-#include <types/types.hpp>
+#include "Geode/Geode.hpp"
 
 using namespace geode::prelude;
 
@@ -13,6 +13,7 @@ class Settings {
   static int labelYPos;
   static int rotation;
   static float scale;
+  static float opacity;
 
 public:
   static void init();
@@ -26,6 +27,7 @@ public:
   static void setLabelYPos(int value);
   static void setRotation(int value);
   static void setScale(float value);
+  static void setOpacity(float value);
 
   static bool isEnabled();
   static bool isNewBestGolden();
@@ -34,4 +36,5 @@ public:
   static CCPoint getLabelPosition();
   static int getRotation();
   static float getScale();
+  static GLubyte getOpacity();
 };

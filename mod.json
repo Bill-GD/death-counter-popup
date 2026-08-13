@@ -101,6 +101,15 @@
       "max": 2,
       "enable-if": "enable"
     },
+    "opacity": {
+      "type": "float",
+      "name": "Opacity",
+      "description": "The opacity of the label. Range is 0 to 1. To match Megahack status opacity at 1x, use 0.25.",
+      "default": 1,
+      "min": 0,
+      "max": 1,
+      "enable-if": "enable"
+    },
     "save-data-title": {
       "type": "title",
       "name": "Save data"
