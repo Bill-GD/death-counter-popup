@@ -153,9 +153,11 @@ std::vector<std::string> LevelUtils::getAllParentKeys(const std::string& key) {
 }
 
 std::string LevelUtils::getKeyByPrecision(const std::string& key, const int& precision) {
-  const auto clampedPrecision = std::clamp(precision, 0, Constants::MAX_PRECISION);
   auto allKeys = getAllParentKeys(key);
   allKeys.push_back(key);
+  const int maxAvailable = static_cast<int>(allKeys.size()) - 1;
+  const int maxPrecision = std::min(Constants::MAX_PRECISION, maxAvailable);
+  const int clampedPrecision = std::clamp(precision, 0, maxPrecision);
   return allKeys.at(clampedPrecision);
 }
 
