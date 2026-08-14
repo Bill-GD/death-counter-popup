@@ -24,5 +24,9 @@ public:
 
   static std::string getLevelID(GJGameLevel* level);
   static bool isModLoaded(const std::string& modID);
+  // static EndTriggerGameObject* getLastEndTrigger(const PlayLayer* layer);
+  // static EndPortalObject* getEndWall(const PlayLayer* layer);
+
   static void dumpLevelInfo(GJGameLevel* level);
+  // static void dumpAttemptInfo();
 };

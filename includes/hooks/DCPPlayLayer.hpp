@@ -11,6 +11,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
     CCLabelBMFont* label = nullptr;
 
     float runStartPercent = 0;
+    // float playerStartPositionX = 0;
     int currentBest = 0;
 
     bool isNoclipping = false;
@@ -28,4 +29,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
   std::pair<CCLabelBMFont*, std::pair<float, float>> getPopupLabel(const std::string& deathKey);
   void spawnLabel(const std::string& labelStr);
   std::string getRunLabelString(const float& currentPercent, const float& maxClamp = 100.f);
+
+  // std::string getRunByPosition(const float& maxClamp, const bool& useEndTrigger = false);
+  static float getActualCurrentPercent();
 };

@@ -13,7 +13,11 @@ bool DCPPlayLayer::init(GJGameLevel* level, const bool useReplay, const bool don
     SaveHandler::loadSaveData();
   }
   m_fields->currentBest = level->m_newNormalPercent2.value();
-  return PlayLayer::init(level, useReplay, dontCreateObject);
+
+  const auto res = PlayLayer::init(level, useReplay, dontCreateObject);
+  m_fields->runStartPercent = getActualCurrentPercent();
+  // m_fields->playerStartPositionX = this->m_player1->getPositionX();
+  return res;
 }
 
 void DCPPlayLayer::onQuit() {
@@ -24,7 +28,8 @@ void DCPPlayLayer::onQuit() {
 void DCPPlayLayer::resetLevel() {
   PlayLayer::resetLevel();
   m_fields->isNoclipping = false;
-  m_fields->runStartPercent = this->getCurrentPercent();
+  m_fields->runStartPercent = getActualCurrentPercent();
+  // m_fields->playerStartPositionX = this->m_player1->getPositionX();
   m_fields->currentAttemptGameObject = nullptr;
 }
 
@@ -45,7 +50,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     && !this->m_level->isPlatformer()
     && !m_fields->isNoclipping
   ) {
-    const auto runLabelStr = getRunLabelString(this->getCurrentPercent(), 99.999900f);
+    const auto runLabelStr = getRunLabelString(getActualCurrentPercent(), 99.999900f);
     SaveHandler::incrementRun(runLabelStr);
 
     if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
@@ -134,4 +139,36 @@ std::string DCPPlayLayer::getRunLabelString(const float& currentPercent, const f
   }
   labelStr += LevelUtils::formatPercent(currentPercent, maxClamp);
   return labelStr;
+}
+
+// std::string DCPPlayLayer::getRunByPosition(const float& maxClamp, const bool& useEndTrigger) {
+//   const auto endWall = LevelUtils::getEndWall(this);
+//   const auto endTrigger = LevelUtils::getLastEndTrigger(this);
+//   const bool canUseEndTrigger = useEndTrigger && endTrigger != nullptr;
+//   const auto endPositionX = canUseEndTrigger ? endTrigger->getPositionX() : endWall->getPositionX();
+//   const auto playerDeathPosition = this->m_player1->getPositionX();
+//
+//   const float runStartPercent = m_fields->playerStartPositionX / endPositionX * 100;
+//   const float runEndPercent = playerDeathPosition / endPositionX * 100;
+//
+//   std::string labelStr;
+//   if (m_fields->playerStartPositionX > 0) {
+//     labelStr = LevelUtils::formatPercent(runStartPercent, maxClamp) + "-";
+//   }
+//   labelStr += LevelUtils::formatPercent(runEndPercent, maxClamp);
+//   return labelStr;
+// }
+
+// shout out to eclipse mod for figuring out timestamp is level frame count (240)
+// which solves the issue when level has end trigger
+float DCPPlayLayer::getActualCurrentPercent() {
+  const auto game = GJBaseGameLayer::get();
+  float percent;
+
+  if (game->m_level->m_timestamp > 0) {
+    percent = static_cast<float>(game->m_gameState.m_levelTime * 240.f) / game->m_level->m_timestamp * 100.f;
+  } else {
+    percent = game->m_player1->getPositionX() / game->m_levelLength * 100.f;
+  }
+  return percent;
 }
