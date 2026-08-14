@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- Rework how the mod get percentage.
+- A minor fix to run start percentage.
+
 ## 1.1.0
 
 - Add decimal precision support for label:

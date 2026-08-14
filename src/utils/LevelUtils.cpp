@@ -216,6 +216,26 @@ bool LevelUtils::isModLoaded(const std::string& modID) {
   return Loader::get()->isModLoaded(modID);
 }
 
+// EndTriggerGameObject* LevelUtils::getLastEndTrigger(const PlayLayer* layer) {
+//   std::vector<EndTriggerGameObject*> endTriggers = {};
+//   for (const auto& child : layer->m_objects->asExt<GameObject*>()) {
+//     if (auto endTrigger = typeinfo_cast<EndTriggerGameObject*>(child)) {
+//       endTriggers.push_back(endTrigger);
+//     }
+//   }
+//   return endTriggers.empty() ? nullptr : endTriggers.back();
+// }
+//
+// EndPortalObject* LevelUtils::getEndWall(const PlayLayer* layer) {
+//   for (const auto& child : layer->m_objects->asExt<GameObject*>()) {
+//     if (auto endPortal = typeinfo_cast<EndPortalObject*>(child)) {
+//       return endPortal;
+//     }
+//   }
+//   log::warn("No endwall found in level, this should not happen");
+//   return nullptr;
+// }
+
 void LevelUtils::dumpLevelInfo(GJGameLevel* level) {
   log::info("===== GJGameLevel =====");
 
@@ -234,6 +254,7 @@ void LevelUtils::dumpLevelInfo(GJGameLevel* level) {
   log::info("Working Time 1   : {}", level->m_workingTime);
   log::info("Working Time 2   : {}", level->m_workingTime2);
   log::info("Attempt Time     : {}", level->m_attemptTime);
+  // log::info("Timestamp        : {}", level->m_timestamp);
 
   log::info("Stars            : {}", level->m_stars);
   log::info("Orbs             : {}", level->m_orbCompletion);
@@ -243,3 +264,46 @@ void LevelUtils::dumpLevelInfo(GJGameLevel* level) {
   log::info("Level Type       : {}", levelTypeToString(level->m_levelType));
   log::info("Length           : {}", level->m_levelLength);
 }
+
+// void LevelUtils::dumpAttemptInfo() {
+//   const auto playLayer = PlayLayer::get();
+//   const auto game = GJBaseGameLayer::get();
+//   const auto level = playLayer->m_level;
+//   const auto levelID = getLevelID(level);
+//   const auto name = level->m_levelName;
+//   const auto startPos = game->m_startPosObject;
+//   const auto endTrigger = getLastEndTrigger(playLayer);
+//   const auto endWall = getEndWall(playLayer);
+//
+//   log::info("");
+//   log::info("======= AttemptInfo =======");
+//   log::info("level id                       : {}", levelID);
+//   log::info("level name                     : {}", level->m_levelName);
+//   log::info("player pos                     : {}", game->m_player1->getPositionX());
+//   log::info("startpos                       : {}", startPos != nullptr ? startPos->getPositionX() : 0);
+//   log::info("endTrigger                     : {}", endTrigger != nullptr ? endTrigger->getPositionX() : 0);
+//   log::info("endWall                        : {}", endWall != nullptr ? endWall->getPositionX() : 0);
+//   log::info("level time                     : {}", game->m_gameState.m_levelTime);
+//   log::info("total time                     : {}", game->m_gameState.m_totalTime);
+//   log::info("timestamp                      : {}", game->m_level->m_timestamp);
+//   log::info("level length                   : {}", game->m_levelLength);
+//   log::info(
+//     "currentPercent                 : {} ({})",
+//     playLayer->getCurrentPercent(),
+//     formatPercent(playLayer->getCurrentPercent())
+//   );
+//
+//   if (game->m_level->m_timestamp > 0) {
+//     log::info(
+//       "eclipse percent (timestamp > 0): {}",
+//       static_cast<float>(game->m_gameState.m_levelTime * 240.f) / game->m_level->m_timestamp * 100.f
+//     );
+//   } else {
+//     log::info(
+//       "eclipse percent                : {}",
+//       game->m_player1->getPositionX() / game->m_levelLength * 100.f
+//     );
+//   }
+//   log::info("======= AttemptInfo =======");
+//   log::info("");
+// }
