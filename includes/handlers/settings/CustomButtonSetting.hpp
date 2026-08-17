@@ -4,7 +4,9 @@
 
 using namespace geode::prelude;
 
-class MigrateButtonSetting : public SettingV3 {
+constexpr std::string MIGRATE_SETTING_KEY = "migrate-all";
+
+class CustomButtonSetting : public SettingV3 {
 public:
   static Result<std::shared_ptr<SettingV3>> parse(
     std::string const& key,
@@ -20,12 +22,12 @@ public:
   SettingNodeV3* createNode(float width) override;
 };
 
-class MigrateButtonSettingNode : public SettingNodeV3 {
+class CustomButtonSettingNode : public SettingNodeV3 {
 protected:
   ButtonSprite* m_buttonSprite;
   CCMenuItemSpriteExtra* m_button;
 
-  bool init(const std::shared_ptr<MigrateButtonSetting>& setting, float width);
+  bool init(const std::shared_ptr<CustomButtonSetting>& setting, float width);
 
   void updateState(CCNode* invoker) override;
   void onButton(CCObject*);
@@ -34,8 +36,8 @@ protected:
   void onResetToDefault() override {}
 
 public:
-  static MigrateButtonSettingNode* create(const std::shared_ptr<MigrateButtonSetting>& setting, float width);
-  std::shared_ptr<MigrateButtonSetting> getSetting() const;
+  static CustomButtonSettingNode* create(const std::shared_ptr<CustomButtonSetting>& setting, float width);
+  std::shared_ptr<CustomButtonSetting> getSetting() const;
 
   bool hasUncommittedChanges() const override { return false; }
   bool hasNonDefaultValue() const override { return false; }
