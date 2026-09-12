@@ -1,9 +1,11 @@
 #include "handlers/settings/CustomButtonSetting.hpp"
 
 #include "handlers/DataMigrationHandler.hpp"
+#include "ui/DCPDataPopup.hpp"
 
 const std::map<std::string_view, std::string> buttonTextMap = {
-  {MIGRATE_SETTING_KEY, "Migrate All"}
+  {MIGRATE_SETTING_KEY, "Migrate All"},
+  {DATA_POPUP_SETTING_KEY, "Open"}
 };
 
 const std::map<std::string_view, std::function<void()>> actionMap = {
@@ -15,6 +17,9 @@ const std::map<std::string_view, std::function<void()>> actionMap = {
         Notification::create("Already migrated all data", NotificationIcon::Info)->show();
       }
     }
+  },
+  {
+    DATA_POPUP_SETTING_KEY, [] { DCPDataPopup::create()->show(); }
   }
 };
 
