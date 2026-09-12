@@ -1,7 +1,6 @@
-- Rework how percentage is obtained
-  - Timestamp `GJGameLevel::m_timestamp` is total frames/ticks of a level
-  - Actual level time info is in `GJGameState`, can be fetched from `GJBaseGameLayer`
-    (`m_levelTime` is current time in seconds of player)
-  - `GJBaseGameLayer::m_levelLength` is level's spatial length (= endwall position),
-    can use with player's x position for calculation
-- Fix not saving start percent on 1st attempt
+- Add setting for popup style: animated, fade, flat
+  - Animated: mimics New Best label (pops up quickly, then return to normal)
+  - Fade: fades in, waits, fades out
+  - Flat (fallback): just pops in instantly, waits, pops out instantly
+  - All popup style is 2.5s in duration (was 2.55s for animated)
+- Updated custom button setting to be reuseable

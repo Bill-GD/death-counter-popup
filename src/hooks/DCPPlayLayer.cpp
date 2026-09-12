@@ -86,27 +86,12 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
 
   this->removeLabel();
   const auto [label, scales] = getPopupLabel(labelStr);
-  const auto [popScale, endScale] = scales;
   m_fields->label = label;
   this->getChildByID("UILayer")->addChild(m_fields->label);
 
   log::info("Spawned label at ({}), {}°", m_fields->label->getPosition(), m_fields->label->getRotation());
 
-  m_fields->label->runAction(
-    CCSequence::create(
-      CCEaseBackOut::create(CCScaleTo::create(0.15f, popScale)),
-      CCEaseBackOut::create(CCScaleTo::create(0.2f, endScale)),
-      CCDelayTime::create(1.4f),
-      // CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.0f)),
-      CCSpawn::create(
-        CCFadeTo::create(0.4f, 0),
-        CCMoveBy::create(0.4f, CCPoint(0, 20)),
-        nullptr
-      ),
-      CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
-      nullptr
-    )
-  );
+  m_fields->label->runAction(getPopupSequence(scales));
 }
 
 std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
@@ -122,14 +107,59 @@ std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(c
   );
   label->setPosition(Settings::getLabelPosition());
   label->setRotation(static_cast<float>(Settings::getRotation()));
-  label->setOpacity(Settings::getOpacity());
-  label->setScale(0.0f);
+  label->setOpacity(0.f);
+  label->setScale(0.f);
 
   constexpr auto popScale = 1.25f;
   auto endScale = 0.65f;
   if (useGoldFont) endScale += 0.2f;
 
   return {label, {popScale * Settings::getScale(), endScale * Settings::getScale()}};
+}
+
+CCSequence* DCPPlayLayer::getPopupSequence(const std::pair<float, float> scales) {
+  const std::string popupStyle = Settings::getPopupStyle();
+  const auto [popScale, endScale] = scales;
+
+  if (popupStyle == POPUP_STYLE_ANIMATED) {
+    return CCSequence::create(
+      CCFadeTo::create(0.f, Settings::getOpacity()),
+      CCEaseBackOut::create(CCScaleTo::create(0.15f, popScale)),
+      CCEaseBackOut::create(CCScaleTo::create(0.2f, endScale)),
+      CCDelayTime::create(1.35f),
+      // CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.0f)),
+      CCSpawn::create(
+        CCFadeTo::create(0.4f, 0),
+        CCMoveBy::create(0.4f, CCPoint(0, 20)),
+        nullptr
+      ),
+      CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
+      nullptr
+    );
+  }
+
+  if (popupStyle == POPUP_STYLE_FADE) {
+    return CCSequence::create(
+      CCScaleTo::create(0.f, endScale),
+      CCFadeTo::create(0.15f, Settings::getOpacity()),
+      CCDelayTime::create(1.95f),
+      CCFadeTo::create(0.4f, 0),
+      CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
+      nullptr
+    );
+  }
+
+  // flat or invalid
+  return CCSequence::create(
+    CCSpawn::create(
+      CCFadeTo::create(0.f, Settings::getOpacity()),
+      CCScaleTo::create(0.f, endScale),
+      nullptr
+    ),
+    CCDelayTime::create(2.5f),
+    CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
+    nullptr
+  );
 }
 
 std::string DCPPlayLayer::getRunLabelString(const float& currentPercent, const float& maxClamp) {

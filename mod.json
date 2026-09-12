@@ -8,7 +8,7 @@
   },
   "id": "billgd.death_counter_popup",
   "name": "Death Counter Popup",
-  "version": "v1.2.0",
+  "version": "v1.1.2",
   "developer": "BillGD",
   "description": "Shows a text popup of a run counter",
   "settings": {
@@ -108,6 +108,15 @@
       "default": 1,
       "min": 0,
       "max": 1,
+      "enable-if": "enable"
+    },
+    "popup-style": {
+      "type": "string",
+      "name": "Popup Style",
+      "description": "How the label is added and shown. 'animated' mimics new best label, 'fade' fades in-place, 'flat' pops in & out instantly",
+      "default": "animated",
+      "match": "[a-z]+",
+      "one-of": ["animated", "fade", "flat"],
       "enable-if": "enable"
     },
     "save-data-title": {

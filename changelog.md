@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2
+
+- Add setting to configure label popup style (3 styles).
+- Minor code changes
+
 ## 1.1.1
 
 - Rework how the mod get percentage.

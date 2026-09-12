@@ -4,6 +4,10 @@
 
 using namespace geode::prelude;
 
+constexpr std::string POPUP_STYLE_ANIMATED = "animated";
+constexpr std::string POPUP_STYLE_FADE = "fade";
+constexpr std::string POPUP_STYLE_FLAT = "flat";
+
 #include <Geode/modify/PlayLayer.hpp>
 class $modify(DCPPlayLayer, PlayLayer) {
   struct Fields {
@@ -28,6 +32,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
   void removeLabel();
   std::pair<CCLabelBMFont*, std::pair<float, float>> getPopupLabel(const std::string& deathKey);
   void spawnLabel(const std::string& labelStr);
+  CCSequence* getPopupSequence(const std::pair<float, float> scales);
   std::string getRunLabelString(const float& currentPercent, const float& maxClamp = 100.f);
 
   // std::string getRunByPosition(const float& maxClamp, const bool& useEndTrigger = false);

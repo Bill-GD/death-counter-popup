@@ -14,6 +14,7 @@ class Settings {
   static int rotation;
   static float scale;
   static float opacity;
+  static std::string popupStyle;
 
 public:
   static void init();
@@ -28,6 +29,7 @@ public:
   static void setRotation(int value);
   static void setScale(float value);
   static void setOpacity(float value);
+  static void setPopupStyle(const std::string& value);
 
   static bool isEnabled();
   static bool isNewBestGolden();
@@ -37,4 +39,5 @@ public:
   static int getRotation();
   static float getScale();
   static GLubyte getOpacity();
+  static std::string getPopupStyle();
 };

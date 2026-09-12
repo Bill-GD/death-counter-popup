@@ -11,6 +11,7 @@ int Settings::labelYPos{};
 int Settings::rotation{};
 float Settings::scale{};
 float Settings::opacity{};
+std::string Settings::popupStyle{};
 
 void Settings::init() {
   enabled = Mod::get()->getSettingValue<bool>("enable");
@@ -22,6 +23,7 @@ void Settings::init() {
   rotation = Mod::get()->getSettingValue<int>("rotation");
   scale = Mod::get()->getSettingValue<float>("scale");
   opacity = Mod::get()->getSettingValue<float>("opacity");
+  popupStyle = Mod::get()->getSettingValue<std::string>("popup-style");
 }
 
 void Settings::addListeners() {
@@ -34,6 +36,7 @@ void Settings::addListeners() {
   listenForSettingChanges<int>("rotation", setRotation);
   listenForSettingChanges<float>("scale", setScale);
   listenForSettingChanges<float>("opacity", setOpacity);
+  listenForSettingChanges<std::string>("popup-style", setPopupStyle);
 }
 
 void Settings::setEnable(const bool value) { enabled = value; }
@@ -45,6 +48,7 @@ void Settings::setLabelYPos(const int value) { labelYPos = value; }
 void Settings::setRotation(const int value) { rotation = value; }
 void Settings::setScale(const float value) { scale = value; }
 void Settings::setOpacity(const float value) { opacity = value; }
+void Settings::setPopupStyle(const std::string& value) { popupStyle = value; }
 
 bool Settings::isEnabled() { return enabled; }
 bool Settings::isNewBestGolden() { return goldenNewBest; }
@@ -54,3 +58,4 @@ CCPoint Settings::getLabelPosition() { return {static_cast<float>(labelXPos), st
 int Settings::getRotation() { return rotation; }
 float Settings::getScale() { return scale; }
 GLubyte Settings::getOpacity() { return static_cast<GLubyte>(opacity * 255); }
+std::string Settings::getPopupStyle() { return popupStyle; }
