@@ -12,7 +12,7 @@ inline constexpr std::string_view POPUP_STYLE_FLAT = "flat";
 class $modify(DCPPlayLayer, PlayLayer) {
   struct Fields {
     CCSize winSize;
-    CCLabelBMFont* label = nullptr;
+    Label* label = nullptr;
 
     float runStartPercent = 0;
     // float playerStartPositionX = 0;
@@ -30,7 +30,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
   void levelComplete();
 
   void removeLabel();
-  std::pair<CCLabelBMFont*, std::pair<float, float>> getPopupLabel(const std::string& deathKey);
+  std::pair<Label*, std::pair<float, float>> getPopupLabel(const std::string& deathKey);
   void spawnLabel(const std::string& labelStr);
   CCSequence* getPopupSequence(const std::pair<float, float> scales);
   std::string getRunLabelString(const float& currentPercent, const float& maxClamp = 100.f);

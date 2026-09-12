@@ -94,14 +94,14 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   m_fields->label->runAction(getPopupSequence(scales));
 }
 
-std::pair<CCLabelBMFont*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
+std::pair<Label*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
   const auto isRun = deathKey.contains('-');
   const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
   const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
   const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey).count);
 
-  const auto label = CCLabelBMFont::create(
+  const auto label = Label::create(
     textFmt.c_str(),
     useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
   );
