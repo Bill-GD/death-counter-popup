@@ -2,11 +2,11 @@
 
 #include "handlers/DataMigrationHandler.hpp"
 
-const std::map<std::string, std::string> buttonTextMap = {
+const std::map<std::string_view, std::string> buttonTextMap = {
   {MIGRATE_SETTING_KEY, "Migrate All"}
 };
 
-const std::map<std::string, std::function<void()>> actionMap = {
+const std::map<std::string_view, std::function<void()>> actionMap = {
   {
     MIGRATE_SETTING_KEY, [] {
       if (DataMigrationHandler::migrateAll()) {

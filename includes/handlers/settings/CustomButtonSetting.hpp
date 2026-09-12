@@ -4,7 +4,7 @@
 
 using namespace geode::prelude;
 
-constexpr std::string MIGRATE_SETTING_KEY = "migrate-all";
+inline constexpr std::string_view MIGRATE_SETTING_KEY = "migrate-all";
 
 class CustomButtonSetting : public SettingV3 {
 public:

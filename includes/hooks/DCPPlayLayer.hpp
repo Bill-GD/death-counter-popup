@@ -4,9 +4,9 @@
 
 using namespace geode::prelude;
 
-constexpr std::string POPUP_STYLE_ANIMATED = "animated";
-constexpr std::string POPUP_STYLE_FADE = "fade";
-constexpr std::string POPUP_STYLE_FLAT = "flat";
+inline constexpr std::string_view POPUP_STYLE_ANIMATED = "animated";
+inline constexpr std::string_view POPUP_STYLE_FADE = "fade";
+inline constexpr std::string_view POPUP_STYLE_FLAT = "flat";
 
 #include <Geode/modify/PlayLayer.hpp>
 class $modify(DCPPlayLayer, PlayLayer) {
