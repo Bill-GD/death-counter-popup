@@ -3,4 +3,5 @@
   - Fade: fades in, waits, fades out
   - Flat (fallback): just pops in instantly, waits, pops out instantly
   - All popup style is 2.5s in duration (was 2.55s for animated)
-- Updated custom button setting to be reuseable
+- Update custom button setting to be reuseable
+- Bump Geode to 5.10.1 (build fails)

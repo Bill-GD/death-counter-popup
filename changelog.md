@@ -2,6 +2,7 @@
 
 ## 1.1.2
 
+- Bump Geode to 5.10.1
 - Add setting to configure label popup style (3 styles).
 - Minor code changes
 
