@@ -57,7 +57,7 @@
       "type": "int",
       "name": "Pos X",
       "description": "The horizontal position for the label. Lower = left, higher = right. Default is 100, min is 0",
-      "default": 80,
+      "default": 100,
       "min": 0,
       "max": 9999,
       "controls": {

@@ -75,24 +75,24 @@ void DCPPlayLayer::levelComplete() {
 }
 
 void DCPPlayLayer::removeLabel() {
-  if (!m_fields->labelGroup) return;
+  if (!m_fields->label) return;
 
-  m_fields->labelGroup->removeFromParent();
-  m_fields->labelGroup = nullptr;
+  m_fields->label->removeFromParent();
+  m_fields->label = nullptr;
 }
 
 void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   if (!Settings::isEnabled()) return;
 
   this->removeLabel();
-  m_fields->labelGroup = getPopupLabel(labelStr);
-  this->getChildByID("UILayer")->addChild(m_fields->labelGroup);
+  m_fields->label = getPopupLabel(labelStr);
+  this->getChildByID("UILayer")->addChild(m_fields->label);
 
-  log::info("Spawned label at ({}), {}°", m_fields->labelGroup->getPosition(), m_fields->labelGroup->getRotation());
+  log::info("Spawned label at ({}), {}°", m_fields->label->getPosition(), m_fields->label->getRotation());
 
-  m_fields->labelGroup->runAction(getPopupSequence(true));
-  m_fields->labelGroup->getChildByID("RunLabel")->runAction(getPopupSequence(false));
-  m_fields->labelGroup->getChildByID("CountLabel")->runAction(getPopupSequence(false));
+  m_fields->label->runAction(getPopupSequence(true));
+  m_fields->label->getChildByID("RunLabel")->runAction(getPopupSequence(false));
+  m_fields->label->getChildByID("CountLabel")->runAction(getPopupSequence(false));
 }
 
 CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
@@ -120,10 +120,10 @@ CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
   countLabel->setAnchorPoint({0.f, 0.f});
   countLabel->setScale(labelScale * 0.7f);
 
-  const auto labelLayer = CCNode::create();
+  const auto labelNode = CCNode::create();
 
-  labelLayer->addChild(runLabel);
-  labelLayer->addChild(countLabel);
+  labelNode->addChild(runLabel);
+  labelNode->addChild(countLabel);
 
   runLabel->setPosition(0.f, 0.f);
   countLabel->setPosition(
@@ -131,7 +131,7 @@ CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
     0.f
   );
 
-  labelLayer->setContentSize(
+  labelNode->setContentSize(
     {
       runLabel->getScaledContentWidth() + countLabel->getScaledContentWidth(),
       std::max(
@@ -141,12 +141,13 @@ CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
     }
   );
 
-  labelLayer->setID("RunCounterLabelLayer");
-  labelLayer->setPosition(Settings::getLabelPosition());
-  labelLayer->setRotation(static_cast<float>(Settings::getRotation()));
-  labelLayer->setScale(0.f);
+  labelNode->setID("RunCounterLabel");
+  labelNode->setPosition(Settings::getLabelPosition());
+  labelNode->setRotation(static_cast<float>(Settings::getRotation()));
+  labelNode->setScale(0.f);
+  labelNode->setAnchorPoint({0.5f, 0.5f});
 
-  return labelLayer;
+  return labelNode;
 }
 
 CCSequence* DCPPlayLayer::getPopupSequence(const bool isParent) {

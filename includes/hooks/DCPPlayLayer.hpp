@@ -12,7 +12,7 @@ inline constexpr std::string_view POPUP_STYLE_FLAT = "flat";
 class $modify(DCPPlayLayer, PlayLayer) {
   struct Fields {
     CCSize winSize;
-    CCNode* labelGroup = nullptr;
+    CCNode* label = nullptr;
 
     float runStartPercent = 0;
     int currentBest = 0;
