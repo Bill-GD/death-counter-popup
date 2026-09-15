@@ -75,89 +75,130 @@ void DCPPlayLayer::levelComplete() {
 }
 
 void DCPPlayLayer::removeLabel() {
-  if (!m_fields->label) return;
+  if (!m_fields->labelGroup) return;
 
-  m_fields->label->removeFromParent();
-  m_fields->label = nullptr;
+  m_fields->labelGroup->removeFromParent();
+  m_fields->labelGroup = nullptr;
 }
 
 void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   if (!Settings::isEnabled()) return;
 
   this->removeLabel();
-  const auto [label, scales] = getPopupLabel(labelStr);
-  m_fields->label = label;
-  this->getChildByID("UILayer")->addChild(m_fields->label);
+  m_fields->labelGroup = getPopupLabel(labelStr);
+  this->getChildByID("UILayer")->addChild(m_fields->labelGroup);
 
-  log::info("Spawned label at ({}), {}°", m_fields->label->getPosition(), m_fields->label->getRotation());
+  log::info("Spawned label at ({}), {}°", m_fields->labelGroup->getPosition(), m_fields->labelGroup->getRotation());
 
-  m_fields->label->runAction(getPopupSequence(scales));
+  m_fields->labelGroup->runAction(getPopupSequence(true));
+  m_fields->labelGroup->getChildByID("RunLabel")->runAction(getPopupSequence(false));
+  m_fields->labelGroup->getChildByID("CountLabel")->runAction(getPopupSequence(false));
 }
 
-std::pair<Label*, std::pair<float, float>> DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
+CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
   const auto isRun = deathKey.contains('-');
   const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
   const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
-  const auto textFmt = fmt::format("{}x{}", deathKey, SaveHandler::deaths.at(deathKey).count);
+  const auto labelScale = Settings::getScale() + (useGoldFont ? 0.2f : 0.f);
 
-  const auto label = Label::create(
-    textFmt.c_str(),
+  const auto runLabel = Label::create(
+    deathKey,
     useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
   );
-  label->setPosition(Settings::getLabelPosition());
-  label->setRotation(static_cast<float>(Settings::getRotation()));
-  label->setOpacity(0.f);
-  label->setScale(0.f);
+  runLabel->setID("RunLabel");
+  runLabel->setOpacity(0.f);
+  runLabel->setAnchorPoint({0.f, 0.f});
+  runLabel->setScale(labelScale);
 
-  constexpr auto popScale = 1.25f;
-  auto endScale = 0.65f;
-  if (useGoldFont) endScale += 0.2f;
+  const auto countLabel = Label::create(
+    fmt::format("x{}", SaveHandler::deaths.at(deathKey).count),
+    useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
+  );
+  countLabel->setID("CountLabel");
+  countLabel->setOpacity(0.f);
+  countLabel->setAnchorPoint({0.f, 0.f});
+  countLabel->setScale(labelScale * 0.7f);
 
-  return {label, {popScale * Settings::getScale(), endScale * Settings::getScale()}};
+  const auto labelLayer = CCNode::create();
+
+  labelLayer->addChild(runLabel);
+  labelLayer->addChild(countLabel);
+
+  runLabel->setPosition(0.f, 0.f);
+  countLabel->setPosition(
+    runLabel->getScaledContentWidth(),
+    0.f
+  );
+
+  labelLayer->setContentSize(
+    {
+      runLabel->getScaledContentWidth() + countLabel->getScaledContentWidth(),
+      std::max(
+        runLabel->getScaledContentHeight(),
+        countLabel->getScaledContentHeight()
+      )
+    }
+  );
+
+  labelLayer->setID("RunCounterLabelLayer");
+  labelLayer->setPosition(Settings::getLabelPosition());
+  labelLayer->setRotation(static_cast<float>(Settings::getRotation()));
+  labelLayer->setScale(0.f);
+
+  return labelLayer;
 }
 
-CCSequence* DCPPlayLayer::getPopupSequence(const std::pair<float, float> scales) {
+CCSequence* DCPPlayLayer::getPopupSequence(const bool isParent) {
   const std::string popupStyle = Settings::getPopupStyle();
-  const auto [popScale, endScale] = scales;
 
   if (popupStyle == POPUP_STYLE_ANIMATED) {
+    if (isParent) {
+      return CCSequence::create(
+        CCEaseBackOut::create(CCScaleTo::create(0.15f, 1.25f)),
+        CCEaseBackOut::create(CCScaleTo::create(0.2f, m_fields->endScale)),
+        CCDelayTime::create(1.85f),
+        CCScaleTo::create(0.25f, 0.f),
+        CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
+        nullptr
+      );
+    }
     return CCSequence::create(
       CCFadeTo::create(0.f, Settings::getOpacity()),
-      CCEaseBackOut::create(CCScaleTo::create(0.15f, popScale)),
-      CCEaseBackOut::create(CCScaleTo::create(0.2f, endScale)),
-      CCDelayTime::create(1.35f),
-      // CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.0f)),
-      CCSpawn::create(
-        CCFadeTo::create(0.4f, 0),
-        CCMoveBy::create(0.4f, CCPoint(0, 20)),
-        nullptr
-      ),
-      CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
+      CCDelayTime::create(2.5f),
       nullptr
     );
   }
 
   if (popupStyle == POPUP_STYLE_FADE) {
+    if (isParent) {
+      return CCSequence::create(
+        CCScaleTo::create(0.f, m_fields->endScale),
+        CCDelayTime::create(2.5f),
+        CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
+        nullptr
+      );
+    }
     return CCSequence::create(
-      CCScaleTo::create(0.f, endScale),
       CCFadeTo::create(0.15f, Settings::getOpacity()),
       CCDelayTime::create(1.95f),
       CCFadeTo::create(0.4f, 0),
-      CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
       nullptr
     );
   }
 
   // flat or invalid
-  return CCSequence::create(
-    CCSpawn::create(
-      CCFadeTo::create(0.f, Settings::getOpacity()),
-      CCScaleTo::create(0.f, endScale),
+  if (isParent) {
+    return CCSequence::create(
+      CCScaleTo::create(0.f, m_fields->endScale),
+      CCDelayTime::create(2.5f),
+      CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
       nullptr
-    ),
+    );
+  }
+  return CCSequence::create(
+    CCFadeTo::create(0.f, Settings::getOpacity()),
     CCDelayTime::create(2.5f),
-    CCCallFunc::create(this, callfunc_selector(DCPPlayLayer::removeLabel)),
     nullptr
   );
 }
@@ -189,7 +230,7 @@ std::string DCPPlayLayer::getRunLabelString(const float& currentPercent, const f
 //   return labelStr;
 // }
 
-// shout out to eclipse mod for figuring out timestamp is level frame count (240)
+// shout out to eclipse mod (i think) for figuring out timestamp is level frame count (240)
 // which solves the issue when level has end trigger
 float DCPPlayLayer::getActualCurrentPercent() {
   const auto game = GJBaseGameLayer::get();

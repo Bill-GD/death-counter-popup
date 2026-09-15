@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3
+
+- Separate label into run & count part. Count part is smaller for clarity. 
+
 ## 1.1.2
 
 - Bump Geode to 5.10.1

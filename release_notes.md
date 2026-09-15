@@ -1,7 +1,7 @@
-- Add setting for popup style: animated, fade, flat
-  - Animated: mimics New Best label (pops up quickly, then return to normal)
-  - Fade: fades in, waits, fades out
-  - Flat (fallback): just pops in instantly, waits, pops out instantly
-  - All popup style is 2.5s in duration (was 2.55s for animated)
-- Update custom button setting to be reuseable
-- Bump Geode to 5.10.1 (build fails)
+- Separate label into 2 parts (2 `geode::Label` inside `CCNode`)
+  - Run part: same as before
+  - Count part: smaller for clarity
+  - Changed
+- Update & rework spawn sequence to match new node structure
+- Fix 'animated' style not actually mimicking 'New Best' (now scales out instead of fading)
+- Fix wrong markdown format marker in `about.md`
