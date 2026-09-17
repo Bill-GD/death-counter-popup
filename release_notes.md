@@ -2,3 +2,4 @@
 - Mark all platformer as not load & not save.
 - Add new file `info` to store level name, useful for later
 - Add `FileUtils::tryWriteString`
+- Fix new best scale is smaller than normal.

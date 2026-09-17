@@ -103,7 +103,7 @@ CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
   const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
   const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
-  const auto labelScale = Settings::getScale() + (useGoldFont ? 0.2f : 0.f);
+  const auto labelScale = Settings::getScale() + (useGoldFont ? 0.35f : 0.f);
 
   const auto runLabel = Label::create(
     deathKey,

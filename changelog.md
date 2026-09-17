@@ -4,6 +4,7 @@
 
 - Block saving & loading for platformer levels.
 - Add extra file for level name (for later or when you want to manually edit data).
+- Fix new best label is smaller than normal.
 
 ## 1.1.3
 
