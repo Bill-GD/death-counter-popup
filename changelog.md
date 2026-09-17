@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.4
+
+- Block saving & loading for platformer levels.
+- Add extra file for level name (for later or when you want to manually edit data).
+
 ## 1.1.3
 
 - Separate label into run & count part. Count part is smaller for clarity. 

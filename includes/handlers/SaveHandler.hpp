@@ -6,6 +6,7 @@
 using namespace geode::prelude;
 
 class SaveHandler {
+  static bool shouldLoad;
   static std::string currentLevelName;
   static std::string currentLevelID;
 

@@ -1,14 +1,18 @@
 #include "utils/FileUtils.hpp"
 
-bool FileUtils::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value) {
+bool FileUtils::tryWriteString(const std::filesystem::path& filePath, const std::string& value) {
   for (int i = 0; i < 3; ++i) {
-    auto res = file::writeString(filePath, value.dump(matjson::NO_INDENTATION));
+    auto res = file::writeString(filePath, value);
     if (res.isOk()) {
       return true;
     }
     log::warn("Write failed (attempt {}): {}", i + 1, res.unwrapErr());
   }
   return false;
+}
+
+bool FileUtils::tryWrite(const std::filesystem::path& filePath, const matjson::Value& value) {
+  return tryWriteString(filePath, value.dump(matjson::NO_INDENTATION));
 }
 
 std::pair<bool, matjson::Value> FileUtils::tryRead(const std::filesystem::path& filePath) {

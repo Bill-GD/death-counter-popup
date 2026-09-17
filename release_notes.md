@@ -1,7 +1,4 @@
-- Separate label into 2 parts (2 `geode::Label` inside `CCNode`)
-  - Run part: same as before
-  - Count part: smaller for clarity
-  - Changed
-- Update & rework spawn sequence to match new node structure
-- Fix 'animated' style not actually mimicking 'New Best' (now scales out instead of fading)
-- Fix wrong markdown format marker in `about.md`
+- If current level is platformer, data won't be loaded, recorded or saved; no label will be shown.
+- Mark all platformer as not load & not save.
+- Add new file `info` to store level name, useful for later
+- Add `FileUtils::tryWriteString`

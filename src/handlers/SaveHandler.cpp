@@ -8,6 +8,7 @@
 
 using namespace geode::prelude;
 
+bool SaveHandler::shouldLoad{};
 std::string SaveHandler::currentLevelID{};
 std::string SaveHandler::currentLevelName{};
 DeathCounter SaveHandler::deaths{};
@@ -17,6 +18,7 @@ bool SaveHandler::isLevelSet() {
 }
 
 void SaveHandler::setLevel(GJGameLevel* level) {
+  shouldLoad = !level->isPlatformer();
   currentLevelID = LevelUtils::getLevelID(level);
   currentLevelName = level->m_levelName;
 }
@@ -31,6 +33,8 @@ bool SaveHandler::isSaveExists(const std::string& levelID) {
 
 /** @param runKey This key is the most precise variant */
 void SaveHandler::incrementRun(const std::string& runKey) {
+  if (!shouldLoad) return;
+
   auto key = runKey;
   int newRunDataCount = 0;
 
@@ -59,6 +63,7 @@ void SaveHandler::incrementRun(const std::string& runKey) {
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!isSaveExists(levelID)) {
     (void)file::createDirectory(PATH / levelID);
+    FileUtils::tryWriteString(PATH / levelID / "info", currentLevelName);
     return {};
   }
 
@@ -96,6 +101,12 @@ DeathCounter SaveHandler::getLatestLinkedData() {
 }
 
 void SaveHandler::loadSaveData() {
+  if (!shouldLoad) {
+    log::info("This level was marked to not load, possibly platformer");
+    deaths = {};
+    return;
+  }
+
   log::info("Loading deaths for level '{}' (id={})", currentLevelName, currentLevelID);
 
   auto otherData = getLatestLinkedData();
@@ -121,6 +132,12 @@ void SaveHandler::loadSaveData() {
 }
 
 void SaveHandler::saveData() {
+  if (!shouldLoad) {
+    log::info("This level was marked to not save, possibly platformer");
+    return;
+  }
+
+  FileUtils::tryWriteString(PATH / currentLevelID / "info", currentLevelName);
   if (
     const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
     !success

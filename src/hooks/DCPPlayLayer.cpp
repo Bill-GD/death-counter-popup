@@ -35,6 +35,7 @@ void DCPPlayLayer::resetLevel() {
 
 void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
   PlayLayer::destroyPlayer(player, gameObject);
+  if (this->m_level->isPlatformer()) return;
 
   m_fields->currentAttemptGameObject = gameObject;
 
@@ -46,10 +47,7 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     m_fields->isNoclipping = true;
   }
 
-  if (player->m_isDead
-    && !this->m_level->isPlatformer()
-    && !m_fields->isNoclipping
-  ) {
+  if (player->m_isDead && !m_fields->isNoclipping) {
     const auto runLabelStr = getRunLabelString(getActualCurrentPercent(), 99.999900f);
     SaveHandler::incrementRun(runLabelStr);
 
@@ -61,6 +59,11 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
 }
 
 void DCPPlayLayer::levelComplete() {
+  if (this->m_level->isPlatformer()) {
+    PlayLayer::levelComplete();
+    return;
+  }
+
   const auto runLabelStr = getRunLabelString(100.f);
   SaveHandler::incrementRun(runLabelStr);
 
