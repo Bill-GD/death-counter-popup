@@ -11,8 +11,8 @@ inline constexpr std::string_view POPUP_STYLE_FLAT = "flat";
 #include <Geode/modify/PlayLayer.hpp>
 class $modify(DCPPlayLayer, PlayLayer) {
   struct Fields {
-    CCSize winSize;
     CCNode* label = nullptr;
+    CCLabelBMFont* bestLabel = nullptr;
 
     float runStartPercent = 0;
     int currentBest = 0;
@@ -21,7 +21,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
 
     bool isNoclipping = false;
     CCObject* currentAttemptGameObject = nullptr;
-    Fields() : winSize(CCDirector::get()->getWinSize()) {}
+    Fields() {}
   };
 
   bool init(GJGameLevel* level, bool useReplay, bool dontCreateObject);
@@ -29,6 +29,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
   void resetLevel() override;
   void destroyPlayer(PlayerObject* player, GameObject* gameObject) override;
   void levelComplete();
+  void updateProgressbar();
 
   void removeLabel();
   CCNode* getPopupLabel(const std::string& deathKey);
@@ -36,6 +37,7 @@ class $modify(DCPPlayLayer, PlayLayer) {
   CCSequence* getPopupSequence(bool isParent);
   std::string getRunLabelString(const float& currentPercent, const float& maxClamp = 100.f);
 
-  // std::string getRunByPosition(const float& maxClamp, const bool& useEndTrigger = false);
+  void fetchBestLabel();
+  void updateBestPercentageLabel();
   static float getActualCurrentPercent();
 };

@@ -1,5 +1,6 @@
-- If current level is platformer, data won't be loaded, recorded or saved; no label will be shown.
-- Mark all platformer as not load & not save.
+- If current level is platformer, data won't be loaded, recorded or saved; no label will be shown
+- Mark all platformer as not load & not save
 - Add new file `info` to store level name, useful for later
 - Add `FileUtils::tryWriteString`
-- Fix new best scale is smaller than normal.
+- Add new extra feature: show current best in percentage label
+- Fix new best scale is smaller than normal
