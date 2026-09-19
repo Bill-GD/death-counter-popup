@@ -77,8 +77,10 @@ void DCPPlayLayer::levelComplete() {
 
 void DCPPlayLayer::updateProgressbar() {
   PlayLayer::updateProgressbar();
-  fetchBestLabel();
-  updateBestPercentageLabel();
+  if (Settings::bestPercentageShown()) {
+    fetchBestLabel();
+    updateBestPercentageLabel();
+  }
 }
 
 void DCPPlayLayer::removeLabel() {
@@ -221,7 +223,7 @@ std::string DCPPlayLayer::getRunLabelString(const float& currentPercent, const f
 }
 
 void DCPPlayLayer::fetchBestLabel() {
-  if (!m_percentageLabel) return;
+  if (!Settings::bestPercentageShown() || !m_percentageLabel) return;
 
   if (
     const auto bestLabelNode = this->getChildByID("best-percentage-label");
