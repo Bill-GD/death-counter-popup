@@ -16,7 +16,6 @@ bool DCPPlayLayer::init(GJGameLevel* level, const bool useReplay, const bool don
 
   const auto res = PlayLayer::init(level, useReplay, dontCreateObject);
   m_fields->runStartPercent = getActualCurrentPercent();
-  // m_fields->playerStartPositionX = this->m_player1->getPositionX();
   return res;
 }
 
@@ -29,7 +28,6 @@ void DCPPlayLayer::resetLevel() {
   PlayLayer::resetLevel();
   m_fields->isNoclipping = false;
   m_fields->runStartPercent = getActualCurrentPercent();
-  // m_fields->playerStartPositionX = this->m_player1->getPositionX();
   m_fields->currentAttemptGameObject = nullptr;
 }
 
@@ -75,6 +73,12 @@ void DCPPlayLayer::levelComplete() {
   if (m_fields->isNoclipping) return;
 
   if (shouldShow) spawnLabel(LevelUtils::getKeyByPrecision(runLabelStr, Settings::getLabelPrecision()));
+}
+
+void DCPPlayLayer::updateProgressbar() {
+  PlayLayer::updateProgressbar();
+  fetchBestLabel();
+  updateBestPercentageLabel();
 }
 
 void DCPPlayLayer::removeLabel() {
@@ -216,23 +220,40 @@ std::string DCPPlayLayer::getRunLabelString(const float& currentPercent, const f
   return labelStr;
 }
 
-// std::string DCPPlayLayer::getRunByPosition(const float& maxClamp, const bool& useEndTrigger) {
-//   const auto endWall = LevelUtils::getEndWall(this);
-//   const auto endTrigger = LevelUtils::getLastEndTrigger(this);
-//   const bool canUseEndTrigger = useEndTrigger && endTrigger != nullptr;
-//   const auto endPositionX = canUseEndTrigger ? endTrigger->getPositionX() : endWall->getPositionX();
-//   const auto playerDeathPosition = this->m_player1->getPositionX();
-//
-//   const float runStartPercent = m_fields->playerStartPositionX / endPositionX * 100;
-//   const float runEndPercent = playerDeathPosition / endPositionX * 100;
-//
-//   std::string labelStr;
-//   if (m_fields->playerStartPositionX > 0) {
-//     labelStr = LevelUtils::formatPercent(runStartPercent, maxClamp) + "-";
-//   }
-//   labelStr += LevelUtils::formatPercent(runEndPercent, maxClamp);
-//   return labelStr;
-// }
+void DCPPlayLayer::fetchBestLabel() {
+  if (!m_percentageLabel) return;
+
+  if (
+    const auto bestLabelNode = this->getChildByID("best-percentage-label");
+    !bestLabelNode
+  ) {
+    m_fields->bestLabel = CCLabelBMFont::create("", "bigFont.fnt");
+    m_fields->bestLabel->setID("best-percentage-label");
+    m_fields->bestLabel->setScale(m_percentageLabel->getScale());
+    m_fields->bestLabel->setAnchorPoint({0.f, 0.5f});
+    this->addChild(m_fields->bestLabel);
+  } else if (m_fields->bestLabel != bestLabelNode) {
+    m_fields->bestLabel = typeinfo_cast<CCLabelBMFont*>(bestLabelNode);
+  }
+
+  const auto progressBarVisible = m_progressBar ? m_progressBar->isVisible() : false;
+
+  m_fields->bestLabel->setPosition(
+    m_percentageLabel->getPosition() +
+    CCPoint{m_percentageLabel->getScaledContentWidth() / (progressBarVisible ? 1 : 2) + 5.f, 0.f}
+  );
+}
+
+void DCPPlayLayer::updateBestPercentageLabel() {
+  if (!Settings::bestPercentageShown() || !m_percentageLabel || !m_fields->bestLabel) return;
+
+  m_fields->bestLabel->setString(
+    fmt::format(
+      "/ {}%",
+      m_fields->currentBest
+    ).c_str()
+  );
+}
 
 // shout out to eclipse mod (i think) for figuring out timestamp is level frame count (240)
 // which solves the issue when level has end trigger

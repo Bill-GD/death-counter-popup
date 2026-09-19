@@ -2,9 +2,10 @@
 
 ## 1.1.4
 
-- Block saving & loading for platformer levels.
+- Block saving & loading for platformer levels
 - Add extra file for level name (for later or when you want to manually edit data).
 - Fix new best label is smaller than normal.
+- Extra feature: show current best in percentage label.
 
 ## 1.1.3
 
@@ -12,9 +13,9 @@
 
 ## 1.1.2
 
-- Bump Geode to 5.10.1
+- Bump Geode to 5.10.1.
 - Add setting to configure label popup style (3 styles).
-- Minor code changes
+- Minor code changes.
 
 ## 1.1.1
 

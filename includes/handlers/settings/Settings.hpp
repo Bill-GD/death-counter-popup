@@ -15,6 +15,7 @@ class Settings {
   static float scale;
   static float opacity;
   static std::string popupStyle;
+  static bool showBestPercentage;
 
 public:
   static void init();
@@ -30,6 +31,7 @@ public:
   static void setScale(float value);
   static void setOpacity(float value);
   static void setPopupStyle(const std::string& value);
+  static void setShowBestPercentage(bool value);
 
   static bool isEnabled();
   static bool isNewBestGolden();
@@ -40,4 +42,5 @@ public:
   static float getScale();
   static GLubyte getOpacity();
   static std::string getPopupStyle();
+  static bool bestPercentageShown();
 };

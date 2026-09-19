@@ -12,6 +12,7 @@ int Settings::rotation{};
 float Settings::scale{};
 float Settings::opacity{};
 std::string Settings::popupStyle{};
+bool Settings::showBestPercentage{};
 
 void Settings::init() {
   enabled = Mod::get()->getSettingValue<bool>("enable");
@@ -24,6 +25,7 @@ void Settings::init() {
   scale = Mod::get()->getSettingValue<float>("scale");
   opacity = Mod::get()->getSettingValue<float>("opacity");
   popupStyle = Mod::get()->getSettingValue<std::string>("popup-style");
+  showBestPercentage = Mod::get()->getSettingValue<bool>("show-best-in-percentage");
 }
 
 void Settings::addListeners() {
@@ -37,6 +39,7 @@ void Settings::addListeners() {
   listenForSettingChanges<float>("scale", setScale);
   listenForSettingChanges<float>("opacity", setOpacity);
   listenForSettingChanges<std::string>("popup-style", setPopupStyle);
+  listenForSettingChanges<bool>("show-best-in-percentage", setShowBestPercentage);
 }
 
 void Settings::setEnable(const bool value) { enabled = value; }
@@ -49,6 +52,7 @@ void Settings::setRotation(const int value) { rotation = value; }
 void Settings::setScale(const float value) { scale = value; }
 void Settings::setOpacity(const float value) { opacity = value; }
 void Settings::setPopupStyle(const std::string& value) { popupStyle = value; }
+void Settings::setShowBestPercentage(const bool value) { showBestPercentage = value; }
 
 bool Settings::isEnabled() { return enabled; }
 bool Settings::isNewBestGolden() { return goldenNewBest; }
@@ -59,3 +63,4 @@ int Settings::getRotation() { return rotation; }
 float Settings::getScale() { return scale; }
 GLubyte Settings::getOpacity() { return static_cast<GLubyte>(opacity * 255); }
 std::string Settings::getPopupStyle() { return popupStyle; }
+bool Settings::bestPercentageShown() { return showBestPercentage; }

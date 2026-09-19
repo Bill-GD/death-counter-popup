@@ -127,6 +127,16 @@
       "type": "custom:dcp-setting-button",
       "name": "Migrate save data",
       "description": "For manual migration if the mod failed to migrate all on load"
+    },
+    "extra-title": {
+      "type": "title",
+      "name": "Extra"
+    },
+    "show-best-in-percentage": {
+      "type": "bool",
+      "name": "Show Best in Percentage",
+      "description": "Show current level best in percentage label next to percentage label",
+      "default": false
     }
   },
   "resources": {
