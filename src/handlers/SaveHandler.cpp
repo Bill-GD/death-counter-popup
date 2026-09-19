@@ -11,6 +11,7 @@ using namespace geode::prelude;
 bool SaveHandler::shouldLoad{};
 std::string SaveHandler::currentLevelID{};
 std::string SaveHandler::currentLevelName{};
+GJLevelType SaveHandler::currentLevelType{};
 DeathCounter SaveHandler::deaths{};
 
 bool SaveHandler::isLevelSet() {
