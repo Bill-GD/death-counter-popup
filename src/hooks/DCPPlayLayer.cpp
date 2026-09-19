@@ -233,6 +233,7 @@ void DCPPlayLayer::fetchBestLabel() {
     m_fields->bestLabel->setID("best-percentage-label");
     m_fields->bestLabel->setScale(m_percentageLabel->getScale());
     m_fields->bestLabel->setAnchorPoint({0.f, 0.5f});
+    m_fields->bestLabel->setZOrder(m_percentageLabel->getZOrder());
     this->addChild(m_fields->bestLabel);
   } else if (m_fields->bestLabel != bestLabelNode) {
     m_fields->bestLabel = typeinfo_cast<CCLabelBMFont*>(bestLabelNode);
