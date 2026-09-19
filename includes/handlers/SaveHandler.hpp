@@ -7,6 +7,7 @@ using namespace geode::prelude;
 
 class SaveHandler {
   static bool shouldLoad;
+  static GJLevelType currentLevelType;
   static std::string currentLevelName;
   static std::string currentLevelID;
 
@@ -15,6 +16,8 @@ class SaveHandler {
 
   static DeathCounter getSavedData(const std::string& levelID);
   static DeathCounter getLatestLinkedData();
+
+  static std::map<std::string, std::string> getLevelInfo();
 
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels";

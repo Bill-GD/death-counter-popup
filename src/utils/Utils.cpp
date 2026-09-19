@@ -1,6 +1,6 @@
 #include "utils/Utils.hpp"
 
-std::pair<std::string, std::string> Utils::split(const std::string& str, const char& delimiter) {
+std::pair<std::string, std::string> Utils::splitOnce(const std::string& str, const char& delimiter) {
   const auto pos = str.find(delimiter);
   const auto first = str.substr(0, pos);
   const auto second = pos == std::string::npos ? "" : str.substr(pos + 1);

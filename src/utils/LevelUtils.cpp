@@ -4,15 +4,24 @@
 #include "utils/Constants.hpp"
 #include "utils/Utils.hpp"
 
-const char* LevelUtils::levelTypeToString(const GJLevelType type) {
+std::string LevelUtils::levelTypeToString(const GJLevelType type) {
   switch (type) {
     case GJLevelType::Main: return "Main";
     case GJLevelType::Editor: return "Editor";
     case GJLevelType::Default: return "Default";
     case GJLevelType::Saved: return "Saved";
     case GJLevelType::SearchResult: return "SearchResult";
-    default: return "Unknown";
+    default: return "Default";
   }
+}
+
+GJLevelType LevelUtils::stringToLevelType(const std::string& typeString) {
+  if (typeString == "Main") return GJLevelType::Main;
+  if (typeString == "Editor") return GJLevelType::Editor;
+  if (typeString == "Default") return GJLevelType::Default;
+  if (typeString == "Saved") return GJLevelType::Saved;
+  if (typeString == "SearchResult") return GJLevelType::SearchResult;
+  return GJLevelType::Default;
 }
 
 std::string LevelUtils::formatPercent(const float& percent, const float& maxClamp) {
@@ -29,9 +38,9 @@ std::pair<std::string, std::string> LevelUtils::computeRunKeys(const std::string
   if (key.empty()) return {"", ""};
   // filters negative progress (still dont know how they exist)
   if (key.contains('-') && !key.starts_with('-')) {
-    const auto [start, end] = Utils::split(key, '-');
-    const auto [startLeft, startRight] = Utils::split(start, '.');
-    const auto [endLeft, endRight] = Utils::split(end, '.');
+    const auto [start, end] = Utils::splitOnce(key, '-');
+    const auto [startLeft, startRight] = Utils::splitOnce(start, '.');
+    const auto [endLeft, endRight] = Utils::splitOnce(end, '.');
 
     const int precision = std::max(startRight.size(), endRight.size());
     const auto paddedStartRight = Utils::padToPrecision(startRight, precision);
@@ -61,7 +70,7 @@ std::pair<std::string, std::string> LevelUtils::computeRunKeys(const std::string
   }
 
   if (key.contains('.')) {
-    const auto [left, right] = Utils::split(key, '.');
+    const auto [left, right] = Utils::splitOnce(key, '.');
     std::string parent = left;
     if (right.size() > 1) {
       parent += "." + right.substr(0, right.size() - 1);
@@ -75,9 +84,9 @@ std::pair<std::string, std::string> LevelUtils::computeRunKeys(const std::string
 std::string LevelUtils::getParentKey(const std::string& key) {
   if (key.empty()) return "";
   if (key.contains('-') && !key.starts_with('-')) {
-    const auto [start, end] = Utils::split(key, '-');
-    const auto [startLeft, startRight] = Utils::split(start, '.');
-    const auto [endLeft, endRight] = Utils::split(end, '.');
+    const auto [start, end] = Utils::splitOnce(key, '-');
+    const auto [startLeft, startRight] = Utils::splitOnce(start, '.');
+    const auto [endLeft, endRight] = Utils::splitOnce(end, '.');
 
     const int precision = std::max(startRight.size(), endRight.size());
     const auto paddedStartRight = Utils::padToPrecision(startRight, precision);
@@ -98,7 +107,7 @@ std::string LevelUtils::getParentKey(const std::string& key) {
   }
 
   if (key.contains('.')) {
-    const auto [left, right] = Utils::split(key, '.');
+    const auto [left, right] = Utils::splitOnce(key, '.');
     std::string parent = left;
     if (right.size() > 1) {
       parent += "." + right.substr(0, right.size() - 1);
@@ -113,9 +122,9 @@ std::vector<std::string> LevelUtils::getAllParentKeys(const std::string& key) {
   if (key.empty()) return {};
 
   if (key.contains('-') && !key.starts_with('-')) {
-    const auto [start, end] = Utils::split(key, '-');
-    const auto [startLeft, startRight] = Utils::split(start, '.');
-    const auto [endLeft, endRight] = Utils::split(end, '.');
+    const auto [start, end] = Utils::splitOnce(key, '-');
+    const auto [startLeft, startRight] = Utils::splitOnce(start, '.');
+    const auto [endLeft, endRight] = Utils::splitOnce(end, '.');
 
     const int precision = std::max(startRight.size(), endRight.size());
     const auto paddedStartRight = Utils::padToPrecision(startRight, precision);
@@ -137,7 +146,7 @@ std::vector<std::string> LevelUtils::getAllParentKeys(const std::string& key) {
   }
 
   if (key.contains('.')) {
-    const auto [left, right] = Utils::split(key, '.');
+    const auto [left, right] = Utils::splitOnce(key, '.');
     std::vector list = {left};
     const int precision = right.size();
 
@@ -165,11 +174,11 @@ int LevelUtils::getKeyPrecision(const std::string& key) {
   std::string part = key;
 
   if (key.contains('-') && !key.starts_with('-')) {
-    part = Utils::split(key, '-').first;
+    part = Utils::splitOnce(key, '-').first;
   }
   if (!part.contains('.')) { return 0; }
 
-  const auto [_, right] = Utils::split(part, '.');
+  const auto [_, right] = Utils::splitOnce(part, '.');
   return right.size();
 }
 

@@ -9,6 +9,7 @@ public:
   static bool tryWriteString(const std::filesystem::path& filePath, const std::string& value);
   static bool tryWrite(const std::filesystem::path& filePath, const matjson::Value& value);
   static std::pair<bool, matjson::Value> tryRead(const std::filesystem::path& filePath);
+  static std::pair<bool, std::string> tryReadString(const std::filesystem::path& filePath);
   static bool tryMove(const std::filesystem::path& oldPath, const std::filesystem::path& newPath);
   static std::vector<std::filesystem::path> getAllFiles(const std::filesystem::path& directoryPath);
 };

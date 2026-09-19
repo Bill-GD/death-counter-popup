@@ -21,6 +21,7 @@ void SaveHandler::setLevel(GJGameLevel* level) {
   shouldLoad = !level->isPlatformer();
   currentLevelID = LevelUtils::getLevelID(level);
   currentLevelName = level->m_levelName;
+  currentLevelType = level->m_levelType;
 }
 
 std::filesystem::path SaveHandler::getLevelPath(const std::string& levelID) {
@@ -100,6 +101,15 @@ DeathCounter SaveHandler::getLatestLinkedData() {
   return getSavedData(linkedLevelFiles[0].first);
 }
 
+std::map<std::string, std::string> SaveHandler::getLevelInfo() {
+  if (!isLevelSet()) return {};
+  return {
+    {"id", currentLevelID},
+    {"name", currentLevelName},
+    {"type", LevelUtils::levelTypeToString(currentLevelType)},
+  };
+}
+
 void SaveHandler::loadSaveData() {
   if (!shouldLoad) {
     log::info("This level was marked to not load, possibly platformer");
@@ -137,7 +147,7 @@ void SaveHandler::saveData() {
     return;
   }
 
-  FileUtils::tryWriteString(PATH / currentLevelID / "info", currentLevelName);
+  FileUtils::tryWrite(PATH / currentLevelID / "info", matjson::Value(getLevelInfo()));
   if (
     const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
     !success

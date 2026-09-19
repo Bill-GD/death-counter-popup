@@ -6,7 +6,8 @@ using namespace geode::prelude;
 
 class LevelUtils {
 public:
-  static const char* levelTypeToString(GJLevelType type);
+  static std::string levelTypeToString(GJLevelType type);
+  static GJLevelType stringToLevelType(const std::string& typeString);
   static std::string formatPercent(const float& percent, const float& maxClamp = 100.f);
   static std::pair<std::string, std::string> computeRunKeys(const std::string& key);
   static std::string getParentKey(const std::string& key);

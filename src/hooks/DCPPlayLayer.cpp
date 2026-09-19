@@ -243,7 +243,7 @@ void DCPPlayLayer::fetchBestLabel() {
 
   m_fields->bestLabel->setPosition(
     m_percentageLabel->getPosition() +
-    CCPoint{m_percentageLabel->getScaledContentWidth() / (progressBarVisible ? 1 : 2) + 5.f, 0.f}
+    CCPoint{m_percentageLabel->getScaledContentWidth() / (progressBarVisible ? 1.f : 2.f) + 5.f, 0.f}
   );
 }
 

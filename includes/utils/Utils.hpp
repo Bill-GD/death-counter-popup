@@ -16,6 +16,6 @@ public:
     return T{};
   }
 
-  static std::pair<std::string, std::string> split(const std::string& str, const char& delimiter);
+  static std::pair<std::string, std::string> splitOnce(const std::string& str, const char& delimiter);
   static std::string padToPrecision(std::string str, int len);
 };

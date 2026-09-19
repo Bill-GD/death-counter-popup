@@ -26,6 +26,17 @@ std::pair<bool, matjson::Value> FileUtils::tryRead(const std::filesystem::path& 
   return {false, {}};
 }
 
+std::pair<bool, std::string> FileUtils::tryReadString(const std::filesystem::path& filePath) {
+  for (int i = 0; i < 3; ++i) {
+    auto res = file::readString(filePath);
+    if (res.isOk()) {
+      return {true, res.unwrap()};
+    }
+    log::warn("Read failed (attempt {}): {}", i + 1, res.unwrapErr());
+  }
+  return {false, ""};
+}
+
 bool FileUtils::tryMove(const std::filesystem::path& oldPath, const std::filesystem::path& newPath) {
   std::error_code ec;
   std::filesystem::rename(oldPath, newPath, ec);
