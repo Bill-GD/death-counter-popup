@@ -4,9 +4,9 @@ using namespace geode::prelude;
 
 class RightPanel : public CCScale9Sprite {
 protected:
-  bool init() override;
+  bool init(const CCSize& size);
 
 public:
-  static RightPanel* create();
-  void loadLevel(std::string levelID);
+  static RightPanel* create(const CCSize& size);
+  void loadLevelInfo(std::string levelID);
 };
