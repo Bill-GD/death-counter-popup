@@ -1,4 +1,4 @@
-#include "ui/DCPLevelPopup.hpp"
+#include "ui/level_popup/DCPLevelPopup.hpp"
 
 DCPLevelPopup* DCPLevelPopup::create(const GJGameLevel& level) {
   const auto ret = new DCPLevelPopup();
