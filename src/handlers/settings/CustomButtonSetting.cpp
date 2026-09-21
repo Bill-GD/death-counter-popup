@@ -1,7 +1,7 @@
 #include "handlers/settings/CustomButtonSetting.hpp"
 
 #include "handlers/DataMigrationHandler.hpp"
-#include "ui/DCPDataPopup.hpp"
+#include "ui/data_popup/DCPDataPopup.hpp"
 
 const std::map<std::string_view, std::string> buttonTextMap = {
   {MIGRATE_SETTING_KEY, "Migrate All"},
