@@ -1,8 +1,8 @@
 #include "ui/data_popup/components/RightPanel.hpp"
 
-RightPanel* RightPanel::create() {
+RightPanel* RightPanel::create(const CCSize& size) {
   const auto ret = new RightPanel();
-  if (ret->init()) {
+  if (ret->init(size)) {
     ret->autorelease();
     return ret;
   }
@@ -11,15 +11,16 @@ RightPanel* RightPanel::create() {
   return nullptr;
 }
 
-bool RightPanel::init() {
+bool RightPanel::init(const CCSize& size) {
   if (!CCScale9Sprite::initWithFile("geode.loader/GE_square01.png")) return false;
 
-  this->setAnchorPoint({0.5f, 0.5f});
+  this->setContentSize(size);
+
   const auto testLabel = Label::create("test", "bigFont.fnt");
   testLabel->setPosition(this->getPosition());
-  this->addChild(testLabel);
+  this->addChildAtPosition(testLabel, Anchor::Center);
 
   return true;
 }
 
-void RightPanel::loadLevel(std::string levelID) {}
+void RightPanel::loadLevelInfo(std::string levelID) {}

@@ -32,13 +32,10 @@ void DCPDataPopup::addContent() {
 
   const auto contentSize = m_mainLayer->getScaledContentSize();
   this->leftPanel = LeftPanel::create({contentSize.width / 3.f - 15.f, contentSize.height - 60.f});
-  this->rightPanel = RightPanel::create();
+  this->rightPanel = RightPanel::create({contentSize.width / 1.5f - 15.f, contentSize.height - 60.f});
 
   m_mainLayer->addChild(this->leftPanel);
   m_mainLayer->addChild(this->rightPanel);
-
-  // this->leftPanel->setContentSize({contentSize.width / 3.f - 15.f, contentSize.height - 60.f});
-  this->rightPanel->setContentSize({contentSize.width / 1.5f - 15.f, contentSize.height - 60.f});
 
   this->leftPanel->setPosition({contentSize.width / 6.f + 5.f, m_mainLayer->getPositionY() - 35.f});
   this->rightPanel->setPosition({contentSize.width / 1.5f - 5.f, m_mainLayer->getPositionY() - 35.f});
