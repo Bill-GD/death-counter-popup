@@ -37,7 +37,7 @@ bool LevelTile::init(std::string levelID, const CCSize& size, std::function<void
   label->setAnchorPoint({0.f, 0.5f});
   label->setAlignment(Label::Alignment::Left);
   textClip->addChildAtPosition(label, Anchor::Left);
-  this->addChildAtPosition(textClip, Anchor::Left, {2.5f, 0});
+  this->addChildAtPosition(textClip, Anchor::Left, {10.f, 0});
 
   const auto menu = CCMenu::create();
   menu->setContentSize({this->getContentWidth() * 0.25f, this->getContentHeight()});
@@ -52,7 +52,7 @@ bool LevelTile::init(std::string levelID, const CCSize& size, std::function<void
   arrow->setAnchorPoint({0.5f, 0.5f});
   menu->setScale(0.5f);
   menu->addChildAtPosition(arrow, Anchor::Center);
-  this->addChildAtPosition(menu, Anchor::Right, {-5.f, 0});
+  this->addChildAtPosition(menu, Anchor::Right, {-16.f, 0});
 
   arrow->setUserObject(CCString::create(levelID));
 

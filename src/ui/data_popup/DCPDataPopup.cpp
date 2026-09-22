@@ -3,6 +3,9 @@
 #include "ui/data_popup/components/LeftPanel.hpp"
 #include "ui/data_popup/components/RightPanel.hpp"
 
+inline constexpr float LEFT_RATIO = 12.f / 5.f;
+inline constexpr float RIGHT_RATIO = 12.f / 7.f;
+
 DCPDataPopup* DCPDataPopup::create() {
   const auto ret = new DCPDataPopup();
   if (ret->init()) {
@@ -32,13 +35,17 @@ void DCPDataPopup::addContent() {
 
   const auto contentSize = m_mainLayer->getScaledContentSize();
 
-  this->leftPanel = LeftPanel::create({contentSize.width / 3.f - 15.f, contentSize.height - 60.f});
-  m_mainLayer->addChild(this->leftPanel);
-  this->leftPanel->setPosition({contentSize.width / 6.f + 5.f, m_mainLayer->getPositionY() - 35.f});
+  const auto leftWidth = contentSize.width / LEFT_RATIO - 15.f;
+  const auto rightWidth = contentSize.width / RIGHT_RATIO - 15.f;
+  const auto panelHeight = contentSize.height - 96.f;
 
-  this->rightPanel = RightPanel::create({contentSize.width / 1.5f - 15.f, contentSize.height - 60.f});
-  m_mainLayer->addChild(this->rightPanel);
-  this->rightPanel->setPosition({contentSize.width / 1.5f - 5.f, m_mainLayer->getPositionY() - 35.f});
+  this->leftPanel = LeftPanel::create({leftWidth, panelHeight});
+  this->leftPanel->setAnchorPoint({0.f, 0.5f});
+  m_mainLayer->addChildAtPosition(this->leftPanel, Anchor::Left, {10.f, -35.f});
+
+  this->rightPanel = RightPanel::create({rightWidth, panelHeight});
+  this->rightPanel->setAnchorPoint({1.f, 0.5f});
+  m_mainLayer->addChildAtPosition(this->rightPanel, Anchor::Right, {-10.f, -35.f});
 
   const auto loadingLayer = CCLayer::create();
   loadingLayer->setContentSize(contentSize);
@@ -63,6 +70,7 @@ void DCPDataPopup::load() const {
   if (!this->leftPanel || !this->loadingCircle) return;
 
   this->loadingCircle->setVisible(true);
-  this->leftPanel->loadLevelList([this](const std::string& levelID) { onLevelSelected(levelID); });
+  this->leftPanel->loadLevelList();
+  this->leftPanel->displayLevelList([this](const std::string& levelID) { onLevelSelected(levelID); });
   this->loadingCircle->setVisible(false);
 }
