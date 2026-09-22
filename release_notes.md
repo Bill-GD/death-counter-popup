@@ -1,6 +1,3 @@
-- If current level is platformer, data won't be loaded, recorded or saved; no label will be shown
-- Mark all platformer as not load & not save
-- Add new file `info` to store level name, useful for later
-- Add `FileUtils::tryWriteString`
-- Add new extra feature: show current best in percentage label
-- Fix new best scale is smaller than normal
+- Add data viewer popups: all data & level data
+  - Add relevant components for popup composition
+- `FileUtils`: new method to get all directories

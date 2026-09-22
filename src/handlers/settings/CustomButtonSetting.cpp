@@ -19,7 +19,11 @@ const std::map<std::string_view, std::function<void()>> actionMap = {
     }
   },
   {
-    DATA_POPUP_SETTING_KEY, [] { DCPDataPopup::create()->show(); }
+    DATA_POPUP_SETTING_KEY, [] {
+      const auto popup = DCPDataPopup::create();
+      popup->show();
+      popup->load();
+    }
   }
 };
 
