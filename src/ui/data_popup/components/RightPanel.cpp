@@ -23,4 +23,8 @@ bool RightPanel::init(const CCSize& size) {
   return true;
 }
 
-void RightPanel::loadLevelInfo(std::string levelID) {}
+void RightPanel::loadLevelInfo(std::string levelID) {
+  const auto testLabel = Label::create(fmt::format("{}", levelID), "bigFont.fnt");
+  testLabel->setPosition(this->getPosition());
+  this->addChildAtPosition(testLabel, Anchor::Center);
+}

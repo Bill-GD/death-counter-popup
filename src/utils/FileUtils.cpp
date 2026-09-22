@@ -62,3 +62,18 @@ std::vector<std::filesystem::path> FileUtils::getAllFiles(const std::filesystem:
     }
   );
 }
+
+std::vector<std::filesystem::path> FileUtils::getAllDirectories(const std::filesystem::path& directoryPath) {
+  const auto res = file::readDirectory(directoryPath);
+  if (res.isErr()) {
+    log::warn("Read directory failed: {}", res.unwrapErr());
+    return {};
+  }
+  const auto& files = res.unwrap();
+  return ranges::filter(
+    files,
+    [](auto const& file) {
+      return std::filesystem::is_directory(file);
+    }
+  );
+}
