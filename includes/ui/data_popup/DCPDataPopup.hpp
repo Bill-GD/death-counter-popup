@@ -11,7 +11,7 @@ protected:
 
 public:
   static DCPDataPopup* create();
-  void load();
+  void load() const;
 
 private:
   LeftPanel* leftPanel = nullptr;
@@ -19,5 +19,5 @@ private:
   LoadingCircle* loadingCircle = nullptr;
 
   void addContent();
-  void onLevelSelected(const std::string& levelID);
+  void onLevelSelected(const std::string& levelID) const;
 };

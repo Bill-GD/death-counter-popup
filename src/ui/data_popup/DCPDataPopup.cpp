@@ -54,12 +54,12 @@ void DCPDataPopup::addContent() {
   m_mainLayer->updateLayout();
 }
 
-void DCPDataPopup::onLevelSelected(const std::string& levelID) {
+void DCPDataPopup::onLevelSelected(const std::string& levelID) const {
   if (!this->rightPanel) return;
   this->rightPanel->loadLevelInfo(levelID);
 }
 
-void DCPDataPopup::load() {
+void DCPDataPopup::load() const {
   if (!this->leftPanel || !this->loadingCircle) return;
 
   this->loadingCircle->setVisible(true);

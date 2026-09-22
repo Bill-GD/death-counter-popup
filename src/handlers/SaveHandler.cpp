@@ -102,12 +102,12 @@ DeathCounter SaveHandler::getLatestLinkedData() {
   return getSavedData(linkedLevelFiles[0].first);
 }
 
-std::map<std::string, std::string> SaveHandler::getLevelInfo() {
+LevelInfo SaveHandler::getLevelInfo() {
   if (!isLevelSet()) return {};
-  return {
-    {"id", currentLevelID},
-    {"name", currentLevelName},
-    {"type", LevelUtils::levelTypeToString(currentLevelType)},
+  return LevelInfo{
+    .id = currentLevelID,
+    .name = currentLevelName,
+    .type = LevelUtils::levelTypeToString(currentLevelType),
   };
 }
 

@@ -2,6 +2,6 @@
 
 #include "RunData.hpp"
 
-typedef std::string RunKey;
-typedef std::map<RunKey, RunData> DeathCounter;
-typedef std::map<RunKey, int> OldDeathCounter;
+using RunKey =  std::string;
+using DeathCounter =  std::map<RunKey, RunData>;
+using OldDeathCounter =  std::map<RunKey, int>;
