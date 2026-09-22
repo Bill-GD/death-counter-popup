@@ -21,7 +21,7 @@ bool RightPanel::init(const CCSize& size) {
 
   const auto infoMenu = CCMenu::create();
   const auto infoButton = InfoAlertButton::create(
-    "Help",
+    "General Info Viewer",
     "If info failed to load or show N/A for some, try loading the level again to update.",
     1.f
   );
@@ -47,7 +47,8 @@ void RightPanel::loadLevelInfo(std::string levelID) {
   if (!success) {
     messageLabel = Label::create(fmt::format("Failed to read\ninfo of {}", levelID), "bigFont.fnt");
     messageLabel->setScale(0.5f);
-    addChildAtPosition(messageLabel, Anchor::Center);
+    messageLabel->setAnchorPoint({0.5f, 1.f});
+    addChildAtPosition(messageLabel, Anchor::Top);
     return;
   }
 
@@ -86,10 +87,6 @@ void RightPanel::loadLevelInfo(std::string levelID) {
   scroll->m_contentLayer->updateLayout();
   scroll->scrollToTop();
 
-  addChildAtPosition(
-    container,
-    Anchor::Center,
-    {0, -15.f}
-  );
+  addChildAtPosition(container, Anchor::Center);
   infoContainer = container;
 }
