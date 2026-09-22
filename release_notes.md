@@ -1,3 +1,9 @@
-- Add data viewer popups: all data & level data
-  - Add relevant components for popup composition
+- Add data viewer popups & relevant components for popup composition
+  - Data viewer popup (view list of level & general info)
+    - Left side: ID list
+    - Right side: general saved info
+  - Level viewer popup (view runs of level & link)
+    - N/A
+- Add type `LevelInfo` struct with matjson serialization
 - `FileUtils`: new method to get all directories
+- Switch to `using` (was `typedef`)

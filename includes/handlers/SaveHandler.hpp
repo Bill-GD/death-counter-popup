@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Geode/Geode.hpp"
+#include "types/LevelInfo.hpp"
 #include "types/types.hpp"
 
 using namespace geode::prelude;
@@ -17,7 +18,7 @@ class SaveHandler {
   static DeathCounter getSavedData(const std::string& levelID);
   static DeathCounter getLatestLinkedData();
 
-  static std::map<std::string, std::string> getLevelInfo();
+  static LevelInfo getLevelInfo();
 
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels";
