@@ -37,17 +37,17 @@ void DCPDataPopup::addContent() {
 
   const float leftWidth = contentSize.width / LEFT_RATIO - 15.f;
   const float rightWidth = contentSize.width / RIGHT_RATIO - 15.f;
-  const float panelHeight = contentSize.height - 110.f;
+  const float panelHeight = contentSize.height - 120.f;
   constexpr float controlHeight = 35.f;
   constexpr float panelGap = 15.f;
 
   this->leftPanel = LeftPanel::create(leftWidth, controlHeight, panelHeight, panelGap);
   this->leftPanel->setAnchorPoint({0.f, 0.5f});
-  m_mainLayer->addChildAtPosition(this->leftPanel, Anchor::Left, {10.f, -15.f});
+  m_mainLayer->addChildAtPosition(this->leftPanel, Anchor::Left, {10.f, -5.f});
 
   this->rightPanel = RightPanel::create(rightWidth, controlHeight, panelHeight, panelGap);
   this->rightPanel->setAnchorPoint({1.f, 0.5f});
-  m_mainLayer->addChildAtPosition(this->rightPanel, Anchor::Right, {-10.f, -15.f});
+  m_mainLayer->addChildAtPosition(this->rightPanel, Anchor::Right, {-10.f, -5.f});
 
   const auto loadingLayer = CCLayer::create();
   loadingLayer->setContentSize(contentSize);

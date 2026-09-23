@@ -1,7 +1,6 @@
 #include "ui/data_popup/components/RightPanel.hpp"
 
 #include "handlers/SaveHandler.hpp"
-#include "utils/FileUtils.hpp"
 
 RightPanel* RightPanel::create(const float width, const float controlHeight, const float infoHeight, const float gap) {
   const auto ret = new RightPanel();
@@ -28,7 +27,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   controlMenu->setLayout(controlLayout);
   controlMenu->setContentSize({width, controlHeight});
 
-  const auto buttonHeight = controlHeight - 5.f;
+  const auto buttonHeight = controlHeight - 10.f;
 
   const auto playSprite = CCSprite::createWithSpriteFrameName("GJ_playBtn2_001.png");
   playSprite->setScale(buttonHeight / playSprite->getContentHeight());
@@ -75,9 +74,19 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   controlMenu->updateLayout();
   controlRegion->addChildAtPosition(controlMenu, Anchor::Center);
 
-  infoRegion = CCScale9Sprite::create("GJ_square05.png");
+  const auto infoRegion = CCScale9Sprite::create("GJ_square05.png");
   infoRegion->setContentSize({width, infoHeight});
   infoRegion->setAnchorPoint({0.5f, 0.f});
+
+  const auto infoContainer = CCNode::create();
+  infoContainer->setContentSize({width * 0.9f, infoHeight * 0.85f});
+  infoContainer->setAnchorPoint({0.5f, 0.5f});
+
+  infoLabel = Label::create("", "bigFont.fnt");
+  infoLabel->setScale(0.5f);
+  infoLabel->setAlignment(Label::Alignment::Left);
+  infoLabel->setAnchorPoint({0.f, 1.f});
+  infoContainer->addChildAtPosition(infoLabel, Anchor::Top);
 
   const auto infoMenu = CCMenu::create();
   const auto infoButton = InfoAlertButton::create(
@@ -87,6 +96,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   );
   infoMenu->addChild(infoButton);
   infoRegion->addChildAtPosition(infoMenu, Anchor::TopRight);
+  infoRegion->addChildAtPosition(infoContainer, Anchor::Center);
 
   addChildAtPosition(controlRegion, Anchor::Top);
   addChildAtPosition(infoRegion, Anchor::Bottom);
@@ -94,59 +104,24 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
 }
 
 void RightPanel::loadLevelInfo(std::string levelID) {
+  selectedLevelID = levelID;
   const auto [id, name, type] = SaveHandler::getLevelInfo(levelID);
 
-  if (infoTextContainer) {
-    infoTextContainer->removeFromParent();
-    infoTextContainer = nullptr;
-  }
-  if (messageLabel) {
-    messageLabel->removeFromParent();
-    messageLabel = nullptr;
-  }
-
+  std::string textContent;
   if (id.empty()) {
-    messageLabel = Label::create(fmt::format("Failed to read\ninfo of {}", levelID), "bigFont.fnt");
-    messageLabel->setScale(0.5f);
-    messageLabel->setAnchorPoint({0.5f, 1.f});
-    infoRegion->addChildAtPosition(messageLabel, Anchor::Top);
-    return;
+    textContent = fmt::format("Failed to read\ninfo of {}", levelID);
+  } else {
+    textContent = fmt::format(
+      R"(
+Type: {}
+ID: {}
+Name: {}
+      )",
+      type.empty() ? "N/A" : type,
+      id.empty() ? "N/A" : id,
+      name.empty() ? "N/A" : name
+    );
   }
 
-
-  const auto panelSize = infoRegion->getScaledContentSize();
-  const auto container = CCNode::create();
-  container->setContentSize(panelSize);
-  container->setAnchorPoint({0.5f, 0.5f});
-
-  const auto scroll = ScrollLayer::create(panelSize - 2.5f);
-  scroll->m_contentLayer->setContentSize({panelSize.width, panelSize.height - 4.f});
-  scroll->m_contentLayer->setLayout(ScrollLayer::createDefaultListLayout(5.f));
-
-  container->addChildAtPosition(
-    scroll,
-    Anchor::Center,
-    -scroll->getContentSize() / 2.f
-  );
-
-  const auto typeLabel = Label::create(fmt::format("Type: {}", type.empty() ? "N/A" : type), "bigFont.fnt");
-  typeLabel->setScale(0.5f);
-  typeLabel->setAlignment(Label::Alignment::Left);
-  scroll->m_contentLayer->addChildAtPosition(typeLabel, Anchor::Left);
-
-  const auto idLabel = Label::create(fmt::format("ID: {}", id.empty() ? "N/A" : id), "bigFont.fnt");
-  idLabel->setScale(0.5f);
-  idLabel->setAlignment(Label::Alignment::Left);
-  scroll->m_contentLayer->addChildAtPosition(idLabel, Anchor::Left);
-
-  const auto nameLabel = Label::create(fmt::format("Name: {}", name.empty() ? "N/A" : name), "bigFont.fnt");
-  nameLabel->setScale(0.5f);
-  nameLabel->setAlignment(Label::Alignment::Left);
-  scroll->m_contentLayer->addChildAtPosition(nameLabel, Anchor::Left);
-
-  scroll->m_contentLayer->updateLayout();
-  scroll->scrollToTop();
-
-  infoRegion->addChildAtPosition(container, Anchor::Center);
-  infoTextContainer = container;
+  infoLabel->setString(textContent.c_str());
 }
