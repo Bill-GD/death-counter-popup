@@ -12,7 +12,9 @@ class SaveHandler {
   static std::string currentLevelName;
   static std::string currentLevelID;
 
-  static std::filesystem::path getLevelPath(const std::string& levelID);
+  static std::filesystem::path getLevelDataPath(const std::string& levelID);
+  static std::filesystem::path getLinkInfoPath(const std::string& levelID);
+  static std::filesystem::path getLevelInfoPath(const std::string& levelID);
   static bool isSaveExists(const std::string& levelID);
 
   static DeathCounter getSavedData(const std::string& levelID);
@@ -25,8 +27,12 @@ public:
   static DeathCounter deaths;
 
   static bool isLevelSet();
+  static bool hasLinkedLevel(const std::string& levelID);
+  static std::string getLinkedLevel(const std::string& levelID);
   static void setLevel(GJGameLevel* level);
   static void incrementRun(const std::string& runKey);
   static void loadSaveData();
   static void saveData();
+
+  static LevelInfo getLevelInfo(const std::string& levelID);
 };

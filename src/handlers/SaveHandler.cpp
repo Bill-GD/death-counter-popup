@@ -18,6 +18,16 @@ bool SaveHandler::isLevelSet() {
   return !currentLevelID.empty();
 }
 
+bool SaveHandler::hasLinkedLevel(const std::string& levelID) {
+  return std::filesystem::exists(getLinkInfoPath(levelID));
+}
+
+std::string SaveHandler::getLinkedLevel(const std::string& levelID) {
+  const auto [success, value] = FileUtils::tryReadString(getLinkInfoPath(levelID));
+  if (!success) return "";
+  return value;
+}
+
 void SaveHandler::setLevel(GJGameLevel* level) {
   shouldLoad = !level->isPlatformer();
   currentLevelID = LevelUtils::getLevelID(level);
@@ -25,12 +35,20 @@ void SaveHandler::setLevel(GJGameLevel* level) {
   currentLevelType = level->m_levelType;
 }
 
-std::filesystem::path SaveHandler::getLevelPath(const std::string& levelID) {
+std::filesystem::path SaveHandler::getLevelDataPath(const std::string& levelID) {
   return PATH / levelID / "data";
 }
 
+std::filesystem::path SaveHandler::getLinkInfoPath(const std::string& levelID) {
+  return PATH / levelID / "link";
+}
+
+std::filesystem::path SaveHandler::getLevelInfoPath(const std::string& levelID) {
+  return PATH / levelID / "info";
+}
+
 bool SaveHandler::isSaveExists(const std::string& levelID) {
-  return std::filesystem::exists(getLevelPath(levelID));
+  return std::filesystem::exists(getLevelDataPath(levelID));
 }
 
 /** @param runKey This key is the most precise variant */
@@ -69,7 +87,7 @@ DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
     return {};
   }
 
-  const auto [success, val] = FileUtils::tryRead(getLevelPath(levelID));
+  const auto [success, val] = FileUtils::tryRead(getLevelDataPath(levelID));
   if (!success) return {};
 
   return Utils::tryParse<DeathCounter>(val);
@@ -83,7 +101,7 @@ DeathCounter SaveHandler::getLatestLinkedData() {
     if (!isSaveExists(linkedLevelID)) continue;
     linkedLevelFiles.emplace_back(
       linkedLevelID,
-      std::filesystem::last_write_time(getLevelPath(linkedLevelID))
+      std::filesystem::last_write_time(getLevelDataPath(linkedLevelID))
     );
   }
 
@@ -148,13 +166,20 @@ void SaveHandler::saveData() {
     return;
   }
 
-  FileUtils::tryWrite(PATH / currentLevelID / "info", matjson::Value(getLevelInfo()));
+  FileUtils::tryWrite(getLevelInfoPath(currentLevelID), matjson::Value(getLevelInfo()));
   if (
-    const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID), matjson::Value(deaths));
+    const auto success = FileUtils::tryWrite(getLevelDataPath(currentLevelID), matjson::Value(deaths));
     !success
   ) {
     log::warn("Failed to save for level '{}' (id={})", currentLevelName, currentLevelID);
     return;
   }
   log::info("Saved data for level '{}' (id={})", currentLevelName, currentLevelID);
+}
+
+LevelInfo SaveHandler::getLevelInfo(const std::string& levelID) {
+  const auto [success, value] = FileUtils::tryRead(getLevelInfoPath(levelID));
+  if (!success) return LevelInfo{"", "", ""};
+  const auto [id, name, type] = Utils::tryParse<LevelInfo>(value);
+  return LevelInfo{id, name, type};
 }

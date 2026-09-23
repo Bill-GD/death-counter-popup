@@ -94,8 +94,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
 }
 
 void RightPanel::loadLevelInfo(std::string levelID) {
-  const auto infoPath = SaveHandler::PATH / levelID / "info";
-  const auto [success, value] = FileUtils::tryRead(infoPath);
+  const auto [id, name, type] = SaveHandler::getLevelInfo(levelID);
 
   if (infoTextContainer) {
     infoTextContainer->removeFromParent();
@@ -106,7 +105,7 @@ void RightPanel::loadLevelInfo(std::string levelID) {
     messageLabel = nullptr;
   }
 
-  if (!success) {
+  if (id.empty()) {
     messageLabel = Label::create(fmt::format("Failed to read\ninfo of {}", levelID), "bigFont.fnt");
     messageLabel->setScale(0.5f);
     messageLabel->setAnchorPoint({0.5f, 1.f});
@@ -114,7 +113,6 @@ void RightPanel::loadLevelInfo(std::string levelID) {
     return;
   }
 
-  const auto [id, name, type] = Utils::tryParse<LevelInfo>(value);
 
   const auto panelSize = infoRegion->getScaledContentSize();
   const auto container = CCNode::create();
