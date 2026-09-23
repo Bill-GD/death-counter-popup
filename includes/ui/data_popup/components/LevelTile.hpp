@@ -4,7 +4,7 @@
 using namespace geode::prelude;
 
 class LevelTile : public CCNode {
-  std::function<void(std::string)> onLevelSelected;
+  std::function<void(std::string)> m_onLevelSelected;
 
   void onTileClicked(CCObject* sender) const;
 

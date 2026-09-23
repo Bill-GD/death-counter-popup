@@ -82,11 +82,11 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   infoContainer->setContentSize({width * 0.9f, infoHeight * 0.85f});
   infoContainer->setAnchorPoint({0.5f, 0.5f});
 
-  infoLabel = Label::create("", "bigFont.fnt");
-  infoLabel->setScale(0.5f);
-  infoLabel->setAlignment(Label::Alignment::Left);
-  infoLabel->setAnchorPoint({0.f, 1.f});
-  infoContainer->addChildAtPosition(infoLabel, Anchor::Top);
+  m_infoLabel = Label::create("", "bigFont.fnt");
+  m_infoLabel->setScale(0.5f);
+  m_infoLabel->setAlignment(Label::Alignment::Left);
+  m_infoLabel->setAnchorPoint({0.f, 1.f});
+  infoContainer->addChildAtPosition(m_infoLabel, Anchor::Top);
 
   const auto infoMenu = CCMenu::create();
   const auto infoButton = InfoAlertButton::create(
@@ -104,7 +104,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
 }
 
 void RightPanel::loadLevelInfo(std::string levelID) {
-  selectedLevelID = levelID;
+  m_selectedLevelID = levelID;
   const auto [id, name, type] = SaveHandler::getLevelInfo(levelID);
 
   std::string textContent;
@@ -123,5 +123,5 @@ Name: {}
     );
   }
 
-  infoLabel->setString(textContent.c_str());
+  m_infoLabel->setString(textContent.c_str());
 }

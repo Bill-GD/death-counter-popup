@@ -4,12 +4,12 @@
 using namespace geode::prelude;
 
 class LeftPanel : public CCNode {
-  std::vector<std::pair<std::string, LevelInfo>> allLevels = {};
-  std::vector<std::pair<std::string, LevelInfo>> filteredLevels = {};
-  ScrollLayer* scrollLayer = nullptr;
-  Label* countLabel = nullptr;
-  std::string pendingFilterInput;
-  std::function<void(std::string)> onSelectedCallback = nullptr;
+  std::vector<std::pair<std::string, LevelInfo>> m_allLevels = {};
+  std::vector<std::pair<std::string, LevelInfo>> m_filteredLevels = {};
+  ScrollLayer* m_scrollLayer = nullptr;
+  Label* m_countLabel = nullptr;
+  std::string m_pendingFilterInput;
+  std::function<void(std::string)> m_onSelectedCallback = nullptr;
 
   void onInputChanged(const std::string& value);
 

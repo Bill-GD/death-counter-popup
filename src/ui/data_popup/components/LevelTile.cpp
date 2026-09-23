@@ -20,12 +20,12 @@ LevelTile* LevelTile::create(
 bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<void(std::string)> onSelected) {
   if (!CCNode::init()) return false;
 
-  this->onLevelSelected = std::move(onSelected);
+  m_onLevelSelected = std::move(onSelected);
 
-  this->setContentSize(size);
+  setContentSize(size);
 
   const auto textClip = CCClippingNode::create();
-  textClip->setContentWidth(this->getContentWidth() * 0.7f);
+  textClip->setContentWidth(getContentWidth() * 0.7f);
   textClip->setAnchorPoint({0.f, 0.5f});
 
   const auto stencil = CCScale9Sprite::create("geode.loader/GE_square01.png");
@@ -50,10 +50,10 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
 
   textClip->addChildAtPosition(nameLabel, Anchor::Left, {0, 5.f});
   textClip->addChildAtPosition(idLabel, Anchor::Left, {0, -5.f});
-  this->addChildAtPosition(textClip, Anchor::Left, {10.f, 0});
+  addChildAtPosition(textClip, Anchor::Left, {10.f, 0});
 
   const auto menu = CCMenu::create();
-  menu->setContentSize({this->getContentWidth() * 0.25f, this->getContentHeight()});
+  menu->setContentSize({getContentWidth() * 0.25f, getContentHeight()});
   menu->setAnchorPoint({1.f, 0.5f});
 
   const auto arrow = CCMenuItemSpriteExtra::create(
@@ -65,7 +65,7 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
   arrow->setAnchorPoint({0.5f, 0.5f});
   menu->setScale(0.55f);
   menu->addChildAtPosition(arrow, Anchor::Center);
-  this->addChildAtPosition(menu, Anchor::Right, {-12.f, 0});
+  addChildAtPosition(menu, Anchor::Right, {-12.f, 0});
 
   arrow->setUserObject(CCString::create(tileInfo.id));
 
@@ -75,5 +75,5 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
 void LevelTile::onTileClicked(CCObject* sender) const {
   const auto tile = typeinfo_cast<CCMenuItemSpriteExtra*>(sender);
   const auto levelID = typeinfo_cast<CCString*>(tile->getUserObject())->getCString();
-  if (onLevelSelected) onLevelSelected(levelID);
+  if (m_onLevelSelected) m_onLevelSelected(levelID);
 }

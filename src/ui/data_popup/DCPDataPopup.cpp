@@ -22,8 +22,8 @@ bool DCPDataPopup::init() {
     return false;
   }
 
-  this->setID("dcp-data-viewer");
-  this->setTitle("Run Counter Data Viewer");
+  setID("dcp-data-viewer");
+  setTitle("Run Counter Data Viewer");
 
   addContent();
 
@@ -31,7 +31,7 @@ bool DCPDataPopup::init() {
 }
 
 void DCPDataPopup::addContent() {
-  this->setAnchorPoint({0.5f, 0.5f});
+  setAnchorPoint({0.5f, 0.5f});
 
   const auto contentSize = m_mainLayer->getScaledContentSize();
 
@@ -41,39 +41,39 @@ void DCPDataPopup::addContent() {
   constexpr float controlHeight = 35.f;
   constexpr float panelGap = 15.f;
 
-  this->leftPanel = LeftPanel::create(leftWidth, controlHeight, panelHeight, panelGap);
-  this->leftPanel->setAnchorPoint({0.f, 0.5f});
-  m_mainLayer->addChildAtPosition(this->leftPanel, Anchor::Left, {10.f, -5.f});
+  m_leftPanel = LeftPanel::create(leftWidth, controlHeight, panelHeight, panelGap);
+  m_leftPanel->setAnchorPoint({0.f, 0.5f});
+  m_mainLayer->addChildAtPosition(m_leftPanel, Anchor::Left, {10.f, -5.f});
 
-  this->rightPanel = RightPanel::create(rightWidth, controlHeight, panelHeight, panelGap);
-  this->rightPanel->setAnchorPoint({1.f, 0.5f});
-  m_mainLayer->addChildAtPosition(this->rightPanel, Anchor::Right, {-10.f, -5.f});
+  m_rightPanel = RightPanel::create(rightWidth, controlHeight, panelHeight, panelGap);
+  m_rightPanel->setAnchorPoint({1.f, 0.5f});
+  m_mainLayer->addChildAtPosition(m_rightPanel, Anchor::Right, {-10.f, -5.f});
 
   const auto loadingLayer = CCLayer::create();
   loadingLayer->setContentSize(contentSize);
   loadingLayer->setAnchorPoint({0.5f, 0.5f});
   loadingLayer->setZOrder(3);
-  this->m_mainLayer->addChildAtPosition(loadingLayer, Anchor::Center);
+  m_mainLayer->addChildAtPosition(loadingLayer, Anchor::Center);
 
-  this->loadingCircle = LoadingCircle::create();
-  this->loadingCircle->setParentLayer(loadingLayer);
-  this->loadingCircle->show();
-  this->loadingCircle->setVisible(false);
+  m_loadingCircle = LoadingCircle::create();
+  m_loadingCircle->setParentLayer(loadingLayer);
+  m_loadingCircle->show();
+  m_loadingCircle->setVisible(false);
 
   m_mainLayer->updateLayout();
 }
 
 void DCPDataPopup::onLevelSelected(const std::string& levelID) const {
-  if (!this->rightPanel) return;
-  this->rightPanel->loadLevelInfo(levelID);
+  if (!m_rightPanel) return;
+  m_rightPanel->loadLevelInfo(levelID);
 }
 
 void DCPDataPopup::load() const {
-  if (!this->leftPanel || !this->loadingCircle) return;
+  if (!m_leftPanel || !m_loadingCircle) return;
 
-  this->loadingCircle->setVisible(true);
-  this->leftPanel->setOnSelectedCallback([this](const std::string& levelID) { onLevelSelected(levelID); });
-  this->leftPanel->loadLevelList();
-  this->leftPanel->displayLevelList();
-  this->loadingCircle->setVisible(false);
+  m_loadingCircle->setVisible(true);
+  m_leftPanel->setOnSelectedCallback([this](const std::string& levelID) { onLevelSelected(levelID); });
+  m_leftPanel->loadLevelList();
+  m_leftPanel->displayLevelList();
+  m_loadingCircle->setVisible(false);
 }
