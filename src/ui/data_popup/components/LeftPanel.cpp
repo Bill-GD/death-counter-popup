@@ -131,5 +131,7 @@ void LeftPanel::displayLevelList() const {
   }
   m_scrollLayer->m_contentLayer->updateLayout();
   m_scrollLayer->scrollToTop();
-  m_countLabel->setString(fmt::format("{} levels", m_filteredLevels.size()).c_str());
+
+  const auto levelCount = m_filteredLevels.size();
+  m_countLabel->setString(fmt::format("{} level{}", levelCount, levelCount > 1 ? "s" : "").c_str());
 }

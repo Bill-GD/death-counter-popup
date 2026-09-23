@@ -83,7 +83,6 @@ void SaveHandler::incrementRun(const std::string& runKey) {
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!isSaveExists(levelID)) {
     (void)file::createDirectory(PATH / levelID);
-    FileUtils::tryWriteString(PATH / levelID / "info", currentLevelName);
     return {};
   }
 
@@ -158,6 +157,7 @@ void SaveHandler::loadSaveData() {
     log::info("Updated save data");
     saveData();
   }
+  FileUtils::tryWrite(getLevelInfoPath(currentLevelID), matjson::Value(getLevelInfo(currentLevelID)));
 }
 
 void SaveHandler::saveData() {
