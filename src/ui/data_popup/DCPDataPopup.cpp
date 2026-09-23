@@ -72,7 +72,8 @@ void DCPDataPopup::load() const {
   if (!this->leftPanel || !this->loadingCircle) return;
 
   this->loadingCircle->setVisible(true);
+  this->leftPanel->setOnSelectedCallback([this](const std::string& levelID) { onLevelSelected(levelID); });
   this->leftPanel->loadLevelList();
-  this->leftPanel->displayLevelList([this](const std::string& levelID) { onLevelSelected(levelID); });
+  this->leftPanel->displayLevelList();
   this->loadingCircle->setVisible(false);
 }
