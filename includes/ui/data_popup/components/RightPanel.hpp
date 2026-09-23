@@ -2,14 +2,15 @@
 
 using namespace geode::prelude;
 
-class RightPanel : public CCScale9Sprite {
+class RightPanel : public CCNode {
   Label* messageLabel = nullptr;
-  CCNode* infoContainer = nullptr;
+  CCNode* infoTextContainer = nullptr;
+  CCScale9Sprite* infoRegion = nullptr;
 
 protected:
-  bool init(const CCSize& size);
+  bool init(float width, float controlHeight, float infoHeight, float gap);
 
 public:
-  static RightPanel* create(const CCSize& size);
+  static RightPanel* create(float width, float controlHeight, float infoHeight, float gap);
   void loadLevelInfo(std::string levelID);
 };
