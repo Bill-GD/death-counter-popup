@@ -19,15 +19,10 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
   if (!CCNode::init()) return false;
   setContentSize({width, listHeight + gap + controlHeight});
 
-  const auto controlRegion = CCMenu::create();
-  controlRegion->setContentSize({width, controlHeight});
-  controlRegion->setAnchorPoint({0.5f, 1.f});
-
   const auto textInput = TextInput::create(width, "Search", "bigFont.fnt");
-  textInput->setAnchorPoint({0.f, 0.5f});
+  textInput->setContentSize({width, controlHeight});
+  textInput->setAnchorPoint({0.5f, 1.f});
   textInput->setCallback([this](const std::string& value) { onInputChanged(value); });
-
-  controlRegion->addChildAtPosition(textInput, Anchor::Left);
 
   countLabel = Label::create("bigFont.fnt");
   countLabel->setScale(0.5f);
@@ -55,7 +50,7 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
 
   this->scrollLayer = scroll;
 
-  addChildAtPosition(controlRegion, Anchor::Top);
+  addChildAtPosition(textInput, Anchor::Top);
   addChildAtPosition(countLabel, Anchor::Top, {0.f, -(controlHeight + gap / 2.f)});
   addChildAtPosition(listRegion, Anchor::Bottom);
   return true;
