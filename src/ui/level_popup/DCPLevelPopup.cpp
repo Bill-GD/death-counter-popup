@@ -16,7 +16,7 @@ bool DCPLevelPopup::init(const GJGameLevel& level) {
     return false;
   }
 
-  this->setTitle(fmt::format("Run Counter ({})", level.m_levelName));
+  setTitle(fmt::format("Run Counter ({})", level.m_levelName));
 
   return true;
 }

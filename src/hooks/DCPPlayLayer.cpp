@@ -33,7 +33,7 @@ void DCPPlayLayer::resetLevel() {
 
 void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
   PlayLayer::destroyPlayer(player, gameObject);
-  if (this->m_level->isPlatformer()) return;
+  if (m_level->isPlatformer()) return;
 
   m_fields->currentAttemptGameObject = gameObject;
 
@@ -49,15 +49,15 @@ void DCPPlayLayer::destroyPlayer(PlayerObject* player, GameObject* gameObject) {
     const auto runLabelStr = getRunLabelString(getActualCurrentPercent(), 99.999900f);
     SaveHandler::incrementRun(runLabelStr);
 
-    if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) return;
+    if (LevelUtils::isLevelCompleted(m_level) && !Settings::isShownForCompleted()) return;
 
     spawnLabel(LevelUtils::getKeyByPrecision(runLabelStr, Settings::getLabelPrecision()));
-    m_fields->currentBest = this->m_level->m_newNormalPercent2.value();
+    m_fields->currentBest = m_level->m_newNormalPercent2.value();
   }
 }
 
 void DCPPlayLayer::levelComplete() {
-  if (this->m_level->isPlatformer()) {
+  if (m_level->isPlatformer()) {
     PlayLayer::levelComplete();
     return;
   }
@@ -66,7 +66,7 @@ void DCPPlayLayer::levelComplete() {
   SaveHandler::incrementRun(runLabelStr);
 
   auto shouldShow = true;
-  if (LevelUtils::isLevelCompleted(this->m_level) && !Settings::isShownForCompleted()) shouldShow = false;
+  if (LevelUtils::isLevelCompleted(m_level) && !Settings::isShownForCompleted()) shouldShow = false;
 
   PlayLayer::levelComplete();
 
@@ -93,9 +93,9 @@ void DCPPlayLayer::removeLabel() {
 void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   if (!Settings::isEnabled()) return;
 
-  this->removeLabel();
+  removeLabel();
   m_fields->label = getPopupLabel(labelStr);
-  this->getChildByID("UILayer")->addChild(m_fields->label);
+  getChildByID("UILayer")->addChild(m_fields->label);
 
   log::info("Spawned label at ({}), {}°", m_fields->label->getPosition(), m_fields->label->getRotation());
 
@@ -106,7 +106,7 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
 
 CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
   const auto isRun = deathKey.contains('-');
-  const auto isNewBest = !isRun && this->getCurrentPercentInt() > m_fields->currentBest;
+  const auto isNewBest = !isRun && getCurrentPercentInt() > m_fields->currentBest;
   const auto useGoldFont = isNewBest && Settings::isNewBestGolden();
 
   const auto labelScale = Settings::getScale() + (useGoldFont ? 0.35f : 0.f);
@@ -226,7 +226,7 @@ void DCPPlayLayer::fetchBestLabel() {
   if (!Settings::bestPercentageShown() || !m_percentageLabel) return;
 
   if (
-    const auto bestLabelNode = this->getChildByID("best-percentage-label");
+    const auto bestLabelNode = getChildByID("best-percentage-label");
     !bestLabelNode
   ) {
     m_fields->bestLabel = CCLabelBMFont::create("", "bigFont.fnt");
@@ -234,7 +234,7 @@ void DCPPlayLayer::fetchBestLabel() {
     m_fields->bestLabel->setScale(m_percentageLabel->getScale());
     m_fields->bestLabel->setAnchorPoint({0.f, 0.5f});
     m_fields->bestLabel->setZOrder(m_percentageLabel->getZOrder());
-    this->addChild(m_fields->bestLabel);
+    addChild(m_fields->bestLabel);
   } else if (m_fields->bestLabel != bestLabelNode) {
     m_fields->bestLabel = typeinfo_cast<CCLabelBMFont*>(bestLabelNode);
   }

@@ -24,9 +24,9 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
   textInput->setAnchorPoint({0.5f, 1.f});
   textInput->setCallback([this](const std::string& value) { onInputChanged(value); });
 
-  countLabel = Label::create("bigFont.fnt");
-  countLabel->setScale(0.35f);
-  countLabel->setAnchorPoint({0.5f, 0.5f});
+  m_countLabel = Label::create("bigFont.fnt");
+  m_countLabel->setScale(0.35f);
+  m_countLabel->setAnchorPoint({0.5f, 0.5f});
 
   const auto listRegion = CCScale9Sprite::create("GJ_square05.png");
   listRegion->setContentSize({width, listHeight});
@@ -48,16 +48,16 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
   );
   listRegion->addChildAtPosition(scrollbar, Anchor::Right, {-3.f, 0});
 
-  this->scrollLayer = scroll;
+  m_scrollLayer = scroll;
 
   addChildAtPosition(textInput, Anchor::Top);
-  addChildAtPosition(countLabel, Anchor::Top, {0.f, -(controlHeight + gap / 2.f)});
+  addChildAtPosition(m_countLabel, Anchor::Top, {0.f, -(controlHeight + gap / 2.f)});
   addChildAtPosition(listRegion, Anchor::Bottom);
   return true;
 }
 
 void LeftPanel::onInputChanged(const std::string& value) {
-  pendingFilterInput = value;
+  m_pendingFilterInput = value;
 
   stopActionByTag(12345);
   const auto delaySequence = CCSequence::createWithTwoActions(
@@ -81,27 +81,27 @@ void LeftPanel::loadLevelList() {
       return id != "backups";
     }
   );
-  allLevels = ranges::map<std::vector<std::pair<std::string, LevelInfo>>>(
+  m_allLevels = ranges::map<std::vector<std::pair<std::string, LevelInfo>>>(
     allLevelIDs,
     [](auto const& id) {
       return std::pair{id, SaveHandler::getLevelInfo(id)};
     }
   );
-  filteredLevels = allLevels;
+  m_filteredLevels = m_allLevels;
 }
 
 void LeftPanel::executeFiltering() {
-  if (pendingFilterInput.empty()) {
-    filteredLevels = allLevels;
+  if (m_pendingFilterInput.empty()) {
+    m_filteredLevels = m_allLevels;
   } else {
-    filterLevels(pendingFilterInput);
+    filterLevels(m_pendingFilterInput);
   }
   displayLevelList();
 }
 
 void LeftPanel::filterLevels(const std::string& input) {
-  filteredLevels = ranges::filter(
-    allLevels,
+  m_filteredLevels = ranges::filter(
+    m_allLevels,
     [input](auto const& level) {
       return string::toLower(level.first).contains(string::toLower(input))
         || string::toLower(level.second.name).contains(string::toLower(input));
@@ -110,22 +110,22 @@ void LeftPanel::filterLevels(const std::string& input) {
 }
 
 void LeftPanel::setOnSelectedCallback(const std::function<void(std::string)>& onSelected) {
-  onSelectedCallback = onSelected;
+  m_onSelectedCallback = onSelected;
 }
 
 void LeftPanel::displayLevelList() const {
-  this->scrollLayer->m_contentLayer->removeAllChildren();
+  m_scrollLayer->m_contentLayer->removeAllChildren();
 
-  for (auto const& [id, level] : filteredLevels) {
-    this->scrollLayer->m_contentLayer->addChild(
+  for (auto const& [id, level] : m_filteredLevels) {
+    m_scrollLayer->m_contentLayer->addChild(
       LevelTile::create(
         LevelTileInfo{id, level.name},
-        {this->getContentWidth(), 30.f},
-        onSelectedCallback
+        {getContentWidth(), 30.f},
+        m_onSelectedCallback
       )
     );
   }
-  this->scrollLayer->m_contentLayer->updateLayout();
-  this->scrollLayer->scrollToTop();
-  countLabel->setString(fmt::format("{} levels", filteredLevels.size()).c_str());
+  m_scrollLayer->m_contentLayer->updateLayout();
+  m_scrollLayer->scrollToTop();
+  m_countLabel->setString(fmt::format("{} levels", m_filteredLevels.size()).c_str());
 }
