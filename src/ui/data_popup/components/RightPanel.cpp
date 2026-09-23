@@ -15,6 +15,7 @@ RightPanel* RightPanel::create(const float width, const float controlHeight, con
 
 bool RightPanel::init(float width, float controlHeight, float infoHeight, float gap) {
   if (!CCNode::init()) return false;
+  setID("right-panel"_spr);
   setContentSize({width, infoHeight + gap + controlHeight});
 
   const auto controlRegion = CCScale9Sprite::create("GJ_square05.png");
@@ -24,6 +25,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   const auto controlMenu = CCMenu::create();
   const auto controlLayout = RowLayout::create();
   controlLayout->setAxisAlignment(AxisAlignment::Even);
+  controlMenu->setID("control-menu"_spr);
   controlMenu->setLayout(controlLayout);
   controlMenu->setContentSize({width, controlHeight});
 
@@ -83,9 +85,10 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   infoContainer->setAnchorPoint({0.5f, 0.5f});
 
   m_infoLabel = Label::create("", "bigFont.fnt");
-  m_infoLabel->setScale(0.5f);
+  m_infoLabel->setID("level-info-label"_spr);
+  m_infoLabel->setScale(0.4f);
   m_infoLabel->setAlignment(Label::Alignment::Left);
-  m_infoLabel->setAnchorPoint({0.f, 1.f});
+  m_infoLabel->setAnchorPoint({0.5f, 1.f});
   infoContainer->addChildAtPosition(m_infoLabel, Anchor::Top);
 
   const auto infoMenu = CCMenu::create();
@@ -109,11 +112,10 @@ void RightPanel::loadLevelInfo(std::string levelID) {
 
   std::string textContent;
   if (id.empty()) {
-    textContent = fmt::format("Failed to read\ninfo of {}", levelID);
+    textContent = fmt::format("Failed to read info of\n{}", levelID);
   } else {
     textContent = fmt::format(
-      R"(
-Type: {}
+      R"(Type: {}
 ID: {}
 Name: {}
       )",
