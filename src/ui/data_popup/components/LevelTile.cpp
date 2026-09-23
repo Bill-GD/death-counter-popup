@@ -3,12 +3,12 @@
 #include "handlers/SaveHandler.hpp"
 
 LevelTile* LevelTile::create(
-  const std::string& levelID,
+  const LevelTileInfo& tileInfo,
   const CCSize& size,
   const std::function<void(std::string)>& onSelected
 ) {
   const auto ret = new LevelTile();
-  if (ret->init(levelID, size, onSelected)) {
+  if (ret->init(tileInfo, size, onSelected)) {
     ret->autorelease();
     return ret;
   }
@@ -17,7 +17,7 @@ LevelTile* LevelTile::create(
   return nullptr;
 }
 
-bool LevelTile::init(std::string levelID, const CCSize& size, std::function<void(std::string)> onSelected) {
+bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<void(std::string)> onSelected) {
   if (!CCNode::init()) return false;
 
   this->onLevelSelected = std::move(onSelected);
@@ -34,11 +34,22 @@ bool LevelTile::init(std::string levelID, const CCSize& size, std::function<void
   stencil->setPosition({0.f, textClip->getContentHeight() / 2.f});
   textClip->setStencil(stencil);
 
-  const auto label = Label::create(fmt::format("{}", levelID), "bigFont.fnt");
-  label->setScale(0.3f);
-  label->setAnchorPoint({0.f, 0.5f});
-  label->setAlignment(Label::Alignment::Left);
-  textClip->addChildAtPosition(label, Anchor::Left);
+  const auto nameLabel = Label::create(
+    fmt::format("{}", tileInfo.name.empty() ? "N/A" : tileInfo.name),
+    "bigFont.fnt"
+  );
+  nameLabel->setScale(0.35f);
+  nameLabel->setAnchorPoint({0.f, 0.5f});
+  nameLabel->setAlignment(Label::Alignment::Left);
+
+  const auto idLabel = Label::create(fmt::format("{}", tileInfo.id), "bigFont.fnt");
+  idLabel->setScale(0.3f);
+  idLabel->setColor(ccColor3B{200, 200, 200});
+  idLabel->setAnchorPoint({0.f, 0.5f});
+  idLabel->setAlignment(Label::Alignment::Left);
+
+  textClip->addChildAtPosition(nameLabel, Anchor::Left, {0, 5.f});
+  textClip->addChildAtPosition(idLabel, Anchor::Left, {0, -5.f});
   this->addChildAtPosition(textClip, Anchor::Left, {10.f, 0});
 
   const auto menu = CCMenu::create();
@@ -56,7 +67,7 @@ bool LevelTile::init(std::string levelID, const CCSize& size, std::function<void
   menu->addChildAtPosition(arrow, Anchor::Center);
   this->addChildAtPosition(menu, Anchor::Right, {-12.f, 0});
 
-  arrow->setUserObject(CCString::create(levelID));
+  arrow->setUserObject(CCString::create(tileInfo.id));
 
   return true;
 }

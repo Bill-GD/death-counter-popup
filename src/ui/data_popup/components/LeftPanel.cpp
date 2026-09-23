@@ -62,11 +62,20 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
 }
 
 void LeftPanel::onInputChanged(const std::string& value) {
+  pendingFilterInput = value;
+
+  stopActionByTag(12345);
+  const auto delaySequence = CCSequence::createWithTwoActions(
+    CCDelayTime::create(0.4f),
+    CCCallFunc::create(this, callfunc_selector(LeftPanel::executeFiltering))
+  );
+  delaySequence->setTag(12345);
+  runAction(delaySequence);
 }
 
 void LeftPanel::loadLevelList() {
   const std::vector<std::filesystem::path> allLevelDirs = FileUtils::getAllDirectories(SaveHandler::PATH);
-  allLevelIDs = ranges::filter(
+  const auto allLevelIDs = ranges::filter(
     ranges::map<std::vector<std::string>>(
       allLevelDirs,
       [](auto const& dir) {
@@ -77,31 +86,51 @@ void LeftPanel::loadLevelList() {
       return id != "backups";
     }
   );
-  filteredLevelIDs = allLevelIDs;
+  allLevels = ranges::map<std::vector<std::pair<std::string, LevelInfo>>>(
+    allLevelIDs,
+    [](auto const& id) {
+      return std::pair{id, SaveHandler::getLevelInfo(id)};
+    }
+  );
+  filteredLevels = allLevels;
 }
 
-void LeftPanel::filterByName(std::string input) {
-  filteredLevelIDs = ranges::filter(
-    allLevelIDs,
-    [input](auto const& id) {
-      return id.contains(input);
+void LeftPanel::executeFiltering() {
+  if (pendingFilterInput.empty()) {
+    filteredLevels = allLevels;
+  } else {
+    filterLevels(pendingFilterInput);
+  }
+  displayLevelList();
+}
+
+void LeftPanel::filterLevels(const std::string& input) {
+  filteredLevels = ranges::filter(
+    allLevels,
+    [input](auto const& level) {
+      return string::toLower(level.first).contains(string::toLower(input))
+        || string::toLower(level.second.name).contains(string::toLower(input));
     }
   );
 }
 
-void LeftPanel::displayLevelList(const std::function<void(std::string)>& onSelected) const {
+void LeftPanel::setOnSelectedCallback(const std::function<void(std::string)>& onSelected) {
+  onSelectedCallback = onSelected;
+}
+
+void LeftPanel::displayLevelList() const {
   this->scrollLayer->m_contentLayer->removeAllChildren();
 
-  for (auto const& id : filteredLevelIDs) {
+  for (auto const& [id, level] : filteredLevels) {
     this->scrollLayer->m_contentLayer->addChild(
       LevelTile::create(
-        id,
-        {this->getContentWidth(), 20.f},
-        onSelected
+        LevelTileInfo{id, level.name},
+        {this->getContentWidth(), 30.f},
+        onSelectedCallback
       )
     );
   }
   this->scrollLayer->m_contentLayer->updateLayout();
   this->scrollLayer->scrollToTop();
-  countLabel->setString(fmt::format("{} levels", filteredLevelIDs.size()).c_str());
+  countLabel->setString(fmt::format("{} levels", filteredLevels.size()).c_str());
 }

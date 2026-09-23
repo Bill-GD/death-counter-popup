@@ -1,4 +1,5 @@
 #pragma once
+#include "types/types.hpp"
 
 using namespace geode::prelude;
 
@@ -8,8 +9,12 @@ class LevelTile : public CCNode {
   void onTileClicked(CCObject* sender) const;
 
 protected:
-  bool init(std::string levelID, const CCSize& size, std::function<void(std::string)> onSelected);
+  bool init(LevelTileInfo tileInfo, const CCSize& size, std::function<void(std::string)> onSelected);
 
 public:
-  static LevelTile* create(const std::string& levelID, const CCSize& size, const std::function<void(std::string)>& onSelected);
+  static LevelTile* create(
+    const LevelTileInfo& tileInfo,
+    const CCSize& size,
+    const std::function<void(std::string)>& onSelected
+  );
 };
