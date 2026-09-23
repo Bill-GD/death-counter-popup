@@ -3,7 +3,9 @@
 #include "handlers/SaveHandler.hpp"
 
 LevelTile* LevelTile::create(
-  const std::string& levelID, const CCSize& size, const std::function<void(std::string)>& onSelected
+  const std::string& levelID,
+  const CCSize& size,
+  const std::function<void(std::string)>& onSelected
 ) {
   const auto ret = new LevelTile();
   if (ret->init(levelID, size, onSelected)) {
@@ -52,7 +54,7 @@ bool LevelTile::init(std::string levelID, const CCSize& size, std::function<void
   arrow->setAnchorPoint({0.5f, 0.5f});
   menu->setScale(0.5f);
   menu->addChildAtPosition(arrow, Anchor::Center);
-  this->addChildAtPosition(menu, Anchor::Right, {-16.f, 0});
+  this->addChildAtPosition(menu, Anchor::Right, {-12.f, 0});
 
   arrow->setUserObject(CCString::create(levelID));
 
