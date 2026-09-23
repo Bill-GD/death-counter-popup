@@ -17,18 +17,22 @@ LeftPanel* LeftPanel::create(const float width, const float controlHeight, const
 
 bool LeftPanel::init(float width, float controlHeight, float listHeight, float gap) {
   if (!CCNode::init()) return false;
+  setID("left-panel"_spr);
   setContentSize({width, listHeight + gap + controlHeight});
 
   const auto textInput = TextInput::create(width, "Search", "bigFont.fnt");
+  textInput->setID("search-input"_spr);
   textInput->setContentSize({width, controlHeight});
   textInput->setAnchorPoint({0.5f, 1.f});
   textInput->setCallback([this](const std::string& value) { onInputChanged(value); });
 
   m_countLabel = Label::create("bigFont.fnt");
+  m_countLabel->setID("level-count-label"_spr);
   m_countLabel->setScale(0.35f);
   m_countLabel->setAnchorPoint({0.5f, 0.5f});
 
   const auto listRegion = CCScale9Sprite::create("GJ_square05.png");
+  listRegion->setID("level-list"_spr);
   listRegion->setContentSize({width, listHeight});
   listRegion->setAnchorPoint({0.5f, 0.f});
 
@@ -61,7 +65,7 @@ void LeftPanel::onInputChanged(const std::string& value) {
 
   stopActionByTag(12345);
   const auto delaySequence = CCSequence::createWithTwoActions(
-    CCDelayTime::create(0.4f),
+    CCDelayTime::create(0.3f),
     CCCallFunc::create(this, callfunc_selector(LeftPanel::executeFiltering))
   );
   delaySequence->setTag(12345);
