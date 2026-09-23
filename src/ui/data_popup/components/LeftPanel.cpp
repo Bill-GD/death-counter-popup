@@ -25,7 +25,7 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
   textInput->setCallback([this](const std::string& value) { onInputChanged(value); });
 
   countLabel = Label::create("bigFont.fnt");
-  countLabel->setScale(0.5f);
+  countLabel->setScale(0.35f);
   countLabel->setAnchorPoint({0.5f, 0.5f});
 
   const auto listRegion = CCScale9Sprite::create("GJ_square05.png");
@@ -46,7 +46,7 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
     Anchor::Center,
     -scrollSize / 2.f - CCSize{2.f, 0}
   );
-  listRegion->addChildAtPosition(scrollbar, Anchor::Right, {-4.f, 0});
+  listRegion->addChildAtPosition(scrollbar, Anchor::Right, {-3.f, 0});
 
   this->scrollLayer = scroll;
 

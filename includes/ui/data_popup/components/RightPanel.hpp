@@ -3,9 +3,8 @@
 using namespace geode::prelude;
 
 class RightPanel : public CCNode {
-  Label* messageLabel = nullptr;
-  CCNode* infoTextContainer = nullptr;
-  CCScale9Sprite* infoRegion = nullptr;
+  std::string selectedLevelID;
+  Label* infoLabel = nullptr;
 
 protected:
   bool init(float width, float controlHeight, float infoHeight, float gap);
