@@ -22,7 +22,7 @@ bool DCPDataPopup::init() {
     return false;
   }
 
-  setID("data-viewer"_spr);
+  setID("data-viewer");
   setTitle("Run Counter Data Viewer");
 
   addContent();

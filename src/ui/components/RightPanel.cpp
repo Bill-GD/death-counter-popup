@@ -15,7 +15,6 @@ RightPanel* RightPanel::create(const float width, const float controlHeight, con
 
 bool RightPanel::init(float width, float controlHeight, float infoHeight, float gap) {
   if (!CCNode::init()) return false;
-  setID("right-panel"_spr);
   setContentSize({width, infoHeight + gap + controlHeight});
 
   const auto controlRegion = CCScale9Sprite::create("GJ_square05.png");
@@ -85,7 +84,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   infoContainer->setAnchorPoint({0.5f, 0.5f});
 
   m_infoLabel = Label::create("", "bigFont.fnt");
-  m_infoLabel->setID("level-info-label"_spr);
+  m_infoLabel->setID("level-info-label");
   m_infoLabel->setScale(0.4f);
   m_infoLabel->setAlignment(Label::Alignment::Left);
   m_infoLabel->setAnchorPoint({0.5f, 1.f});
