@@ -1,7 +1,7 @@
-#include "ui/data_popup/DCPDataPopup.hpp"
+#include "ui/DCPDataPopup.hpp"
 
-#include "ui/data_popup/components/LeftPanel.hpp"
-#include "ui/data_popup/components/RightPanel.hpp"
+#include "ui/components/LeftPanel.hpp"
+#include "ui/components/RightPanel.hpp"
 
 inline constexpr float LEFT_RATIO = 12.f / 5.f;
 inline constexpr float RIGHT_RATIO = 12.f / 7.f;

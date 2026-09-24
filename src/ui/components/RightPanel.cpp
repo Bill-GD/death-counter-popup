@@ -1,4 +1,4 @@
-#include "ui/data_popup/components/RightPanel.hpp"
+#include "ui/components/RightPanel.hpp"
 
 #include "handlers/SaveHandler.hpp"
 
