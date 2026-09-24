@@ -1,7 +1,7 @@
-#include "ui/data_popup/components/LeftPanel.hpp"
+#include "ui/components/LeftPanel.hpp"
 
 #include "handlers/SaveHandler.hpp"
-#include "ui/data_popup/components/LevelTile.hpp"
+#include "ui/components/LevelTile.hpp"
 #include "utils/FileUtils.hpp"
 
 LeftPanel* LeftPanel::create(const float width, const float controlHeight, const float listHeight, const float gap) {
