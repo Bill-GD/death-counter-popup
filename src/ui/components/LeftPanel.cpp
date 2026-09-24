@@ -36,6 +36,10 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
   listRegion->setContentSize({width, listHeight});
   listRegion->setAnchorPoint({0.5f, 0.f});
 
+  m_loadingSpinner = LoadingSpinner::create(controlHeight);
+  m_loadingSpinner->setVisible(false);
+  listRegion->addChildAtPosition(m_loadingSpinner, Anchor::Center);
+
   const auto scroll = ScrollLayer::create({width - 10.f, listHeight - 4.f});
   const auto scrollSize = scroll->getContentSize();
   scroll->m_contentLayer->setContentSize({scrollSize.width, scrollSize.height - 10.f});
@@ -73,6 +77,8 @@ void LeftPanel::onInputChanged(const std::string& value) {
 }
 
 void LeftPanel::loadLevelList() {
+  m_loadingSpinner->setVisible(true);
+
   const std::vector<std::filesystem::path> allLevelDirs = FileUtils::getAllDirectories(SaveHandler::PATH);
   const auto allLevelIDs = ranges::filter(
     ranges::map<std::vector<std::string>>(
@@ -92,6 +98,8 @@ void LeftPanel::loadLevelList() {
     }
   );
   m_filteredLevels = m_allLevels;
+
+  m_loadingSpinner->setVisible(false);
 }
 
 void LeftPanel::executeFiltering() {
