@@ -16,7 +16,6 @@ public:
 private:
   LeftPanel* m_leftPanel = nullptr;
   RightPanel* m_rightPanel = nullptr;
-  LoadingCircle* m_loadingCircle = nullptr;
 
   void addContent();
   void onLevelSelected(const std::string& levelID) const;

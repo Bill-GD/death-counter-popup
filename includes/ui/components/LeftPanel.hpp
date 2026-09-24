@@ -10,6 +10,7 @@ class LeftPanel : public CCNode {
   Label* m_countLabel = nullptr;
   std::string m_pendingFilterInput;
   std::function<void(std::string)> m_onSelectedCallback = nullptr;
+  LoadingSpinner* m_loadingSpinner = nullptr;
 
   void onInputChanged(const std::string& value);
 
