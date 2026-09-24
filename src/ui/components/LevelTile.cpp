@@ -63,11 +63,11 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
   );
   arrow->setRotation(180.f);
   arrow->setAnchorPoint({0.5f, 0.5f});
+  arrow->setUserObject(CCString::create(tileInfo.id));
+
   menu->setScale(0.55f);
   menu->addChildAtPosition(arrow, Anchor::Center);
   addChildAtPosition(menu, Anchor::Right, {-12.f, 0});
-
-  arrow->setUserObject(CCString::create(tileInfo.id));
 
   return true;
 }

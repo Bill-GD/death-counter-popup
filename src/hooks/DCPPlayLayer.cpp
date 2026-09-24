@@ -100,8 +100,8 @@ void DCPPlayLayer::spawnLabel(const std::string& labelStr) {
   log::info("Spawned label at ({}), {}°", m_fields->label->getPosition(), m_fields->label->getRotation());
 
   m_fields->label->runAction(getPopupSequence(true));
-  m_fields->label->getChildByID("run-label"_spr)->runAction(getPopupSequence(false));
-  m_fields->label->getChildByID("count-label"_spr)->runAction(getPopupSequence(false));
+  m_fields->label->getChildByID("run-label")->runAction(getPopupSequence(false));
+  m_fields->label->getChildByID("count-label")->runAction(getPopupSequence(false));
 }
 
 CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
@@ -115,7 +115,7 @@ CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
     deathKey,
     useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
   );
-  runLabel->setID("run-label"_spr);
+  runLabel->setID("run-label");
   runLabel->setOpacity(0.f);
   runLabel->setAnchorPoint({0.f, 0.f});
   runLabel->setScale(labelScale);
@@ -124,7 +124,7 @@ CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
     fmt::format("x{}", SaveHandler::deaths.at(deathKey).count),
     useGoldFont ? "goldFont.fnt" : "bigFont.fnt"
   );
-  countLabel->setID("count-label"_spr);
+  countLabel->setID("count-label");
   countLabel->setOpacity(0.f);
   countLabel->setAnchorPoint({0.f, 0.f});
   countLabel->setScale(labelScale * 0.7f);
@@ -150,7 +150,7 @@ CCNode* DCPPlayLayer::getPopupLabel(const std::string& deathKey) {
     }
   );
 
-  labelNode->setID("run-counter-label"_spr);
+  labelNode->setID("run-counter-label");
   labelNode->setPosition(Settings::getLabelPosition());
   labelNode->setRotation(static_cast<float>(Settings::getRotation()));
   labelNode->setScale(0.f);
@@ -226,11 +226,11 @@ void DCPPlayLayer::fetchBestLabel() {
   if (!Settings::bestPercentageShown() || !m_percentageLabel) return;
 
   if (
-    const auto bestLabelNode = getChildByID("best-percentage-label"_spr);
+    const auto bestLabelNode = getChildByID("best-percentage-label");
     !bestLabelNode
   ) {
     m_fields->bestLabel = CCLabelBMFont::create("", "bigFont.fnt");
-    m_fields->bestLabel->setID("best-percentage-label"_spr);
+    m_fields->bestLabel->setID("best-percentage-label");
     m_fields->bestLabel->setScale(m_percentageLabel->getScale());
     m_fields->bestLabel->setAnchorPoint({0.f, 0.5f});
     m_fields->bestLabel->setZOrder(m_percentageLabel->getZOrder());
