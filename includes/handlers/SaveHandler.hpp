@@ -6,21 +6,27 @@
 
 using namespace geode::prelude;
 
+enum class SavePathType {
+  DIR,
+  DATA,
+  INFO,
+  LINK,
+};
+
 class SaveHandler {
   static bool shouldLoad;
   static GJLevelType currentLevelType;
   static std::string currentLevelName;
   static std::string currentLevelID;
 
-  static std::filesystem::path getLevelDataPath(const std::string& levelID);
-  static std::filesystem::path getLinkInfoPath(const std::string& levelID);
-  static std::filesystem::path getLevelInfoPath(const std::string& levelID);
-  static bool isSaveExists(const std::string& levelID);
+  static std::filesystem::path getLevelPath(const std::string& levelID, SavePathType type);
+  static bool pathExists(const std::string& levelID, SavePathType type);
 
   static DeathCounter getSavedData(const std::string& levelID);
   static DeathCounter getLatestLinkedData();
 
   static LevelInfo getLevelInfo();
+  static void saveCurrentLevelInfo();
 
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels";
@@ -34,5 +40,5 @@ public:
   static void loadSaveData();
   static void saveData();
 
-  static LevelInfo getLevelInfo(const std::string& levelID);
+  static LevelInfo getLevelInfoFromFile(const std::string& levelID, bool log = true);
 };

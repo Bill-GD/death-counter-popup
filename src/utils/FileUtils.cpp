@@ -15,13 +15,13 @@ bool FileUtils::tryWrite(const std::filesystem::path& filePath, const matjson::V
   return tryWriteString(filePath, value.dump(matjson::NO_INDENTATION));
 }
 
-std::pair<bool, matjson::Value> FileUtils::tryRead(const std::filesystem::path& filePath) {
+std::pair<bool, matjson::Value> FileUtils::tryRead(const std::filesystem::path& filePath, const bool log) {
   for (int i = 0; i < 3; ++i) {
     auto res = file::readJson(filePath);
     if (res.isOk()) {
       return {true, res.unwrap()};
     }
-    log::warn("Read failed (attempt {}): {}", i + 1, res.unwrapErr());
+    if (log) log::warn("Read {} failed (attempt {}): {}", filePath.string(), i + 1, res.unwrapErr());
   }
   return {false, {}};
 }
@@ -32,7 +32,7 @@ std::pair<bool, std::string> FileUtils::tryReadString(const std::filesystem::pat
     if (res.isOk()) {
       return {true, res.unwrap()};
     }
-    log::warn("Read failed (attempt {}): {}", i + 1, res.unwrapErr());
+    log::warn("Read {} failed (attempt {}): {}", filePath.string(), i + 1, res.unwrapErr());
   }
   return {false, ""};
 }

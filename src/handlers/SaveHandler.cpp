@@ -19,11 +19,11 @@ bool SaveHandler::isLevelSet() {
 }
 
 bool SaveHandler::hasLinkedLevel(const std::string& levelID) {
-  return std::filesystem::exists(getLinkInfoPath(levelID));
+  return std::filesystem::exists(getLevelPath(levelID, SavePathType::LINK));
 }
 
 std::string SaveHandler::getLinkedLevel(const std::string& levelID) {
-  const auto [success, value] = FileUtils::tryReadString(getLinkInfoPath(levelID));
+  const auto [success, value] = FileUtils::tryReadString(getLevelPath(levelID, SavePathType::LINK));
   if (!success) return "";
   return value;
 }
@@ -35,20 +35,18 @@ void SaveHandler::setLevel(GJGameLevel* level) {
   currentLevelType = level->m_levelType;
 }
 
-std::filesystem::path SaveHandler::getLevelDataPath(const std::string& levelID) {
-  return PATH / levelID / "data";
+std::filesystem::path SaveHandler::getLevelPath(const std::string& levelID, const SavePathType type) {
+  switch (type) {
+    case SavePathType::DATA: return PATH / levelID / "data";
+    case SavePathType::INFO: return PATH / levelID / "info";
+    case SavePathType::LINK: return PATH / levelID / "link";
+    case SavePathType::DIR:
+    default: return PATH / levelID;
+  }
 }
 
-std::filesystem::path SaveHandler::getLinkInfoPath(const std::string& levelID) {
-  return PATH / levelID / "link";
-}
-
-std::filesystem::path SaveHandler::getLevelInfoPath(const std::string& levelID) {
-  return PATH / levelID / "info";
-}
-
-bool SaveHandler::isSaveExists(const std::string& levelID) {
-  return std::filesystem::exists(getLevelDataPath(levelID));
+bool SaveHandler::pathExists(const std::string& levelID, const SavePathType type) {
+  return std::filesystem::exists(getLevelPath(levelID, type));
 }
 
 /** @param runKey This key is the most precise variant */
@@ -81,12 +79,12 @@ void SaveHandler::incrementRun(const std::string& runKey) {
 }
 
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
-  if (!isSaveExists(levelID)) {
+  if (!pathExists(levelID, SavePathType::DATA)) {
     (void)file::createDirectory(PATH / levelID);
     return {};
   }
 
-  const auto [success, val] = FileUtils::tryRead(getLevelDataPath(levelID));
+  const auto [success, val] = FileUtils::tryRead(getLevelPath(levelID, SavePathType::DATA));
   if (!success) return {};
 
   return Utils::tryParse<DeathCounter>(val);
@@ -97,10 +95,10 @@ DeathCounter SaveHandler::getLatestLinkedData() {
 
   std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
   for (const auto& linkedLevelID : linkedLevels) {
-    if (!isSaveExists(linkedLevelID)) continue;
+    if (!pathExists(linkedLevelID, SavePathType::DATA)) continue;
     linkedLevelFiles.emplace_back(
       linkedLevelID,
-      std::filesystem::last_write_time(getLevelDataPath(linkedLevelID))
+      std::filesystem::last_write_time(getLevelPath(linkedLevelID, SavePathType::DATA))
     );
   }
 
@@ -128,6 +126,11 @@ LevelInfo SaveHandler::getLevelInfo() {
   };
 }
 
+void SaveHandler::saveCurrentLevelInfo() {
+  log::info("Saving info of level {}", currentLevelID);
+  FileUtils::tryWrite(getLevelPath(currentLevelID, SavePathType::INFO), matjson::Value(getLevelInfo()));
+}
+
 void SaveHandler::loadSaveData() {
   if (!shouldLoad) {
     log::info("This level was marked to not load, possibly platformer");
@@ -136,6 +139,7 @@ void SaveHandler::loadSaveData() {
   }
 
   log::info("Loading deaths for level '{}' (id={})", currentLevelName, currentLevelID);
+  saveCurrentLevelInfo();
 
   auto otherData = getLatestLinkedData();
   if (otherData.empty()) {
@@ -157,7 +161,6 @@ void SaveHandler::loadSaveData() {
     log::info("Updated save data");
     saveData();
   }
-  FileUtils::tryWrite(getLevelInfoPath(currentLevelID), matjson::Value(getLevelInfo(currentLevelID)));
 }
 
 void SaveHandler::saveData() {
@@ -166,9 +169,9 @@ void SaveHandler::saveData() {
     return;
   }
 
-  FileUtils::tryWrite(getLevelInfoPath(currentLevelID), matjson::Value(getLevelInfo()));
+  saveCurrentLevelInfo();
   if (
-    const auto success = FileUtils::tryWrite(getLevelDataPath(currentLevelID), matjson::Value(deaths));
+    const auto success = FileUtils::tryWrite(getLevelPath(currentLevelID, SavePathType::DATA), matjson::Value(deaths));
     !success
   ) {
     log::warn("Failed to save for level '{}' (id={})", currentLevelName, currentLevelID);
@@ -177,9 +180,12 @@ void SaveHandler::saveData() {
   log::info("Saved data for level '{}' (id={})", currentLevelName, currentLevelID);
 }
 
-LevelInfo SaveHandler::getLevelInfo(const std::string& levelID) {
-  const auto [success, value] = FileUtils::tryRead(getLevelInfoPath(levelID));
+LevelInfo SaveHandler::getLevelInfoFromFile(const std::string& levelID, const bool log) {
+  if (!pathExists(levelID, SavePathType::INFO)) return LevelInfo{"", "", ""};
+
+  const auto [success, value] = FileUtils::tryRead(getLevelPath(levelID, SavePathType::INFO), log);
   if (!success) return LevelInfo{"", "", ""};
+
   const auto [id, name, type] = Utils::tryParse<LevelInfo>(value);
   return LevelInfo{id, name, type};
 }

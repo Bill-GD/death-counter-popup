@@ -135,8 +135,9 @@ void RightPanel::onDeleteButtonClicked(CCObject* sender) {}
 
 
 void RightPanel::loadLevelInfo(std::string levelID) {
+  const auto [id, name, type] = SaveHandler::getLevelInfoFromFile(levelID);
+
   m_selectedLevelID = levelID;
-  const auto [id, name, type] = SaveHandler::getLevelInfo(levelID);
 
   std::string textContent;
   if (id.empty()) {

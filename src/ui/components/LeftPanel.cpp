@@ -93,7 +93,7 @@ void LeftPanel::loadLevelList() {
   m_allLevels = ranges::map<std::vector<std::pair<std::string, LevelInfo>>>(
     allLevelIDs,
     [](auto const& id) {
-      return std::pair{id, SaveHandler::getLevelInfo(id)};
+      return std::pair{id, SaveHandler::getLevelInfoFromFile(id, false)};
     }
   );
   m_filteredLevels = m_allLevels;
