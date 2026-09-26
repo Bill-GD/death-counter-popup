@@ -8,4 +8,5 @@ protected:
 
 public:
   static DCPLevelPopup* create(const GJGameLevel& level);
+  void load();
 };

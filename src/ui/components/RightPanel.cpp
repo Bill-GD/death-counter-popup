@@ -1,6 +1,8 @@
 #include "ui/components/RightPanel.hpp"
 
 #include "handlers/SaveHandler.hpp"
+#include "ui/DCPLevelPopup.hpp"
+#include "utils/LevelUtils.hpp"
 
 RightPanel* RightPanel::create(const float width, const float controlHeight, const float infoHeight, const float gap) {
   const auto ret = new RightPanel();
@@ -129,15 +131,25 @@ void RightPanel::onLinkingButtonClicked(CCObject* sender) {
   m_popupStatusLabel->setString(str.c_str());
 }
 
-void RightPanel::onStatButtonClicked(CCObject* sender) {}
+void RightPanel::onStatButtonClicked(CCObject*) {
+  if (m_selectedLevelID.empty()) return;
 
-void RightPanel::onDeleteButtonClicked(CCObject* sender) {}
+  const auto [_, gameLevel] = LevelUtils::getLevel(m_selectedLevelID, m_selectedLevelType);
+  const auto popup = DCPLevelPopup::create(*gameLevel);
+  popup->show();
+  popup->load();
+}
+
+void RightPanel::onDeleteButtonClicked(CCObject*) {}
 
 
 void RightPanel::loadLevelInfo(std::string levelID) {
   const auto [id, name, type] = SaveHandler::getLevelInfoFromFile(levelID);
 
   m_selectedLevelID = levelID;
+  if (!type.empty()) {
+    m_selectedLevelType = id.contains("local") ? GJLevelType::Main : LevelUtils::stringToLevelType(type);
+  }
 
   std::string textContent;
   if (id.empty()) {
