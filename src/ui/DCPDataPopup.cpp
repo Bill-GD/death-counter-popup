@@ -22,15 +22,9 @@ bool DCPDataPopup::init() {
     return false;
   }
 
-  setID("data-viewer");
+  setID("all-data-viewer");
   setTitle("Run Counter Data Viewer");
 
-  addContent();
-
-  return true;
-}
-
-void DCPDataPopup::addContent() {
   setAnchorPoint({0.5f, 0.5f});
 
   const auto contentSize = m_mainLayer->getScaledContentSize();
@@ -50,6 +44,8 @@ void DCPDataPopup::addContent() {
   m_mainLayer->addChildAtPosition(m_rightPanel, Anchor::Right, {-10.f, -5.f});
 
   m_mainLayer->updateLayout();
+
+  return true;
 }
 
 void DCPDataPopup::onLevelSelected(const std::string& levelID) const {
@@ -58,12 +54,9 @@ void DCPDataPopup::onLevelSelected(const std::string& levelID) const {
 }
 
 void DCPDataPopup::load() const {
-  // if (!m_leftPanel || !m_loadingCircle) return;
   if (!m_leftPanel) return;
 
-  // m_loadingCircle->setVisible(true);
   m_leftPanel->setOnSelectedCallback([this](const std::string& levelID) { onLevelSelected(levelID); });
   m_leftPanel->loadLevelList();
   m_leftPanel->displayLevelList();
-  // m_loadingCircle->setVisible(false);
 }
