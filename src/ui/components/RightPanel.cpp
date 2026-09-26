@@ -134,8 +134,7 @@ void RightPanel::onLinkingButtonClicked(CCObject* sender) {
 void RightPanel::onStatButtonClicked(CCObject*) {
   if (m_selectedLevelID.empty()) return;
 
-  const auto [_, gameLevel] = LevelUtils::getLevel(m_selectedLevelID, m_selectedLevelType);
-  const auto popup = DCPLevelPopup::create(*gameLevel);
+  const auto popup = DCPLevelPopup::create(m_selectedLevelID);
   popup->show();
   popup->load();
 }

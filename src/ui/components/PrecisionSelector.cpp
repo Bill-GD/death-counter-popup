@@ -4,7 +4,7 @@
 
 PrecisionSelector* PrecisionSelector::create(
   const CCSize& size,
-  const std::function<void(std::string const&)>& callback
+  const std::function<void(int const&)>& callback
 ) {
   const auto ret = new PrecisionSelector();
   if (ret->init(size, callback)) {
@@ -18,7 +18,7 @@ PrecisionSelector* PrecisionSelector::create(
 
 bool PrecisionSelector::init(
   const CCSize& size,
-  const std::function<void(std::string const&)>& callback
+  const std::function<void(int const&)>& callback
 ) {
   if (!CCNode::init()) {
     return false;
@@ -26,23 +26,22 @@ bool PrecisionSelector::init(
 
   m_values.reserve(Constants::MAX_PRECISION + 1);
   for (int i = 0; i <= Constants::MAX_PRECISION; ++i) {
-    m_values.push_back(std::to_string(i));
+    m_values.push_back(i);
   }
   m_callback = std::move(callback);
 
   setContentSize(size);
 
-  const auto leftSprite = CCSprite::createWithSpriteFrameName("navArrowBtn_001.png");
-  leftSprite->setScaleY(0.35f);
-  leftSprite->setScaleX(-0.35f);
+  const auto leftSprite = CCSprite::createWithSpriteFrameName("edit_leftBtn_001.png");
+  leftSprite->setScale(0.75f);
   const auto leftButton = CCMenuItemSpriteExtra::create(
     leftSprite,
     this,
     menu_selector(PrecisionSelector::onLeft)
   );
 
-  const auto rightSprite = CCSprite::createWithSpriteFrameName("navArrowBtn_001.png");
-  rightSprite->setScale(0.35);
+  const auto rightSprite = CCSprite::createWithSpriteFrameName("edit_rightBtn_001.png");
+  rightSprite->setScale(0.75f);
   const auto rightButton = CCMenuItemSpriteExtra::create(
     rightSprite,
     this,
@@ -50,7 +49,7 @@ bool PrecisionSelector::init(
   );
 
   m_label = CCLabelBMFont::create("", "bigFont.fnt");
-  m_label->setScale(0.55f);
+  m_label->setScale(0.6f);
   m_label->setAnchorPoint({0.5f, 0.5f});
 
   const auto menu = CCMenu::create();
@@ -88,6 +87,6 @@ void PrecisionSelector::onRight(CCObject*) {
 
 void PrecisionSelector::updateLabel() {
   const auto& value = m_values.at(m_index);
-  m_label->setString(value.c_str());
+  m_label->setString(std::to_string(value).c_str());
   m_callback(value);
 }
