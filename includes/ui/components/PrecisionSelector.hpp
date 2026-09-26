@@ -4,14 +4,14 @@ using namespace geode::prelude;
 
 class PrecisionSelector : public CCNode {
   CCLabelBMFont* m_label = nullptr;
-  std::function<void(std::string const&)> m_callback;
+  std::function<void(int const&)> m_callback;
 
-  std::vector<std::string> m_values;
+  std::vector<int> m_values;
   size_t m_index = 0;
 
   bool init(
     const CCSize& size,
-    const std::function<void(std::string const&)>& callback
+    const std::function<void(int const&)>& callback
   );
 
   void onLeft(CCObject*);
@@ -21,6 +21,6 @@ class PrecisionSelector : public CCNode {
 public:
   static PrecisionSelector* create(
     const CCSize& size,
-    const std::function<void(std::string const&)>& callback
+    const std::function<void(int const&)>& callback
   );
 };

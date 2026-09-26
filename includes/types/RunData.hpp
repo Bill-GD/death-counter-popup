@@ -1,7 +1,5 @@
 #pragma once
 
-#include "utils/Utils.hpp"
-
 using namespace geode::prelude;
 
 struct RunData {

@@ -16,3 +16,10 @@ struct LevelIDParseResult {
   bool isDaily;
   bool isGauntlet;
 };
+
+struct KeyedRunData {
+  std::string run;
+  int count = 0;
+  int precision = 0;
+  std::string parent;
+};
