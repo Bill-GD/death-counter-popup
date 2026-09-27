@@ -50,7 +50,6 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
 
   textClip->addChildAtPosition(nameLabel, Anchor::Left, {0, 5.f});
   textClip->addChildAtPosition(idLabel, Anchor::Left, {0, -5.f});
-  addChildAtPosition(textClip, Anchor::Left, {10.f, 0});
 
   const auto menu = CCMenu::create();
   menu->setContentSize({getContentWidth() * 0.25f, getContentHeight()});
@@ -59,7 +58,7 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
   const auto arrow = CCMenuItemSpriteExtra::create(
     CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png"),
     this,
-    menu_selector(LevelTile::onTileClicked)
+    menu_selector(LevelTile::onLevelSelected)
   );
   arrow->setRotation(180.f);
   arrow->setAnchorPoint({0.5f, 0.5f});
@@ -67,13 +66,15 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
 
   menu->setScale(0.55f);
   menu->addChildAtPosition(arrow, Anchor::Center);
+
+  addChildAtPosition(textClip, Anchor::Left, {10.f, 0});
   addChildAtPosition(menu, Anchor::Right, {-12.f, 0});
 
   return true;
 }
 
-void LevelTile::onTileClicked(CCObject* sender) const {
-  const auto tile = typeinfo_cast<CCMenuItemSpriteExtra*>(sender);
-  const auto levelID = typeinfo_cast<CCString*>(tile->getUserObject())->getCString();
+void LevelTile::onLevelSelected(CCObject* sender) const {
+  const auto tile = static_cast<CCMenuItemSpriteExtra*>(sender);
+  const auto levelID = static_cast<CCString*>(tile->getUserObject())->getCString();
   if (m_onLevelSelected) m_onLevelSelected(levelID);
 }

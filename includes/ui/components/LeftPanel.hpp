@@ -8,7 +8,7 @@ class LeftPanel : public CCNode {
   std::vector<std::pair<std::string, LevelInfo>> m_filteredLevels = {};
   ScrollLayer* m_scrollLayer = nullptr;
   Label* m_countLabel = nullptr;
-  std::string m_pendingFilterInput;
+  std::string m_filterInput;
   std::function<void(std::string)> m_onSelectedCallback = nullptr;
   LoadingSpinner* m_loadingSpinner = nullptr;
 

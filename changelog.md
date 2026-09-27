@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Add UI for viewing saved level data.
+- Add button to open the UI to level screens: level info, editor level info, pause menu. Can enable/disable in settings.
+- Some code reorganization for UI stuff.
+
 ## 1.1.4
 
 - Block saving & loading for platformer levels

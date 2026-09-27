@@ -16,7 +16,7 @@ class PrecisionSelector : public CCNode {
 
   void onLeft(CCObject*);
   void onRight(CCObject*);
-  void updateLabel();
+  void updateLabel() const;
 
 public:
   static PrecisionSelector* create(

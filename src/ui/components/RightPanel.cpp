@@ -19,15 +19,13 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   if (!CCNode::init()) return false;
   setContentSize({width, infoHeight + gap + controlHeight});
 
-  const auto controlRegion = CCScale9Sprite::create("GJ_square05.png");
-  controlRegion->setContentSize({width, controlHeight});
-  controlRegion->setAnchorPoint({0.5f, 1.f});
+  const auto controlArea = CCScale9Sprite::create("GJ_square05.png");
+  controlArea->setContentSize({width, controlHeight});
+  controlArea->setAnchorPoint({0.5f, 1.f});
 
   const auto controlMenu = CCMenu::create();
-  const auto controlLayout = RowLayout::create();
-  controlLayout->setAxisAlignment(AxisAlignment::Even);
-  controlMenu->setID("control-menu"_spr);
-  controlMenu->setLayout(controlLayout);
+  controlMenu->setID("level-control-menu");
+  controlMenu->setLayout(RowLayout::create()->setAxisAlignment(AxisAlignment::Even));
   controlMenu->setContentSize({width, controlHeight});
 
   const auto buttonHeight = controlHeight - 10.f;
@@ -55,7 +53,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   m_linkingButton->toggle(false);
 
   const auto loadCurrentText = Label::create("ID", "bigFont.fnt");
-  loadCurrentText->setScale(0.6f);
+  loadCurrentText->setScale(0.7f);
   const auto loadCurrentSprite = CCSprite::createWithSpriteFrameName("GJ_plainBtn_001.png");
   loadCurrentSprite->setScale(buttonHeight / loadCurrentSprite->getContentHeight());
   loadCurrentSprite->addChildAtPosition(loadCurrentText, Anchor::Center);
@@ -91,11 +89,11 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   controlMenu->addChild(deleteButton);
   controlMenu->updateLayout();
 
-  controlRegion->addChildAtPosition(controlMenu, Anchor::Center);
+  controlArea->addChildAtPosition(controlMenu, Anchor::Center);
 
-  const auto infoRegion = CCScale9Sprite::create("GJ_square05.png");
-  infoRegion->setContentSize({width, infoHeight});
-  infoRegion->setAnchorPoint({0.5f, 0.f});
+  const auto infoArea = CCScale9Sprite::create("GJ_square05.png");
+  infoArea->setContentSize({width, infoHeight});
+  infoArea->setAnchorPoint({0.5f, 0.f});
 
   const auto infoContainer = CCNode::create();
   infoContainer->setContentSize({width * 0.9f, infoHeight * 0.85f});
@@ -106,13 +104,13 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   m_infoLabel->setScale(0.4f);
   m_infoLabel->setAlignment(Label::Alignment::Left);
   m_infoLabel->setAnchorPoint({0.5f, 1.f});
+
   infoContainer->addChildAtPosition(m_infoLabel, Anchor::Top);
 
   m_popupStatusLabel = Label::create("", "bigFont.fnt");
   m_popupStatusLabel->setID("popup-status-label");
   m_popupStatusLabel->setScale(0.5f);
   m_popupStatusLabel->setAnchorPoint({0.5f, 1.f});
-  infoRegion->addChildAtPosition(m_popupStatusLabel, Anchor::BottomRight, {-width * (6.f / 7.f), -4.f});
 
   const auto infoMenu = CCMenu::create();
   const auto infoButton = InfoAlertButton::create(
@@ -121,18 +119,20 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
     1.f
   );
   infoMenu->addChild(infoButton);
-  infoRegion->addChildAtPosition(infoMenu, Anchor::TopRight);
-  infoRegion->addChildAtPosition(infoContainer, Anchor::Center);
 
-  addChildAtPosition(controlRegion, Anchor::Top);
-  addChildAtPosition(infoRegion, Anchor::Bottom);
+  infoArea->addChildAtPosition(infoMenu, Anchor::TopRight);
+  infoArea->addChildAtPosition(infoContainer, Anchor::Center);
+  infoArea->addChildAtPosition(m_popupStatusLabel, Anchor::BottomRight, {-width * (6.f / 7.f), -4.f});
+
+  addChildAtPosition(controlArea, Anchor::Top);
+  addChildAtPosition(infoArea, Anchor::Bottom);
   return true;
 }
 
 void RightPanel::onPlayButtonClicked(CCObject* sender) {}
 
 void RightPanel::onLinkingButtonClicked(CCObject* sender) {
-  const auto toggle = typeinfo_cast<CCMenuItemToggler*>(sender);
+  const auto toggle = static_cast<CCMenuItemToggler*>(sender);
   const bool wasEnabled = toggle->isToggled(); // state is before
 
   if (!wasEnabled && m_selectedLevelID.empty()) {

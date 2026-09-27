@@ -6,7 +6,7 @@ using namespace geode::prelude;
 class LevelTile : public CCNode {
   std::function<void(std::string)> m_onLevelSelected;
 
-  void onTileClicked(CCObject* sender) const;
+  void onLevelSelected(CCObject* sender) const;
 
 protected:
   bool init(LevelTileInfo tileInfo, const CCSize& size, std::function<void(std::string)> onSelected);

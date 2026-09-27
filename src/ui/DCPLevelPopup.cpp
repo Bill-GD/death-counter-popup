@@ -33,19 +33,18 @@ bool DCPLevelPopup::init(const std::string& levelID) {
   filterArea->setContentSize({displayWidth, selectorHeight});
   filterArea->setAnchorPoint({0.5f, 1.f});
 
-  const auto precisionInput = CCNode::create();
-  precisionInput->setContentSize({displayWidth / 2.4f, selectorHeight});
-  precisionInput->setAnchorPoint({0.f, 0.5f});
+  const auto precisionInputMenu = CCNode::create();
+  precisionInputMenu->setContentSize({displayWidth / 2.4f, selectorHeight});
+  precisionInputMenu->setAnchorPoint({0.f, 0.5f});
 
   const auto precisionInputLabel = CCLabelBMFont::create("Precision", "bigFont.fnt");
   precisionInputLabel->setScale(0.5f);
   precisionInputLabel->setAnchorPoint({0.f, 0.5f});
-  precisionInput->addChildAtPosition(precisionInputLabel, Anchor::Left);
 
   const auto precisionSelector = PrecisionSelector::create(
     {displayWidth * 0.15f, selectorHeight},
     [this](const int value) {
-      m_pendingPrecisionFilter = value;
+      m_precisionFilter = value;
 
       stopActionByTag(12346);
       const auto delaySequence = CCSequence::createWithTwoActions(
@@ -57,17 +56,17 @@ bool DCPLevelPopup::init(const std::string& levelID) {
     }
   );
   precisionSelector->setAnchorPoint({1.f, 0.5f});
-  precisionInput->addChildAtPosition(precisionSelector, Anchor::Right);
-  filterArea->addChildAtPosition(precisionInput, Anchor::Left);
 
-  const auto fromZeroInput = CCMenu::create();
-  fromZeroInput->setContentSize({displayWidth / 2.6f, selectorHeight});
-  fromZeroInput->setAnchorPoint({1.f, 0.5f});
+  precisionInputMenu->addChildAtPosition(precisionInputLabel, Anchor::Left);
+  precisionInputMenu->addChildAtPosition(precisionSelector, Anchor::Right);
+
+  const auto fromZeroInputMenu = CCMenu::create();
+  fromZeroInputMenu->setContentSize({displayWidth / 2.6f, selectorHeight});
+  fromZeroInputMenu->setAnchorPoint({1.f, 0.5f});
 
   const auto fromZeroLabel = CCLabelBMFont::create("From Zero", "bigFont.fnt");
   fromZeroLabel->setScale(0.5f);
   fromZeroLabel->setAnchorPoint({1.f, 0.5f});
-  fromZeroInput->addChildAtPosition(fromZeroLabel, Anchor::Right);
 
   const auto fromZeroCheckbox = CCMenuItemToggler::createWithStandardSprites(
     this,
@@ -78,8 +77,12 @@ bool DCPLevelPopup::init(const std::string& levelID) {
   fromZeroCheckbox->setAnchorPoint({0.f, 0.5f});
   fromZeroCheckbox->setScale(0.9f);
   fromZeroCheckbox->toggle(true);
-  fromZeroInput->addChildAtPosition(fromZeroCheckbox, Anchor::Left);
-  filterArea->addChildAtPosition(fromZeroInput, Anchor::Right);
+
+  fromZeroInputMenu->addChildAtPosition(fromZeroLabel, Anchor::Right);
+  fromZeroInputMenu->addChildAtPosition(fromZeroCheckbox, Anchor::Left);
+
+  filterArea->addChildAtPosition(precisionInputMenu, Anchor::Left);
+  filterArea->addChildAtPosition(fromZeroInputMenu, Anchor::Right);
 
   const auto dataArea = CCScale9Sprite::create("GJ_square05.png");
   dataArea->setID("run-data-display");
@@ -110,8 +113,8 @@ For anything other than the run precision, just use Death Tracker, that one is m
     1.f
   );
   infoMenu->addChild(infoButton);
-  m_mainLayer->addChildAtPosition(infoMenu, Anchor::TopRight);
 
+  m_mainLayer->addChildAtPosition(infoMenu, Anchor::TopRight);
   m_mainLayer->addChildAtPosition(filterArea, Anchor::Top, {0.f, -35.f});
   m_mainLayer->addChildAtPosition(dataArea, Anchor::Bottom, {0.f, 20.f});
   m_scrollLayer = scroll;
@@ -138,6 +141,7 @@ void DCPLevelPopup::load() {
 
   const auto [_, name, __] = SaveHandler::getLevelInfoFromFile(m_levelID, false);
   setTitle(fmt::format("Run Counter ({})", name));
+  log::info("Loaded run data of {} ({})", m_levelID, name);
 
   filterRuns();
   displayData();
@@ -147,7 +151,7 @@ void DCPLevelPopup::onCheckbox(CCObject* sender) {
   const auto checkbox = static_cast<CCMenuItemToggler*>(sender);
 
   const bool wasChecked = checkbox->isToggled();
-  m_pendingFromZeroFilter = !wasChecked;
+  m_fromZeroFilter = !wasChecked;
   filterRuns();
   displayData();
 }
@@ -158,16 +162,17 @@ void DCPLevelPopup::onPrecisionChanged() {
 }
 
 void DCPLevelPopup::filterRuns() {
+  log::info("Filtering run data: precision={}, fromZero={}", m_precisionFilter, m_fromZeroFilter);
   m_filteredRunData = ranges::filter(
     m_runData,
     [this](const auto& el) {
       const auto isFromZero = !el.run.contains('-') || el.run.starts_with('-');
-      return el.precision == m_pendingPrecisionFilter && isFromZero == m_pendingFromZeroFilter;
+      return el.precision == m_precisionFilter && isFromZero == m_fromZeroFilter;
     }
   );
 }
 
-void DCPLevelPopup::displayData() {
+void DCPLevelPopup::displayData() const {
   m_scrollLayer->m_contentLayer->removeAllChildren();
 
   for (auto const& runData : m_filteredRunData) {

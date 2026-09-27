@@ -85,7 +85,7 @@ void PrecisionSelector::onRight(CCObject*) {
   updateLabel();
 }
 
-void PrecisionSelector::updateLabel() {
+void PrecisionSelector::updateLabel() const {
   const auto& value = m_values.at(m_index);
   m_label->setString(std::to_string(value).c_str());
   m_callback(value);

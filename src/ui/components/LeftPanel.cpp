@@ -30,14 +30,13 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
   m_countLabel->setScale(0.35f);
   m_countLabel->setAnchorPoint({0.5f, 0.5f});
 
-  const auto listRegion = CCScale9Sprite::create("GJ_square05.png");
-  listRegion->setID("level-list");
-  listRegion->setContentSize({width, listHeight});
-  listRegion->setAnchorPoint({0.5f, 0.f});
+  const auto listArea = CCScale9Sprite::create("GJ_square05.png");
+  listArea->setID("level-list");
+  listArea->setContentSize({width, listHeight});
+  listArea->setAnchorPoint({0.5f, 0.f});
 
   m_loadingSpinner = LoadingSpinner::create(controlHeight);
   m_loadingSpinner->setVisible(false);
-  listRegion->addChildAtPosition(m_loadingSpinner, Anchor::Center);
 
   const auto scroll = ScrollLayer::create({width - 10.f, listHeight - 4.f});
   const auto scrollSize = scroll->getContentSize();
@@ -48,23 +47,24 @@ bool LeftPanel::init(float width, float controlHeight, float listHeight, float g
   scrollbar->setAnchorPoint({1.f, 0.5f});
   scrollbar->setContentSize({4.f, listHeight});
 
-  listRegion->addChildAtPosition(
+  listArea->addChildAtPosition(
     scroll,
     Anchor::Center,
     -scrollSize / 2.f - CCSize{2.f, 0}
   );
-  listRegion->addChildAtPosition(scrollbar, Anchor::Right, {-3.f, 0});
+  listArea->addChildAtPosition(scrollbar, Anchor::Right, {-3.f, 0});
+  listArea->addChildAtPosition(m_loadingSpinner, Anchor::Center);
 
   m_scrollLayer = scroll;
 
   addChildAtPosition(textInput, Anchor::Top);
   addChildAtPosition(m_countLabel, Anchor::Top, {0.f, -(controlHeight + gap / 2.f)});
-  addChildAtPosition(listRegion, Anchor::Bottom);
+  addChildAtPosition(listArea, Anchor::Bottom);
   return true;
 }
 
 void LeftPanel::onInputChanged(const std::string& value) {
-  m_pendingFilterInput = value;
+  m_filterInput = value;
 
   stopActionByTag(12345);
   const auto delaySequence = CCSequence::createWithTwoActions(
@@ -99,18 +99,20 @@ void LeftPanel::loadLevelList() {
   m_filteredLevels = m_allLevels;
 
   m_loadingSpinner->setVisible(false);
+  log::info("Loaded {} levels", m_filteredLevels.size());
 }
 
 void LeftPanel::executeFiltering() {
-  if (m_pendingFilterInput.empty()) {
+  if (m_filterInput.empty()) {
     m_filteredLevels = m_allLevels;
   } else {
-    filterLevels(m_pendingFilterInput);
+    filterLevels(m_filterInput);
   }
   displayLevelList();
 }
 
 void LeftPanel::filterLevels(const std::string& input) {
+  log::info("Filtering levels: input={}", m_filterInput);
   m_filteredLevels = ranges::filter(
     m_allLevels,
     [input](auto const& level) {

@@ -6,16 +6,15 @@
 using namespace geode::prelude;
 
 class DCPDataPopup : public Popup {
+  LeftPanel* m_leftPanel = nullptr;
+  RightPanel* m_rightPanel = nullptr;
+
+  void onLevelSelected(const std::string& levelID) const;
+
 protected:
   bool init() override;
 
 public:
   static DCPDataPopup* create();
   void load() const;
-
-private:
-  LeftPanel* m_leftPanel = nullptr;
-  RightPanel* m_rightPanel = nullptr;
-
-  void onLevelSelected(const std::string& levelID) const;
 };
