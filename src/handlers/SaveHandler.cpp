@@ -14,6 +14,10 @@ std::string SaveHandler::currentLevelName{};
 GJLevelType SaveHandler::currentLevelType{};
 DeathCounter SaveHandler::deaths{};
 
+const std::string& SaveHandler::getCurrentLevelID() {
+  return currentLevelID;
+}
+
 bool SaveHandler::isLevelSet() {
   return !currentLevelID.empty();
 }

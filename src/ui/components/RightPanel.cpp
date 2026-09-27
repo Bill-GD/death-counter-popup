@@ -54,6 +54,18 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   m_linkingButton->setContentSize({buttonHeight, buttonHeight});
   m_linkingButton->toggle(false);
 
+  const auto loadCurrentText = Label::create("ID", "bigFont.fnt");
+  loadCurrentText->setScale(0.6f);
+  const auto loadCurrentSprite = CCSprite::createWithSpriteFrameName("GJ_plainBtn_001.png");
+  loadCurrentSprite->setScale(buttonHeight / loadCurrentSprite->getContentHeight());
+  loadCurrentSprite->addChildAtPosition(loadCurrentText, Anchor::Center);
+  const auto loadCurrentButton = CCMenuItemSpriteExtra::create(
+    loadCurrentSprite,
+    this,
+    menu_selector(RightPanel::onLoadCurrentButtonClicked)
+  );
+  loadCurrentButton->setContentSize({buttonHeight, buttonHeight});
+
   const auto statSprite = CCSprite::createWithSpriteFrameName("GJ_statsBtn_001.png");
   statSprite->setScale(buttonHeight / statSprite->getContentHeight());
   const auto statButton = CCMenuItemSpriteExtra::create(
@@ -74,6 +86,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
 
   controlMenu->addChild(playButton);
   controlMenu->addChild(m_linkingButton);
+  controlMenu->addChild(loadCurrentButton);
   controlMenu->addChild(statButton);
   controlMenu->addChild(deleteButton);
   controlMenu->updateLayout();
@@ -119,7 +132,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
 void RightPanel::onPlayButtonClicked(CCObject* sender) {}
 
 void RightPanel::onLinkingButtonClicked(CCObject* sender) {
-  const auto toggle = static_cast<CCMenuItemToggler*>(sender);
+  const auto toggle = typeinfo_cast<CCMenuItemToggler*>(sender);
   const bool wasEnabled = toggle->isToggled(); // state is before
 
   if (!wasEnabled && m_selectedLevelID.empty()) {
@@ -129,6 +142,11 @@ void RightPanel::onLinkingButtonClicked(CCObject* sender) {
 
   const auto str = wasEnabled ? "" : fmt::format("Linking level: {}", m_selectedLevelID);
   m_popupStatusLabel->setString(str.c_str());
+}
+
+void RightPanel::onLoadCurrentButtonClicked(CCObject*) {
+  if (!SaveHandler::isLevelSet()) return;
+  loadLevelInfo(SaveHandler::getCurrentLevelID());
 }
 
 void RightPanel::onStatButtonClicked(CCObject*) {
