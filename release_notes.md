@@ -3,7 +3,27 @@
     - Left side: ID list
     - Right side: general saved info
   - Level viewer popup (view runs of level & link)
-    - N/A
-- Add type `LevelInfo` struct with matjson serialization
-- `FileUtils`: new method to get all directories
+    - List of saved runs
+    - Filter runs by percentage precision & (not) from zero
+  - Add button to open data popup to level info, editor level info, pause menu (has setting option to toggle)
+- Update handlers:
+  - `SaveHandler`:
+    - Methods for geting path by file purpose (data, link, info, dir) & path exists checks
+    - Method for getting saved level info
+    - `getSavedData` is public
+    - Save level info on level load & save
+    - Public getter for current level ID
+  - `FileUtils`:
+    - Method to get all directories
+    - Option to not log file reading failure
+    - Add file path to file reading failure log message
+  - `LevelUtils`:
+    - Methods to parse level ID & get game level from ID
+- Add several types/structs: `LevelInfo` (matjson serialization), `LevelIDParseResult`, `LevelTileInfo`, `KeyedRunData`
 - Switch to `using` (was `typedef`)
+- Code cleanup & consistency:
+  - Remove all `this->`
+  - Imports use quote
+  - Add prefix `m_` to ui classes' fields
+  - Use `static_cast` for UI callbacks (was `typeinfo_cast`, but type is set & won't change)
+  - Add some log messages

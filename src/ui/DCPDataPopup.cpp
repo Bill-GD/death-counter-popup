@@ -37,12 +37,12 @@ bool DCPDataPopup::init() {
 
   m_leftPanel = LeftPanel::create(leftWidth, controlHeight, panelHeight, panelGap);
   m_leftPanel->setAnchorPoint({0.f, 0.5f});
-  m_mainLayer->addChildAtPosition(m_leftPanel, Anchor::Left, {10.f, -5.f});
 
   m_rightPanel = RightPanel::create(rightWidth, controlHeight, panelHeight, panelGap);
   m_rightPanel->setAnchorPoint({1.f, 0.5f});
-  m_mainLayer->addChildAtPosition(m_rightPanel, Anchor::Right, {-10.f, -5.f});
 
+  m_mainLayer->addChildAtPosition(m_leftPanel, Anchor::Left, {10.f, -5.f});
+  m_mainLayer->addChildAtPosition(m_rightPanel, Anchor::Right, {-10.f, -5.f});
   m_mainLayer->updateLayout();
 
   const auto infoMenu = CCMenu::create();

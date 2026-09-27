@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geode/Geode.hpp>
+#include "Geode/Geode.hpp"
 
 using namespace geode::prelude;
 
@@ -8,7 +8,7 @@ inline constexpr std::string_view POPUP_STYLE_ANIMATED = "animated";
 inline constexpr std::string_view POPUP_STYLE_FADE = "fade";
 inline constexpr std::string_view POPUP_STYLE_FLAT = "flat";
 
-#include <Geode/modify/PlayLayer.hpp>
+#include "Geode/modify/PlayLayer.hpp"
 class $modify(DCPPlayLayer, PlayLayer) {
   struct Fields {
     CCNode* label = nullptr;
