@@ -78,28 +78,34 @@ void LeftPanel::onInputChanged(const std::string& value) {
 void LeftPanel::loadLevelList() {
   m_loadingSpinner->setVisible(true);
 
-  const std::vector<std::filesystem::path> allLevelDirs = FileUtils::getAllDirectories(SaveHandler::PATH);
-  const auto allLevelIDs = ranges::filter(
-    ranges::map<std::vector<std::string>>(
-      allLevelDirs,
-      [](auto const& dir) {
-        return dir.stem().string();
-      }
-    ),
-    [](auto const& id) {
-      return id != "backups";
-    }
-  );
-  m_allLevels = ranges::map<std::vector<std::pair<std::string, LevelInfo>>>(
-    allLevelIDs,
-    [](auto const& id) {
-      return std::pair{id, SaveHandler::getLevelInfoFromFile(id, false)};
-    }
-  );
-  m_filteredLevels = m_allLevels;
+  std::thread(
+    [this] {
+      const auto allLevelDirs = FileUtils::getAllDirectories(SaveHandler::PATH);
+      const auto allLevelIDs = ranges::filter(
+        ranges::map<std::vector<std::string>>(
+          allLevelDirs,
+          [](auto const& dir) { return dir.filename().string(); }
+        ),
+        [](auto const& id) { return id != "backups"; }
+      );
+      auto loadedLevels = ranges::map<std::vector<std::pair<std::string, LevelInfo>>>(
+        allLevelIDs,
+        [](auto const& id) {
+          return std::pair{id, SaveHandler::getLevelInfoFromFile(id, false)};
+        }
+      );
 
-  m_loadingSpinner->setVisible(false);
-  log::info("Loaded {} levels", m_filteredLevels.size());
+      Loader::get()->queueInMainThread(
+        [this, data = std::move(loadedLevels)]() mutable {
+          m_allLevels = std::move(data);
+          m_filteredLevels = m_allLevels;
+          m_loadingSpinner->setVisible(false);
+          displayLevelList();
+          log::info("Loaded {} levels", m_filteredLevels.size());
+        }
+      );
+    }
+  ).detach();
 }
 
 void LeftPanel::executeFiltering() {
@@ -142,5 +148,5 @@ void LeftPanel::displayLevelList() const {
   m_scrollLayer->scrollToTop();
 
   const auto levelCount = m_filteredLevels.size();
-  m_countLabel->setString(fmt::format("{} level{}", levelCount, levelCount > 1 ? "s" : "").c_str());
+  m_countLabel->setString(fmt::format("{} level{}", levelCount, levelCount == 1 ? "" : "s").c_str());
 }

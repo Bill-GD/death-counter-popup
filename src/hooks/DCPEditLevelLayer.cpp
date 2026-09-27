@@ -21,6 +21,7 @@ bool DCPEditLevelLayer::init(GJGameLevel* level) {
     const auto dtButton = infoButtonMenu->getChildByID("dt-skull-button");
     const auto infoButton = infoButtonMenu->getChildByID("info-button");
     const auto settingsButton = infoButtonMenu->getChildByID("settings-button");
+    if (!infoButton || !settingsButton) return true;
 
     const auto dcpButton = DCPDataViewerButton::create(0.75f);
     infoButtonMenu->addChild(dcpButton);

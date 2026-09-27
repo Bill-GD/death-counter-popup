@@ -7,7 +7,6 @@ class RightPanel : public CCNode {
   Label* m_infoLabel = nullptr;
   Label* m_popupStatusLabel = nullptr;
   std::string m_selectedLevelID;
-  GJLevelType m_selectedLevelType = GJLevelType::Default;
   bool m_isLinking = false;
 
   void onPlayButtonClicked(CCObject* sender);
