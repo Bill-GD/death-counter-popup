@@ -61,7 +61,7 @@ bool DCPLevelPopup::init(const std::string& levelID) {
   filterArea->addChildAtPosition(precisionInput, Anchor::Left);
 
   const auto fromZeroInput = CCMenu::create();
-  fromZeroInput->setContentSize({displayWidth / 2.5f, selectorHeight});
+  fromZeroInput->setContentSize({displayWidth / 2.6f, selectorHeight});
   fromZeroInput->setAnchorPoint({1.f, 0.5f});
 
   const auto fromZeroLabel = CCLabelBMFont::create("From Zero", "bigFont.fnt");
@@ -110,7 +110,7 @@ For anything other than the run precision, just use Death Tracker, that one is m
     1.f
   );
   infoMenu->addChild(infoButton);
-  addChildAtPosition(infoMenu, Anchor::TopRight);
+  m_mainLayer->addChildAtPosition(infoMenu, Anchor::TopRight);
 
   m_mainLayer->addChildAtPosition(filterArea, Anchor::Top, {0.f, -35.f});
   m_mainLayer->addChildAtPosition(dataArea, Anchor::Bottom, {0.f, 20.f});

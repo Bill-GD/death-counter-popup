@@ -31,6 +31,8 @@ public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels";
   static DeathCounter deaths;
 
+  static const std::string& getCurrentLevelID();
+
   static bool isLevelSet();
   static bool hasLinkedLevel(const std::string& levelID);
   static std::string getLinkedLevel(const std::string& levelID);
