@@ -25,7 +25,7 @@ bool LevelTile::init(LevelTileInfo tileInfo, const CCSize& size, std::function<v
   setContentSize(size);
 
   const auto textClip = CCClippingNode::create();
-  textClip->setContentWidth(getContentWidth() * 0.7f);
+  textClip->setContentSize({getContentWidth() * 0.7f, getContentHeight()});
   textClip->setAnchorPoint({0.f, 0.5f});
 
   const auto stencil = CCScale9Sprite::create("geode.loader/GE_square01.png");

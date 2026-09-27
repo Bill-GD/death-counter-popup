@@ -190,6 +190,5 @@ LevelInfo SaveHandler::getLevelInfoFromFile(const std::string& levelID, const bo
   const auto [success, value] = FileUtils::tryRead(getLevelPath(levelID, SavePathType::INFO), log);
   if (!success) return LevelInfo{"", "", ""};
 
-  const auto [id, name, type] = Utils::tryParse<LevelInfo>(value);
-  return LevelInfo{id, name, type};
+  return Utils::tryParse<LevelInfo>(value);
 }

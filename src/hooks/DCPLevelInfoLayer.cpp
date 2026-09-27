@@ -19,10 +19,13 @@ bool DCPLevelInfoLayer::init(GJGameLevel* level, bool challenge) {
   if (Settings::popupButtonShown()) {
     const auto otherMenu = getChildByID("other-menu");
     const auto settingsMenu = getChildByID("settings-menu");
+    if (!otherMenu || !settingsMenu) return true;
 
     const auto dtButton = otherMenu->getChildByID("dt-skull-button");
     const auto favButton = otherMenu->getChildByID("favorite-button");
     const auto settingsButton = settingsMenu->getChildByID("settings-button");
+
+    if (!favButton || !settingsButton) return true;
 
     const auto dcpButton = DCPDataViewerButton::create(0.75f);
     otherMenu->addChild(dcpButton);

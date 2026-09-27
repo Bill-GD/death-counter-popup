@@ -72,5 +72,4 @@ void DCPDataPopup::load() const {
 
   m_leftPanel->setOnSelectedCallback([this](const std::string& levelID) { onLevelSelected(levelID); });
   m_leftPanel->loadLevelList();
-  m_leftPanel->displayLevelList();
 }

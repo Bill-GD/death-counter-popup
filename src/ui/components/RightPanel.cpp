@@ -164,9 +164,6 @@ void RightPanel::loadLevelInfo(std::string levelID) {
   const auto [id, name, type] = SaveHandler::getLevelInfoFromFile(levelID);
 
   m_selectedLevelID = levelID;
-  if (!type.empty()) {
-    m_selectedLevelType = id.contains("local") ? GJLevelType::Main : LevelUtils::stringToLevelType(type);
-  }
 
   std::string textContent;
   if (id.empty()) {
