@@ -131,7 +131,13 @@
     "data-popup": {
       "type": "custom:dcp-setting-button",
       "name": "Show data popup",
-      "description": "Show menu for managing/viewing all data saved"
+      "description": "Show popup for managing/viewing all data saved"
+    },
+    "show-popup-button": {
+      "type": "bool",
+      "name": "Add Button for Data Popup",
+      "description": "Add button to open data popup to level info, editor level, pause screen.",
+      "default": false
     },
     "extra-title": {
       "type": "title",
