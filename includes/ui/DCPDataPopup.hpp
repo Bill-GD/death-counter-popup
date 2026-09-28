@@ -10,6 +10,7 @@ class DCPDataPopup : public Popup {
   RightPanel* m_rightPanel = nullptr;
 
   void onLevelSelected(const std::string& levelID) const;
+  void onReload(CCObject*);
 
 protected:
   bool init() override;

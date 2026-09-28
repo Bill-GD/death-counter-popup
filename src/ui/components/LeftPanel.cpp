@@ -99,7 +99,7 @@ void LeftPanel::loadLevelList() {
       Loader::get()->queueInMainThread(
         [this, data = std::move(loadedLevels)]() mutable {
           m_allLevels = std::move(data);
-          m_filteredLevels = m_allLevels;
+          filterLevels(m_filterInput);
           m_loadingSpinner->setVisible(false);
           displayLevelList();
           log::info("Loaded {} levels", m_filteredLevels.size());
@@ -110,15 +110,16 @@ void LeftPanel::loadLevelList() {
 }
 
 void LeftPanel::executeFiltering() {
-  if (m_filterInput.empty()) {
-    m_filteredLevels = m_allLevels;
-  } else {
-    filterLevels(m_filterInput);
-  }
+  filterLevels(m_filterInput);
   displayLevelList();
 }
 
 void LeftPanel::filterLevels(const std::string& input) {
+  if (m_filterInput.empty()) {
+    m_filteredLevels = m_allLevels;
+    return;
+  }
+
   log::info("Filtering levels: input={}", m_filterInput);
   m_filteredLevels = ranges::filter(
     m_allLevels,
