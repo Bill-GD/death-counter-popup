@@ -144,7 +144,7 @@ void RightPanel::onPlayButtonClicked(CCObject*) {
   CCScene* scene;
   switch (levelType) {
     case GJLevelType::Main: {
-      scene = LevelSelectLayer::scene(id - 1);
+      scene = LevelSelectLayer::scene(std::max(id - 1, 0));
       Notification::create("Remember: play once to update info.")->show();
       break;
     }
@@ -168,10 +168,7 @@ void RightPanel::onLinkingButtonClicked(CCObject* sender) {
   const auto toggle = static_cast<CCMenuItemToggler*>(sender);
   const bool wasEnabled = toggle->isToggled(); // state is before
 
-  if (!wasEnabled && m_selectedLevelID.empty()) {
-    Notification::create("Select a level", NotificationIcon::Info)->show();
-    return;
-  }
+  if (!wasEnabled && m_selectedLevelID.empty()) return;
 
   const auto str = wasEnabled ? "" : fmt::format("Linking level: {}", m_selectedLevelID);
   m_popupStatusLabel->setString(str.c_str());
@@ -198,20 +195,21 @@ void RightPanel::onDeleteButtonClicked(CCObject*) {
     fmt::format("Are you sure you want to delete\nsaved data of <cy>{}</c>?", m_selectedLevelID),
     "Cancel",
     "Delete",
-    [this](FLAlertLayer*, const bool confirmed) {
+    [this, selectedLevelID = m_selectedLevelID](FLAlertLayer*, const bool confirmed) {
       // confirmed is true when btn2 clicked
       if (!confirmed) return;
-      if (SaveHandler::deleteSavedData(m_selectedLevelID)) {
+      if (SaveHandler::deleteSavedData(selectedLevelID)) {
         Notification::create(
-          fmt::format("Deleted data of {}. Remember to reload.", m_selectedLevelID),
+          fmt::format("Deleted data of {}. Remember to reload.", selectedLevelID),
           NotificationIcon::Success
         )->show();
       } else {
         Notification::create(
-          fmt::format("Failed to delete data of {}", m_selectedLevelID),
+          fmt::format("Failed to delete data of {}", selectedLevelID),
           NotificationIcon::Error
         )->show();
       }
+      unloadLevelInfo();
     },
     true,
     true
@@ -220,8 +218,8 @@ void RightPanel::onDeleteButtonClicked(CCObject*) {
 
 void RightPanel::loadLevelInfo(std::string levelID) {
   m_selectedLevelID = levelID;
-  const auto [savedID, name, link] = SaveHandler::getLevelInfoFromFile(m_selectedLevelID);
   const auto [numID, levelType, _1, _2] = LevelUtils::parseLevelID(m_selectedLevelID);
+  const auto [savedID, name, link] = SaveHandler::getLevelInfoFromFile(m_selectedLevelID);
 
   std::string textContent;
   if (savedID.empty()) {

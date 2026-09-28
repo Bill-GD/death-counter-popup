@@ -53,8 +53,8 @@ bool DCPDataPopup::init() {
     "General Data Viewer",
     R"(Shows list of saved levels, can filter by name or ID (different from level ID).
 <cy>Play button</c>: open the level (only show the level selection for main levels).
-ID button: load the info for the current level (requires opening a level first).
 <cf>Link & unlink button</c>: link the data with another level.
+ID button: load the info for the current level (requires opening a level first).
 <cc>Stat button</c>: show saved data of selected level.
 <cr>Delete button</c>: delete the selected level saved data.)",
     1.f

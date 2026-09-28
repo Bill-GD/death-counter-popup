@@ -184,12 +184,20 @@ void SaveHandler::saveData() {
 }
 
 bool SaveHandler::deleteSavedData(const std::string& levelID) {
-  if (!pathExists(levelID, SavePathType::DIR)) return false;
+  if (levelID.empty() || !pathExists(levelID, SavePathType::DIR)) return false;
+
+  std::error_code ec;
   const auto path = getLevelPath(levelID, SavePathType::DIR);
-  const auto success = std::filesystem::remove_all(path) > 0;
-  if (success) log::info("Deleted saved data of {}", levelID);
-  else log::info("Failed to delete saved data of {}", levelID);
-  return success;
+  if (
+    const auto success = std::filesystem::remove_all(path, ec) > 0;
+    ec || !success
+  ) {
+    log::info("Failed to delete saved data of {}", levelID);
+    return false;
+  }
+
+  log::info("Deleted saved data of {}", levelID);
+  return true;
 }
 
 LevelInfoFromFileResult SaveHandler::getLevelInfoFromFile(const std::string& levelID, const bool shouldLog) {
@@ -201,6 +209,7 @@ LevelInfoFromFileResult SaveHandler::getLevelInfoFromFile(const std::string& lev
   if (!levelInfoSuccess) return LevelInfoFromFileResult{"", "", ""};
   const auto [id, name] = Utils::tryParse<LevelInfo>(levelInfoValue);
 
+  if (!pathExists(levelID, SavePathType::LINK)) return LevelInfoFromFileResult{id, name, ""};
   const auto [linkLevelSuccess, linkedLevelID] = FileUtils::tryReadString(
     getLevelPath(levelID, SavePathType::LINK), shouldLog
   );

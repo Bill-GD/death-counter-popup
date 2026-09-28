@@ -75,46 +75,50 @@ void LeftPanel::onInputChanged(const std::string& value) {
   runAction(delaySequence);
 }
 
-void LeftPanel::loadLevelList() {
-  m_loadingSpinner->setVisible(true);
-
-  std::thread(
-    [this] {
+arc::Future<LeftPanel::LoadedData> LeftPanel::fetchLevelsAsync() {
+  auto handle = runtime().spawnBlocking<LoadedData>(
+    [] {
       const auto allLevelDirs = FileUtils::getAllDirectories(SaveHandler::PATH);
       const auto allLevelIDs = ranges::filter(
         ranges::map<std::vector<std::string>>(
           allLevelDirs,
           [](auto const& dir) { return dir.filename().string(); }
         ),
-        [](auto const& id) { return id != "backups"; }
+        [](std::string const& id) { return !id.empty() && std::isdigit(id.at(0)); }
       );
-      auto loadedLevels = ranges::map<std::vector<std::pair<std::string, LevelInfo>>>(
+      return ranges::map<LoadedData>(
         allLevelIDs,
         [](auto const& id) {
           const auto [idStr, name, link] = SaveHandler::getLevelInfoFromFile(id, false);
           return std::pair{id, LevelInfo{idStr, name}};
         }
       );
-
-      Loader::get()->queueInMainThread(
-        [this, data = std::move(loadedLevels)]() mutable {
-          m_allLevels = std::move(data);
-          filterLevels(m_filterInput);
-          m_loadingSpinner->setVisible(false);
-          displayLevelList();
-          log::info("Loaded {} levels", m_filteredLevels.size());
-        }
-      );
     }
-  ).detach();
+  );
+  co_return co_await handle;
+}
+
+void LeftPanel::loadLevelList() {
+  m_loadingSpinner->setVisible(true);
+
+  m_taskHolder.spawn(
+    fetchLevelsAsync(),
+    [this](LoadedData data) {
+      m_allLevels = std::move(data);
+      filterLevels();
+      m_loadingSpinner->setVisible(false);
+      displayLevelList();
+      log::info("Loaded {} levels", m_filteredLevels.size());
+    }
+  );
 }
 
 void LeftPanel::executeFiltering() {
-  filterLevels(m_filterInput);
+  filterLevels();
   displayLevelList();
 }
 
-void LeftPanel::filterLevels(const std::string& input) {
+void LeftPanel::filterLevels() {
   if (m_filterInput.empty()) {
     m_filteredLevels = m_allLevels;
     return;
@@ -123,7 +127,7 @@ void LeftPanel::filterLevels(const std::string& input) {
   log::info("Filtering levels: input={}", m_filterInput);
   m_filteredLevels = ranges::filter(
     m_allLevels,
-    [input](auto const& level) {
+    [input = m_filterInput](auto const& level) {
       return string::toLower(level.first).contains(string::toLower(input))
         || string::toLower(level.second.name).contains(string::toLower(input));
     }
