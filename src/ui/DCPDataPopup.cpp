@@ -46,6 +46,9 @@ bool DCPDataPopup::init() {
   m_mainLayer->updateLayout();
 
   const auto infoMenu = CCMenu::create();
+  infoMenu->setAnchorPoint({0.5f, 0.5f});
+  infoMenu->setContentSize(contentSize);
+
   const auto infoButton = InfoAlertButton::create(
     "General Data Viewer",
     R"(Shows list of saved levels, can filter by name or ID (different from level ID).
@@ -56,8 +59,16 @@ ID button: load the info for the current level (requires opening a level first).
 <cr>Delete button</c>: delete the selected level saved data.)",
     1.f
   );
-  infoMenu->addChild(infoButton);
-  m_mainLayer->addChildAtPosition(infoMenu, Anchor::TopRight);
+
+  const auto reloadButton = CCMenuItemSpriteExtra::create(
+    CCSprite::createWithSpriteFrameName("GJ_getSongInfoBtn_001.png"),
+    this,
+    menu_selector(DCPDataPopup::onReload)
+  );
+
+  infoMenu->addChildAtPosition(infoButton, Anchor::TopRight);
+  infoMenu->addChildAtPosition(reloadButton, Anchor::BottomLeft);
+  m_mainLayer->addChildAtPosition(infoMenu, Anchor::Center);
 
   return true;
 }
@@ -65,6 +76,11 @@ ID button: load the info for the current level (requires opening a level first).
 void DCPDataPopup::onLevelSelected(const std::string& levelID) const {
   if (!m_rightPanel) return;
   m_rightPanel->loadLevelInfo(levelID);
+}
+
+void DCPDataPopup::onReload(CCObject*) {
+  m_rightPanel->unloadLevelInfo();
+  m_leftPanel->loadLevelList();
 }
 
 void DCPDataPopup::load() const {

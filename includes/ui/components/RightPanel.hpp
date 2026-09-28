@@ -21,4 +21,5 @@ protected:
 public:
   static RightPanel* create(float width, float controlHeight, float infoHeight, float gap);
   void loadLevelInfo(std::string levelID);
+  void unloadLevelInfo();
 };

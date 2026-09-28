@@ -202,9 +202,15 @@ void RightPanel::onDeleteButtonClicked(CCObject*) {
       // confirmed is true when btn2 clicked
       if (!confirmed) return;
       if (SaveHandler::deleteSavedData(m_selectedLevelID)) {
-        Notification::create(fmt::format("Deleted data of {}. Remember to reload.", m_selectedLevelID))->show();
+        Notification::create(
+          fmt::format("Deleted data of {}. Remember to reload.", m_selectedLevelID),
+          NotificationIcon::Success
+        )->show();
       } else {
-        Notification::create(fmt::format("Failed to delete data of {}", m_selectedLevelID))->show();
+        Notification::create(
+          fmt::format("Failed to delete data of {}", m_selectedLevelID),
+          NotificationIcon::Error
+        )->show();
       }
     },
     true,
@@ -235,4 +241,9 @@ Link: {}
   }
 
   m_infoLabel->setString(textContent.c_str());
+}
+
+void RightPanel::unloadLevelInfo() {
+  m_selectedLevelID = "";
+  m_infoLabel->setString("");
 }
