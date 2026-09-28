@@ -222,49 +222,61 @@ std::string LevelUtils::getLevelID(GJGameLevel* level) {
 
 LevelIDParseResult LevelUtils::parseLevelID(const std::string& levelID) {
   int id = 0;
+  GJLevelType levelType = GJLevelType::Default;
   bool isDaily = false;
   bool isGauntlet = false;
 
   if (levelID.contains('-')) {
     const auto [idStr, type] = Utils::splitOnce(levelID, '-');
     id = std::stoi(idStr);
-    isDaily = type == "daily";
-    isGauntlet = type == "gauntlet";
+
+    if (type == "local") levelType = GJLevelType::Main;
+    else if (type == "editor") levelType = GJLevelType::Editor;
+    else if (type == "daily" || type == "gauntlet") {
+      isDaily = type == "daily";
+      isGauntlet = type == "gauntlet";
+      levelType = GJLevelType::Saved;
+    }
   } else {
     id = std::stoi(levelID);
+    levelType = GJLevelType::Saved;
   }
   return LevelIDParseResult{
     id,
+    levelType,
     isDaily,
     isGauntlet,
   };
 }
 
-std::pair<int, GJGameLevel*> LevelUtils::getLevel(const std::string& id, const GJLevelType type) {
-  const auto [idNum, isDaily, isGauntlet] = parseLevelID(id);
+FetchSavedLevelResult LevelUtils::getLevel(const std::string& id) {
+  const auto [idNum, levelType, isDaily, isGauntlet] = parseLevelID(id);
 
   const auto gameManager = GameLevelManager::sharedState();
   GJGameLevel* level;
-  switch (type) {
+  switch (levelType) {
     case GJLevelType::Main: {
       level = LevelTools::getLevel(idNum, true);
       break;
     }
-    case GJLevelType::Default:
+    case GJLevelType::Editor: {
+      level = EditorIDs::getLevelByID(idNum);
+      break;
+    }
+    case GJLevelType::SearchResult:
     case GJLevelType::Saved: {
       if (isDaily) level = gameManager->getSavedDailyLevelFromLevelID(idNum);
       else if (isGauntlet) level = gameManager->getSavedGauntletLevel(idNum);
       else level = gameManager->getSavedLevel(idNum);
       break;
     }
-    case GJLevelType::Editor:
-    case GJLevelType::SearchResult:
+    case GJLevelType::Default:
     default: {
       level = nullptr;
       break;
     }
   }
-  return {idNum, level};
+  return {idNum, levelType, level};
 }
 
 bool LevelUtils::isModLoaded(const std::string& modID) {

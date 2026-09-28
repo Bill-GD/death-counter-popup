@@ -26,7 +26,7 @@ public:
 
   static std::string getLevelID(GJGameLevel* level);
   static LevelIDParseResult parseLevelID(const std::string& levelID);
-  static std::pair<int, GJGameLevel*> getLevel(const std::string& id, GJLevelType type);
+  static FetchSavedLevelResult getLevel(const std::string& id);
   static bool isModLoaded(const std::string& modID);
   // static EndTriggerGameObject* getLastEndTrigger(const PlayLayer* layer);
   // static EndPortalObject* getEndWall(const PlayLayer* layer);

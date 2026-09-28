@@ -126,7 +126,6 @@ LevelInfo SaveHandler::getLevelInfo() {
   return LevelInfo{
     .id = currentLevelID,
     .name = currentLevelName,
-    .type = LevelUtils::levelTypeToString(currentLevelType),
   };
 }
 
@@ -184,11 +183,23 @@ void SaveHandler::saveData() {
   log::info("Saved data for level '{}' (id={})", currentLevelName, currentLevelID);
 }
 
-LevelInfo SaveHandler::getLevelInfoFromFile(const std::string& levelID, const bool log) {
-  if (!pathExists(levelID, SavePathType::INFO)) return LevelInfo{"", "", ""};
+LevelInfoFromFileResult SaveHandler::getLevelInfoFromFile(const std::string& levelID, const bool shouldLog) {
+  if (!pathExists(levelID, SavePathType::INFO)) return LevelInfoFromFileResult{"", "", ""};
 
-  const auto [success, value] = FileUtils::tryRead(getLevelPath(levelID, SavePathType::INFO), log);
-  if (!success) return LevelInfo{"", "", ""};
+  const auto [levelInfoSuccess, levelInfoValue] = FileUtils::tryRead(
+    getLevelPath(levelID, SavePathType::INFO), shouldLog
+  );
+  if (!levelInfoSuccess) return LevelInfoFromFileResult{"", "", ""};
+  const auto [id, name] = Utils::tryParse<LevelInfo>(levelInfoValue);
 
-  return Utils::tryParse<LevelInfo>(value);
+  const auto [linkLevelSuccess, linkedLevelID] = FileUtils::tryReadString(
+    getLevelPath(levelID, SavePathType::LINK), shouldLog
+  );
+  if (!linkLevelSuccess) return {.id = id, .name = name, .link = ""};
+
+  return LevelInfoFromFileResult{
+    .id = id,
+    .name = name,
+    .link = linkedLevelID,
+  };
 }

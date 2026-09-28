@@ -15,24 +15,24 @@ bool FileUtils::tryWrite(const std::filesystem::path& filePath, const matjson::V
   return tryWriteString(filePath, value.dump(matjson::NO_INDENTATION));
 }
 
-std::pair<bool, matjson::Value> FileUtils::tryRead(const std::filesystem::path& filePath, const bool log) {
+std::pair<bool, matjson::Value> FileUtils::tryRead(const std::filesystem::path& filePath, const bool shouldLog) {
   for (int i = 0; i < 3; ++i) {
     auto res = file::readJson(filePath);
     if (res.isOk()) {
       return {true, res.unwrap()};
     }
-    if (log) log::warn("Read {} failed (attempt {}): {}", filePath.string(), i + 1, res.unwrapErr());
+    if (shouldLog) log::warn("Read {} failed (attempt {}): {}", filePath.string(), i + 1, res.unwrapErr());
   }
   return {false, {}};
 }
 
-std::pair<bool, std::string> FileUtils::tryReadString(const std::filesystem::path& filePath) {
+std::pair<bool, std::string> FileUtils::tryReadString(const std::filesystem::path& filePath, const bool shouldLog) {
   for (int i = 0; i < 3; ++i) {
     auto res = file::readString(filePath);
     if (res.isOk()) {
       return {true, res.unwrap()};
     }
-    log::warn("Read {} failed (attempt {}): {}", filePath.string(), i + 1, res.unwrapErr());
+    if (shouldLog) log::warn("Read {} failed (attempt {}): {}", filePath.string(), i + 1, res.unwrapErr());
   }
   return {false, ""};
 }

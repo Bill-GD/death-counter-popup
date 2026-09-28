@@ -16,5 +16,6 @@ protected:
 
 public:
   static DCPDataPopup* create();
+  static void closePopup();
   void load() const;
 };

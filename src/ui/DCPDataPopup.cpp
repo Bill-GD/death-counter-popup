@@ -73,3 +73,11 @@ void DCPDataPopup::load() const {
   m_leftPanel->setOnSelectedCallback([this](const std::string& levelID) { onLevelSelected(levelID); });
   m_leftPanel->loadLevelList();
 }
+
+void DCPDataPopup::closePopup() {
+  const auto dataPopup = typeinfo_cast<DCPDataPopup*>(
+    CCDirector::sharedDirector()->getRunningScene()->getChildByIDRecursive("all-data-viewer")
+  );
+  if (!dataPopup) return;
+  dataPopup->m_closeBtn->activate();
+}

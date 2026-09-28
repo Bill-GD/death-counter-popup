@@ -136,7 +136,7 @@
     "show-popup-button": {
       "type": "bool",
       "name": "Add Button for Data Popup",
-      "description": "Add button to open data popup to level info, editor level, pause screen.",
+      "description": "Add button to open data popup to level info, editor level, pause screen. Level linking requires UI.",
       "default": false
     },
     "extra-title": {
