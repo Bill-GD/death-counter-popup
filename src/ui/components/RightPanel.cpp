@@ -1,6 +1,7 @@
 #include "ui/components/RightPanel.hpp"
 
 #include "handlers/SaveHandler.hpp"
+#include "ui/DCPDataPopup.hpp"
 #include "ui/DCPLevelPopup.hpp"
 #include "utils/LevelUtils.hpp"
 
@@ -115,7 +116,9 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   const auto infoMenu = CCMenu::create();
   const auto infoButton = InfoAlertButton::create(
     "General Info Viewer",
-    "If info failed to load or show N/A for some, try loading the level again to update.",
+    R"(If info failed to load or show N/A for some, try loading the level to update.
+If the level doesn't fully load, try playing it once (only playing will load main levels).
+Fully deleted levels can't be loaded, I can't do anything about that.)",
     1.f
   );
   infoMenu->addChild(infoButton);
@@ -129,7 +132,37 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   return true;
 }
 
-void RightPanel::onPlayButtonClicked(CCObject* sender) {}
+void RightPanel::onPlayButtonClicked(CCObject*) {
+  if (m_selectedLevelID.empty()) return;
+
+  const auto [id, levelType, gameLevel] = LevelUtils::getLevel(m_selectedLevelID);
+  if (!gameLevel) {
+    Notification::create("Could not get level, aborted", NotificationIcon::Info)->show();
+    return;
+  }
+
+  CCScene* scene;
+  switch (levelType) {
+    case GJLevelType::Main: {
+      scene = LevelSelectLayer::scene(id - 1);
+      Notification::create("Remember: play once to update info.")->show();
+      break;
+    }
+    case GJLevelType::Editor: {
+      scene = EditLevelLayer::scene(gameLevel);
+      break;
+    }
+    default: {
+      scene = LevelInfoLayer::scene(gameLevel, false);
+      break;
+    }
+  }
+
+  DCPDataPopup::closePopup();
+  const auto ccDirector = CCDirector::sharedDirector();
+  if (ccDirector->getRunningScene()) ccDirector->replaceScene(scene);
+  else ccDirector->pushScene(scene);
+}
 
 void RightPanel::onLinkingButtonClicked(CCObject* sender) {
   const auto toggle = static_cast<CCMenuItemToggler*>(sender);
@@ -161,22 +194,24 @@ void RightPanel::onDeleteButtonClicked(CCObject*) {}
 
 
 void RightPanel::loadLevelInfo(std::string levelID) {
-  const auto [id, name, type] = SaveHandler::getLevelInfoFromFile(levelID);
-
   m_selectedLevelID = levelID;
+  const auto [savedID, name, link] = SaveHandler::getLevelInfoFromFile(m_selectedLevelID);
+  const auto [numID, levelType, _1, _2] = LevelUtils::parseLevelID(m_selectedLevelID);
 
   std::string textContent;
-  if (id.empty()) {
+  if (savedID.empty()) {
     textContent = fmt::format("Failed to read info of\n{}", levelID);
   } else {
     textContent = fmt::format(
       R"(Type: {}
 ID: {}
 Name: {}
+Link: {}
       )",
-      type.empty() ? "N/A" : type,
-      id.empty() ? "N/A" : id,
-      name.empty() ? "N/A" : name
+      LevelUtils::levelTypeToString(levelType),
+      savedID.empty() ? "N/A" : savedID,
+      name.empty() ? "N/A" : name,
+      link.empty() ? "N/A" : link
     );
   }
 

@@ -11,10 +11,23 @@ struct LevelTileInfo {
   std::string name;
 };
 
+struct LevelInfoFromFileResult {
+  std::string id;
+  std::string name;
+  std::string link;
+};
+
 struct LevelIDParseResult {
   int id;
+  GJLevelType type;
   bool isDaily;
   bool isGauntlet;
+};
+
+struct FetchSavedLevelResult {
+  int id;
+  GJLevelType type;
+  GJGameLevel* level;
 };
 
 struct KeyedRunData {

@@ -42,5 +42,5 @@ public:
   static void loadSaveData();
   static void saveData();
 
-  static LevelInfo getLevelInfoFromFile(const std::string& levelID, bool log = true);
+  static LevelInfoFromFileResult getLevelInfoFromFile(const std::string& levelID, bool shouldLog = true);
 };

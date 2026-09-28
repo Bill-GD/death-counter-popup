@@ -7,7 +7,6 @@ using namespace geode::prelude;
 struct LevelInfo {
   std::string id;
   std::string name;
-  std::string type;
 };
 
 template <>
@@ -17,7 +16,6 @@ struct matjson::Serialize<LevelInfo> {
       {
         {"id", info.id},
         {"name", info.name},
-        {"type", info.type},
       }
     );
   }
@@ -26,7 +24,6 @@ struct matjson::Serialize<LevelInfo> {
     LevelInfo info;
     info.id = value["id"].asString().unwrapOr("");
     info.name = value["name"].asString().unwrapOr("");
-    info.type = value["type"].asString().unwrapOr("");
     return Ok(info);
   }
 };
