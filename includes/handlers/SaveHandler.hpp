@@ -41,6 +41,7 @@ public:
   static DeathCounter getSavedData(const std::string& levelID);
   static void loadSaveData();
   static void saveData();
+  static bool deleteSavedData(const std::string& levelID);
 
   static LevelInfoFromFileResult getLevelInfoFromFile(const std::string& levelID, bool shouldLog = true);
 };

@@ -183,6 +183,15 @@ void SaveHandler::saveData() {
   log::info("Saved data for level '{}' (id={})", currentLevelName, currentLevelID);
 }
 
+bool SaveHandler::deleteSavedData(const std::string& levelID) {
+  if (!pathExists(levelID, SavePathType::DIR)) return false;
+  const auto path = getLevelPath(levelID, SavePathType::DIR);
+  const auto success = std::filesystem::remove_all(path) > 0;
+  if (success) log::info("Deleted saved data of {}", levelID);
+  else log::info("Failed to delete saved data of {}", levelID);
+  return success;
+}
+
 LevelInfoFromFileResult SaveHandler::getLevelInfoFromFile(const std::string& levelID, const bool shouldLog) {
   if (!pathExists(levelID, SavePathType::INFO)) return LevelInfoFromFileResult{"", "", ""};
 
