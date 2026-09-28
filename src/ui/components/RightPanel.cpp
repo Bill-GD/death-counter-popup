@@ -190,8 +190,27 @@ void RightPanel::onStatButtonClicked(CCObject*) {
   popup->load();
 }
 
-void RightPanel::onDeleteButtonClicked(CCObject*) {}
+void RightPanel::onDeleteButtonClicked(CCObject*) {
+  if (m_selectedLevelID.empty()) return;
 
+  createQuickPopup(
+    "Confirm Delete",
+    fmt::format("Are you sure you want to delete\nsaved data of <cy>{}</c>?", m_selectedLevelID),
+    "Cancel",
+    "Delete",
+    [this](FLAlertLayer*, const bool confirmed) {
+      // confirmed is true when btn2 clicked
+      if (!confirmed) return;
+      if (SaveHandler::deleteSavedData(m_selectedLevelID)) {
+        Notification::create(fmt::format("Deleted data of {}. Remember to reload.", m_selectedLevelID))->show();
+      } else {
+        Notification::create(fmt::format("Failed to delete data of {}", m_selectedLevelID))->show();
+      }
+    },
+    true,
+    true
+  );
+}
 
 void RightPanel::loadLevelInfo(std::string levelID) {
   m_selectedLevelID = levelID;
