@@ -17,6 +17,11 @@ struct LevelInfoFromFileResult {
   std::string link;
 };
 
+struct LevelSaveDataMetadata {
+  int size;
+  std::filesystem::file_time_type dataLastModified;
+};
+
 struct LevelIDParseResult {
   int id;
   GJLevelType type;

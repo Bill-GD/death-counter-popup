@@ -188,16 +188,13 @@ bool SaveHandler::deleteSavedData(const std::string& levelID) {
 
   std::error_code ec;
   const auto path = getLevelPath(levelID, SavePathType::DIR);
-  if (
-    const auto success = std::filesystem::remove_all(path, ec) > 0;
-    ec || !success
-  ) {
+  const auto success = FileUtils::tryRemoveDirectory(path);
+  if (success) {
+    log::info("Deleted saved data of {}", levelID);
+  } else {
     log::info("Failed to delete saved data of {}", levelID);
-    return false;
   }
-
-  log::info("Deleted saved data of {}", levelID);
-  return true;
+  return success;
 }
 
 LevelInfoFromFileResult SaveHandler::getLevelInfoFromFile(const std::string& levelID, const bool shouldLog) {
@@ -220,4 +217,11 @@ LevelInfoFromFileResult SaveHandler::getLevelInfoFromFile(const std::string& lev
     .name = name,
     .link = linkedLevelID,
   };
+}
+
+LevelSaveDataMetadata SaveHandler::getMetadata(const std::string& levelID) {
+  if (!pathExists(levelID, SavePathType::DIR) || !pathExists(levelID, SavePathType::DATA)) return {0, {}};
+  const auto size = FileUtils::getDirectorySize(getLevelPath(levelID, SavePathType::DIR));
+  const auto lastModifiedTime = FileUtils::getFileLastWriteTime(getLevelPath(levelID, SavePathType::DATA));
+  return {size, lastModifiedTime};
 }

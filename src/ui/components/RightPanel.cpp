@@ -96,17 +96,22 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   infoArea->setContentSize({width, infoHeight});
   infoArea->setAnchorPoint({0.5f, 0.f});
 
-  const auto infoContainer = CCNode::create();
-  infoContainer->setContentSize({width * 0.9f, infoHeight * 0.85f});
-  infoContainer->setAnchorPoint({0.5f, 0.5f});
+  const auto scroll = ScrollLayer::create({width * 0.9f, infoHeight * 0.9f});
+  const auto scrollSize = scroll->getContentSize();
+  scroll->m_contentLayer->setContentSize(scrollSize);
 
-  m_infoLabel = Label::create("", "bigFont.fnt");
-  m_infoLabel->setID("level-info-label");
-  m_infoLabel->setScale(0.4f);
-  m_infoLabel->setAlignment(Label::Alignment::Left);
-  m_infoLabel->setAnchorPoint({0.5f, 1.f});
+  const auto scrollbar = Scrollbar::create(scroll);
+  scrollbar->setAnchorPoint({1.f, 0.5f});
+  scrollbar->setContentSize({4.f, scrollSize.height});
 
-  infoContainer->addChildAtPosition(m_infoLabel, Anchor::Top);
+  const float textWidth = scrollSize.width - 12.f;
+  m_infoTextArea = SimpleTextArea::create("", "bigFont.fnt", 0.4f, textWidth);
+  m_infoTextArea->setID("level-info-label");
+  m_infoTextArea->setWrappingMode(SPACE_WRAP);
+  m_infoTextArea->setAnchorPoint({0.f, 1.f});
+  m_infoTextArea->setPosition({0.f, scrollSize.height});
+
+  scroll->m_contentLayer->addChild(m_infoTextArea);
 
   m_popupStatusLabel = Label::create("", "bigFont.fnt");
   m_popupStatusLabel->setID("popup-status-label");
@@ -124,8 +129,15 @@ Fully deleted levels can't be loaded, I can't do anything about that.)",
   infoMenu->addChild(infoButton);
 
   infoArea->addChildAtPosition(infoMenu, Anchor::TopRight);
-  infoArea->addChildAtPosition(infoContainer, Anchor::Center);
+  infoArea->addChildAtPosition(
+    scroll,
+    Anchor::Center,
+    -scrollSize / 2.f - CCSize{5.f, 0}
+  );
+  infoArea->addChildAtPosition(scrollbar, Anchor::Right, {-3.f, 0});
   infoArea->addChildAtPosition(m_popupStatusLabel, Anchor::BottomRight, {-width * (6.f / 7.f), -4.f});
+
+  m_scrollLayer = scroll;
 
   addChildAtPosition(controlArea, Anchor::Top);
   addChildAtPosition(infoArea, Anchor::Bottom);
@@ -220,28 +232,60 @@ void RightPanel::loadLevelInfo(std::string levelID) {
   m_selectedLevelID = levelID;
   const auto [numID, levelType, _1, _2] = LevelUtils::parseLevelID(m_selectedLevelID);
   const auto [savedID, name, link] = SaveHandler::getLevelInfoFromFile(m_selectedLevelID);
+  const auto [size, lastModified] = SaveHandler::getMetadata(m_selectedLevelID);
+
+  // file_time_type (time_point<file_clock>) ->  time_point<system_clock> -> time_t -> std::tm
+  // more complicated & weird than js date fr fr
+  std::string lastModifiedStr = "N/A";
+  if (lastModified.time_since_epoch().count() > 0) {
+    if (
+      const auto sysTime = std::chrono::clock_cast<std::chrono::system_clock>(lastModified);
+      sysTime.time_since_epoch().count() > 0
+    ) {
+      const auto timeT = std::chrono::system_clock::to_time_t(sysTime);
+      lastModifiedStr = fmt::format(
+        "{:%Y-%m-%d %H:%M:%S}",
+        geode::localtime(timeT)
+      );
+    }
+  }
 
   std::string textContent;
   if (savedID.empty()) {
-    textContent = fmt::format("Failed to read info of\n{}", levelID);
+    textContent = fmt::format("Failed to read info of {}", levelID);
   } else {
     textContent = fmt::format(
       R"(Type: {}
 ID: {}
 Name: {}
 Link: {}
-      )",
+Size: {}
+Last data update: {})",
       LevelUtils::levelTypeToString(levelType),
       savedID.empty() ? "N/A" : savedID,
       name.empty() ? "N/A" : name,
-      link.empty() ? "N/A" : link
+      link.empty() ? "N/A" : link,
+      Utils::formatSizeString(size),
+      lastModifiedStr
     );
   }
 
-  m_infoLabel->setString(textContent.c_str());
+  m_infoTextArea->setText(textContent);
+
+  if (m_scrollLayer) {
+    const auto scrollSize = m_scrollLayer->getContentSize();
+    const auto labelHeight = m_infoTextArea->getHeight();
+    const auto contentHeight = std::max(scrollSize.height, labelHeight + 10.f);
+    m_scrollLayer->m_contentLayer->setContentSize({scrollSize.width, contentHeight});
+    m_infoTextArea->setPosition({0.f, contentHeight});
+    m_scrollLayer->scrollToTop();
+  }
 }
 
 void RightPanel::unloadLevelInfo() {
   m_selectedLevelID = "";
-  m_infoLabel->setString("");
+  m_infoTextArea->setText("");
+  if (m_scrollLayer) {
+    m_scrollLayer->scrollToTop();
+  }
 }
