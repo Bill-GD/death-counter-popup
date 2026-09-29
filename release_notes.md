@@ -6,7 +6,7 @@
   - Level viewer popup (view runs of level & link)
     - List of saved runs
     - Filter runs by percentage precision & (not) from zero
-  - Add button to open data popup to level info, editor level info, pause menu (has setting option to toggle)
+  - Add button to open data popup to level info, editor level info, pause menu, main level select (has setting option to toggle)
 - Update handlers:
   - `SaveHandler`:
     - Methods for geting path by file purpose (data, link, info, dir) & path exists checks
