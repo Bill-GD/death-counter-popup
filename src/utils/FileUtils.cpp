@@ -77,3 +77,33 @@ std::vector<std::filesystem::path> FileUtils::getAllDirectories(const std::files
     }
   );
 }
+
+bool FileUtils::tryRemoveDirectory(const std::filesystem::path& directoryPath) {
+  std::error_code ec;
+  const auto success = std::filesystem::remove_all(directoryPath, ec) > 0;
+  return !ec && success;
+}
+
+int FileUtils::getDirectorySize(const std::filesystem::path& dir) {
+  int size = 0;
+  std::error_code ec;
+  for (const auto& entry : std::filesystem::recursive_directory_iterator(
+         dir,
+         std::filesystem::directory_options::skip_permission_denied,
+         ec
+       )) {
+    if (entry.is_regular_file(ec)) {
+      size += entry.file_size(ec);
+    }
+  }
+  return size;
+}
+
+std::filesystem::file_time_type FileUtils::getFileLastWriteTime(const std::filesystem::path& path) {
+  if (!is_regular_file(path)) return {};
+
+  std::error_code ec;
+  const auto latest = std::filesystem::last_write_time(path, ec);
+  if (ec) return {};
+  return latest;
+}

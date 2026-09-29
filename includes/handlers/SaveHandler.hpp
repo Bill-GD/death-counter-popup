@@ -44,4 +44,5 @@ public:
   static bool deleteSavedData(const std::string& levelID);
 
   static LevelInfoFromFileResult getLevelInfoFromFile(const std::string& levelID, bool shouldLog = true);
+  static LevelSaveDataMetadata getMetadata(const std::string& levelID);
 };

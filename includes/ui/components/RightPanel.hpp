@@ -4,8 +4,9 @@ using namespace geode::prelude;
 
 class RightPanel : public CCNode {
   CCMenuItemToggler* m_linkingButton = nullptr;
-  Label* m_infoLabel = nullptr;
+  SimpleTextArea* m_infoTextArea = nullptr;
   Label* m_popupStatusLabel = nullptr;
+  ScrollLayer* m_scrollLayer = nullptr;
   std::string m_selectedLevelID;
   bool m_isLinking = false;
 
