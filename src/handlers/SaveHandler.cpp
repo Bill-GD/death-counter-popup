@@ -186,7 +186,6 @@ void SaveHandler::saveData() {
 bool SaveHandler::deleteSavedData(const std::string& levelID) {
   if (levelID.empty() || !pathExists(levelID, SavePathType::DIR)) return false;
 
-  std::error_code ec;
   const auto path = getLevelPath(levelID, SavePathType::DIR);
   const auto success = FileUtils::tryRemoveDirectory(path);
   if (success) {

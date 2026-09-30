@@ -22,7 +22,7 @@ bool DCPLevelSelectLayer::init(int page) {
     if (infoButton->isVisible()) {
       dcpButton->setPosition(
         {
-          infoButton->getPositionX() - infoButton->getScaledContentHeight() - 5.f,
+          infoButton->getPositionX() - infoButton->getScaledContentWidth() - 5.f,
           infoButton->getPositionY(),
         }
       );
