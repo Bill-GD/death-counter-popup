@@ -226,20 +226,22 @@ LevelIDParseResult LevelUtils::parseLevelID(const std::string& levelID) {
   bool isDaily = false;
   bool isGauntlet = false;
 
-  if (levelID.contains('-')) {
-    const auto [idStr, type] = Utils::splitOnce(levelID, '-');
-    id = std::stoi(idStr);
+  if (!levelID.empty() && std::isdigit(levelID.at(0))) {
+    if (levelID.contains('-')) {
+      const auto [idStr, type] = Utils::splitOnce(levelID, '-');
+      id = std::stoi(idStr);
 
-    if (type == "local") levelType = GJLevelType::Main;
-    else if (type == "editor") levelType = GJLevelType::Editor;
-    else if (type == "daily" || type == "gauntlet") {
-      isDaily = type == "daily";
-      isGauntlet = type == "gauntlet";
+      if (type == "local") levelType = GJLevelType::Main;
+      else if (type == "editor") levelType = GJLevelType::Editor;
+      else if (type == "daily" || type == "gauntlet") {
+        isDaily = type == "daily";
+        isGauntlet = type == "gauntlet";
+        levelType = GJLevelType::Saved;
+      }
+    } else {
+      id = std::stoi(levelID);
       levelType = GJLevelType::Saved;
     }
-  } else {
-    id = std::stoi(levelID);
-    levelType = GJLevelType::Saved;
   }
   return LevelIDParseResult{
     id,
