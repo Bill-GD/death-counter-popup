@@ -10,11 +10,11 @@ class RightPanel : public CCNode {
   std::string m_selectedLevelID;
   bool m_isLinking = false;
 
-  void onPlayButtonClicked(CCObject* sender);
+  void onPlayButtonClicked(CCObject*);
   void onLinkingButtonClicked(CCObject* sender);
   void onLoadCurrentButtonClicked(CCObject*);
-  void onStatButtonClicked(CCObject* sender);
-  void onDeleteButtonClicked(CCObject* sender);
+  void onStatButtonClicked(CCObject*);
+  void onDeleteButtonClicked(CCObject*);
 
 protected:
   bool init(float width, float controlHeight, float infoHeight, float gap);

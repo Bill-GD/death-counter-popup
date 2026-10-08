@@ -84,7 +84,7 @@ void SaveHandler::incrementRun(const std::string& runKey) {
 
 DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   if (!pathExists(levelID, SavePathType::DATA)) {
-    (void)file::createDirectory(PATH / levelID);
+    (void)file::createDirectory(getLevelPath(levelID, SavePathType::DIR));
     return {};
   }
 
@@ -151,8 +151,8 @@ void SaveHandler::loadSaveData() {
   }
 
   deaths = getSavedData(currentLevelID);
-  if (otherData.empty()) return;
 
+  if (otherData.empty()) return;
   bool changed = false;
   for (const auto& [runKey, runData] : otherData) {
     if (!deaths.contains(runKey) || deaths[runKey].count < runData.count) {

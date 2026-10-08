@@ -22,6 +22,8 @@
     - Methods to parse level ID & get game level from ID
 - Add several types/structs: `LevelInfo` (matjson serialization), `LevelIDParseResult`, `LevelTileInfo`, `KeyedRunData`
 - Switch to `using` (was `typedef`)
+- Other:
+  - Remove best label for platformer
 - Code cleanup & consistency:
   - Remove all `this->`
   - Imports use quote
