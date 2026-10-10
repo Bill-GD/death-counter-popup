@@ -1,7 +1,7 @@
 - Add data viewer popups & relevant components for popup composition
   - Data viewer popup (view list of level & general info)
     - Left side: ID list
-    - Right side: general saved info, actions (open level, link level, load current level info, open data viewer, delete)
+    - Right side: general saved info, actions (open level, link level, load current level info, merge DT data, open data viewer, delete)
     - Reload button
   - Level viewer popup (view runs of level & link)
     - List of saved runs

@@ -129,9 +129,20 @@ void DCPLevelPopup::load() {
     const auto deathCounter = SaveHandler::getSavedData(m_levelID);
     const auto& [key, runData] : deathCounter
   ) {
+    float startPercent = 0, endPercent = 0;
+    if (key.contains('-') && !key.starts_with('-')) {
+      const auto [start, end] = Utils::splitOnce(key, '-');
+      startPercent = std::stof(start);
+      endPercent = std::stof(end);
+    } else {
+      endPercent = std::stof(key);
+    }
+
     m_runData.push_back(
       KeyedRunData{
         .run = key,
+        .start = startPercent,
+        .end = endPercent,
         .count = runData.count,
         .precision = runData.precision,
         .parent = runData.parent,
@@ -139,12 +150,18 @@ void DCPLevelPopup::load() {
     );
   }
 
-  const auto [_, name, __] = SaveHandler::getLevelInfoFromFile(m_levelID, false);
-  setTitle(fmt::format("Run Counter ({})", name));
-  log::info("Loaded run data of {} ({})", m_levelID, name);
+  std::ranges::sort(
+    m_runData,
+    [](const KeyedRunData& a, const KeyedRunData& b) {
+      if (a.start != b.start) return a.start < b.start;
+      return a.end < b.end;
+    }
+  );
 
+  loadLevelInfo();
   filterRuns();
   displayData();
+  log::info("Loaded run data of {} ({})", m_levelID, m_levelName);
 }
 
 void DCPLevelPopup::onCheckbox(CCObject* sender) {
@@ -159,6 +176,12 @@ void DCPLevelPopup::onCheckbox(CCObject* sender) {
 void DCPLevelPopup::onPrecisionChanged() {
   filterRuns();
   displayData();
+}
+
+void DCPLevelPopup::loadLevelInfo() {
+  const auto [_, name, __] = SaveHandler::getLevelInfoFromFile(m_levelID, false);
+  m_levelName = name;
+  setTitle(fmt::format("Run Counter ({})", m_levelName));
 }
 
 void DCPLevelPopup::filterRuns() {
