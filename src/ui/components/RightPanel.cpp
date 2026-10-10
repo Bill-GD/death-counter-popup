@@ -65,6 +65,30 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   );
   loadCurrentButton->setContentSize({buttonHeight, buttonHeight});
 
+  CCMenuItemSpriteExtra* dtDataButton = nullptr;
+  if (LevelUtils::isModLoaded("elohmrow.death_tracker")) {
+    const auto baseSprite = CCSprite::createWithSpriteFrameName("GJ_plainBtn_001.png");
+    if (!baseSprite) return false;
+    baseSprite->setScale(buttonHeight / baseSprite->getContentHeight());
+
+    const auto skull = CCSprite::createWithSpriteFrameName("miniSkull_001.png");
+    if (!skull) return false;
+    skull->setScale(0.65f);
+
+    const auto text = Label::create("DT", "bigFont.fnt");
+    if (!text) return false;
+    text->setScale(0.4f);
+
+    baseSprite->addChildAtPosition(skull, Anchor::Center, {0.f, 5.f});
+    baseSprite->addChildAtPosition(text, Anchor::Center, {0.f, -7.f});
+    dtDataButton = CCMenuItemSpriteExtra::create(
+      baseSprite,
+      this,
+      menu_selector(RightPanel::onDTButtonClicked)
+    );
+    dtDataButton->setContentSize({buttonHeight, buttonHeight});
+  }
+
   const auto statSprite = CCSprite::createWithSpriteFrameName("GJ_statsBtn_001.png");
   statSprite->setScale(buttonHeight / statSprite->getContentHeight());
   const auto statButton = CCMenuItemSpriteExtra::create(
@@ -86,6 +110,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   controlMenu->addChild(playButton);
   controlMenu->addChild(m_linkingButton);
   controlMenu->addChild(loadCurrentButton);
+  if (dtDataButton) controlMenu->addChild(dtDataButton);
   controlMenu->addChild(statButton);
   controlMenu->addChild(deleteButton);
   controlMenu->updateLayout();
@@ -189,6 +214,11 @@ void RightPanel::onLinkingButtonClicked(CCObject* sender) {
 void RightPanel::onLoadCurrentButtonClicked(CCObject*) {
   if (!SaveHandler::isLevelSet()) return;
   loadLevelInfo(SaveHandler::getCurrentLevelID());
+}
+
+void RightPanel::onDTButtonClicked(CCObject*) {
+  if (m_selectedLevelID.empty()) return;
+  SaveHandler::mergeDTData(m_selectedLevelID);
 }
 
 void RightPanel::onStatButtonClicked(CCObject*) {

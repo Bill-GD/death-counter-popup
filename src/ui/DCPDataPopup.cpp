@@ -55,6 +55,7 @@ bool DCPDataPopup::init() {
 <cy>Play button</c>: open the level (only show the level selection for main levels).
 <cf>Link & unlink button</c>: link the data with another level.
 ID button: load the info for the current level (requires opening a level first).
+DT button (Death Tracker loaded): merge save data with last modified linked level (use DT link feature) or DT data.
 <cc>Stat button</c>: show saved data of selected level.
 <cr>Delete button</c>: delete the selected level saved data.)",
     1.f

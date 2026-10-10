@@ -13,6 +13,7 @@ class RightPanel : public CCNode {
   void onPlayButtonClicked(CCObject*);
   void onLinkingButtonClicked(CCObject* sender);
   void onLoadCurrentButtonClicked(CCObject*);
+  void onDTButtonClicked(CCObject*);
   void onStatButtonClicked(CCObject*);
   void onDeleteButtonClicked(CCObject*);
 

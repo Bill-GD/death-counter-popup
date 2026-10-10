@@ -94,8 +94,31 @@ DeathCounter SaveHandler::getSavedData(const std::string& levelID) {
   return Utils::tryParse<DeathCounter>(val);
 }
 
-DeathCounter SaveHandler::getLatestLinkedData() {
-  const auto linkedLevels = DeathTrackerHandler::getLinkedLevels(currentLevelID);
+void SaveHandler::mergeDTData(const std::string& levelID) {
+  auto levelData = getSavedData(levelID);
+
+  auto otherData = getLatestLinkedData(levelID);
+  if (otherData.empty()) {
+    // log::info("No linked level found, load from Death Tracker");
+    otherData = DataMigrationHandler::parseOldData(DeathTrackerHandler::getSaveData(levelID));
+  }
+
+  if (otherData.empty()) return;
+  bool changed = false;
+  for (const auto& [runKey, runData] : otherData) {
+    if (!levelData.contains(runKey) || levelData[runKey].count < runData.count) {
+      levelData[runKey] = runData;
+      changed = true;
+    }
+  }
+  if (changed) {
+    // log::info("Updated save data");
+    saveData(levelID, levelData);
+  }
+}
+
+DeathCounter SaveHandler::getLatestLinkedData(const std::string& levelID) {
+  const auto linkedLevels = DeathTrackerHandler::getLinkedLevels(levelID);
 
   std::vector<std::pair<std::string, std::filesystem::file_time_type>> linkedLevelFiles = {};
   for (const auto& linkedLevelID : linkedLevels) {
@@ -144,28 +167,10 @@ void SaveHandler::loadSaveData() {
   log::info("Loading deaths for level '{}' (id={})", currentLevelName, currentLevelID);
   saveCurrentLevelInfo();
 
-  auto otherData = getLatestLinkedData();
-  if (otherData.empty()) {
-    log::info("No linked level found, load from Death Tracker");
-    otherData = DataMigrationHandler::parseOldData(DeathTrackerHandler::getSaveData(currentLevelID));
-  }
-
   deaths = getSavedData(currentLevelID);
-
-  if (otherData.empty()) return;
-  bool changed = false;
-  for (const auto& [runKey, runData] : otherData) {
-    if (!deaths.contains(runKey) || deaths[runKey].count < runData.count) {
-      deaths[runKey] = runData;
-      changed = true;
-    }
-  }
-  if (changed) {
-    log::info("Updated save data");
-    saveData();
-  }
 }
 
+// Save data for currently loaded level
 void SaveHandler::saveData() {
   if (!shouldLoad) {
     log::info("This level was marked to not save, possibly platformer");
@@ -181,6 +186,18 @@ void SaveHandler::saveData() {
     return;
   }
   log::info("Saved data for level '{}' (id={})", currentLevelName, currentLevelID);
+}
+
+// Save data for specified level ID, must pass in data
+void SaveHandler::saveData(const std::string& levelID, const DeathCounter& data) {
+  if (
+    const auto success = FileUtils::tryWrite(getLevelPath(levelID, SavePathType::DATA), matjson::Value(data));
+    !success
+  ) {
+    log::warn("Failed to save for level '{}' (id={})", currentLevelName, levelID);
+    return;
+  }
+  log::info("Saved data for level '{}' (id={})", currentLevelName, levelID);
 }
 
 bool SaveHandler::deleteSavedData(const std::string& levelID) {
