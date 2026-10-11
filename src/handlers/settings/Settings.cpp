@@ -14,6 +14,7 @@ float Settings::opacity{};
 std::string Settings::popupStyle{};
 bool Settings::showBestPercentage{};
 bool Settings::showPopupButton{};
+bool Settings::autoMergeDT{};
 
 void Settings::init() {
   enabled = Mod::get()->getSettingValue<bool>("enable");
@@ -28,6 +29,7 @@ void Settings::init() {
   popupStyle = Mod::get()->getSettingValue<std::string>("popup-style");
   showBestPercentage = Mod::get()->getSettingValue<bool>("show-best-in-percentage");
   showPopupButton = Mod::get()->getSettingValue<bool>("show-popup-button");
+  autoMergeDT = Mod::get()->getSettingValue<bool>("auto-merge-dt-data");
 }
 
 void Settings::addListeners() {
@@ -43,6 +45,7 @@ void Settings::addListeners() {
   listenForSettingChanges<std::string>("popup-style", setPopupStyle);
   listenForSettingChanges<bool>("show-best-in-percentage", setShowBestPercentage);
   listenForSettingChanges<bool>("show-popup-button", setShowPopupButton);
+  listenForSettingChanges<bool>("auto-merge-dt-data", setAutoMergeDT);
 }
 
 void Settings::setEnable(const bool value) { enabled = value; }
@@ -56,7 +59,8 @@ void Settings::setScale(const float value) { scale = value; }
 void Settings::setOpacity(const float value) { opacity = value; }
 void Settings::setPopupStyle(const std::string& value) { popupStyle = value; }
 void Settings::setShowBestPercentage(const bool value) { showBestPercentage = value; }
-void Settings::setShowPopupButton(bool value) { showPopupButton = value; }
+void Settings::setShowPopupButton(const bool value) { showPopupButton = value; }
+void Settings::setAutoMergeDT(const bool value) { autoMergeDT = value; }
 
 bool Settings::isEnabled() { return enabled; }
 bool Settings::isNewBestGolden() { return goldenNewBest; }
@@ -69,3 +73,4 @@ GLubyte Settings::getOpacity() { return static_cast<GLubyte>(opacity * 255); }
 std::string Settings::getPopupStyle() { return popupStyle; }
 bool Settings::bestPercentageShown() { return showBestPercentage; }
 bool Settings::popupButtonShown() { return showPopupButton; }
+bool Settings::isDTAutoMerge() { return autoMergeDT; }

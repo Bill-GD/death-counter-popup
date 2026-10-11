@@ -17,6 +17,7 @@ class Settings {
   static std::string popupStyle;
   static bool showBestPercentage;
   static bool showPopupButton;
+  static bool autoMergeDT;
 
 public:
   static void init();
@@ -34,6 +35,7 @@ public:
   static void setPopupStyle(const std::string& value);
   static void setShowBestPercentage(bool value);
   static void setShowPopupButton(bool value);
+  static void setAutoMergeDT(bool value);
 
   static bool isEnabled();
   static bool isNewBestGolden();
@@ -46,4 +48,5 @@ public:
   static std::string getPopupStyle();
   static bool bestPercentageShown();
   static bool popupButtonShown();
+  static bool isDTAutoMerge();
 };

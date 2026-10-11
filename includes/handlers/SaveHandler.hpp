@@ -15,17 +15,21 @@ enum class SavePathType {
 
 class SaveHandler {
   static bool shouldLoad;
-  static GJLevelType currentLevelType;
-  static std::string currentLevelName;
+  static std::string linkedID;
   static std::string currentLevelID;
+  static std::string currentLevelName;
+
+  static DeathCounter originalDeathDiff;
 
   static std::filesystem::path getLevelPath(const std::string& levelID, SavePathType type);
   static bool pathExists(const std::string& levelID, SavePathType type);
 
-  static DeathCounter getLatestLinkedData();
+  static DeathCounter getLatestLinkedData(const std::string& levelID);
 
   static LevelInfo getLevelInfo();
   static void saveCurrentLevelInfo();
+
+  static void saveDiff();
 
 public:
   const static inline auto PATH = Mod::get()->getSaveDir() / "levels";
@@ -36,11 +40,16 @@ public:
   static bool isLevelSet();
   static bool hasLinkedLevel(const std::string& levelID);
   static std::string getLinkedLevel(const std::string& levelID);
+  static bool setLinkedLevel(const std::string& levelID, const std::string& linkToID);
+  static bool removeLink(const std::string& levelID);
+
   static void setLevel(GJGameLevel* level);
   static void incrementRun(const std::string& runKey);
-  static DeathCounter getSavedData(const std::string& levelID);
-  static void loadSaveData();
+  static DeathCounter getSavedData(const std::string& levelID, bool getLinked);
+  static void mergeDTData(const std::string& levelID);
+  static void loadSaveData(bool skipDTMerge = false);
   static void saveData();
+  static void saveData(const std::string& levelID, const DeathCounter& data);
   static bool deleteSavedData(const std::string& levelID);
 
   static LevelInfoFromFileResult getLevelInfoFromFile(const std::string& levelID, bool shouldLog = true);

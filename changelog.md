@@ -3,9 +3,12 @@
 ## 1.2.0
 
 - Add UI for viewing saved level data.
-- Add button to open the UI to level screens: level info, editor level info, pause menu, main level select. 
-  Can enable/disable in settings. UI is required to use the linking feature.
-- Some code reorganization for UI stuff.
+- Add button to open the UI to level screens: level info, editor level info, pause menu, main level select.
+  Can enable/disable in settings.
+- Add level linking feature. UI is required to use the linking feature.
+- Update level data loading. Check new setting option for details.
+- Remove current best label for platformer.
+- Some code reorganization for UI stuff & level linking.
 
 ## 1.1.4
 

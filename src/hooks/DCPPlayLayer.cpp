@@ -77,7 +77,7 @@ void DCPPlayLayer::levelComplete() {
 
 void DCPPlayLayer::updateProgressbar() {
   PlayLayer::updateProgressbar();
-  if (Settings::bestPercentageShown()) {
+  if (!m_level->isPlatformer() && Settings::bestPercentageShown()) {
     fetchBestLabel();
     updateBestPercentageLabel();
   }

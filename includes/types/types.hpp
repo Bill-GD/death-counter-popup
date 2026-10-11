@@ -37,6 +37,8 @@ struct FetchSavedLevelResult {
 
 struct KeyedRunData {
   std::string run;
+  float start = 0;
+  float end = 0;
   int count = 0;
   int precision = 0;
   std::string parent;

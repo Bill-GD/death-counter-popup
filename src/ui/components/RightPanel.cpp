@@ -65,6 +65,30 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   );
   loadCurrentButton->setContentSize({buttonHeight, buttonHeight});
 
+  CCMenuItemSpriteExtra* dtDataButton = nullptr;
+  if (LevelUtils::isModLoaded("elohmrow.death_tracker")) {
+    const auto baseSprite = CCSprite::createWithSpriteFrameName("GJ_plainBtn_001.png");
+    if (!baseSprite) return false;
+    baseSprite->setScale(buttonHeight / baseSprite->getContentHeight());
+
+    const auto skull = CCSprite::createWithSpriteFrameName("miniSkull_001.png");
+    if (!skull) return false;
+    skull->setScale(0.65f);
+
+    const auto text = Label::create("DT", "bigFont.fnt");
+    if (!text) return false;
+    text->setScale(0.4f);
+
+    baseSprite->addChildAtPosition(skull, Anchor::Center, {0.f, 5.f});
+    baseSprite->addChildAtPosition(text, Anchor::Center, {0.f, -7.f});
+    dtDataButton = CCMenuItemSpriteExtra::create(
+      baseSprite,
+      this,
+      menu_selector(RightPanel::onDTButtonClicked)
+    );
+    dtDataButton->setContentSize({buttonHeight, buttonHeight});
+  }
+
   const auto statSprite = CCSprite::createWithSpriteFrameName("GJ_statsBtn_001.png");
   statSprite->setScale(buttonHeight / statSprite->getContentHeight());
   const auto statButton = CCMenuItemSpriteExtra::create(
@@ -86,6 +110,7 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   controlMenu->addChild(playButton);
   controlMenu->addChild(m_linkingButton);
   controlMenu->addChild(loadCurrentButton);
+  if (dtDataButton) controlMenu->addChild(dtDataButton);
   controlMenu->addChild(statButton);
   controlMenu->addChild(deleteButton);
   controlMenu->updateLayout();
@@ -177,18 +202,54 @@ void RightPanel::onPlayButtonClicked(CCObject*) {
 }
 
 void RightPanel::onLinkingButtonClicked(CCObject* sender) {
-  const auto toggle = static_cast<CCMenuItemToggler*>(sender);
-  const bool wasEnabled = toggle->isToggled(); // state is before
+  if (m_selectedLevelID.empty()) return;
 
-  if (!wasEnabled && m_selectedLevelID.empty()) return;
+  std::string str;
+  if (m_isLinking) {
+    if (m_selectedLevelID != m_firstLinkID) {
+      // link
+      SaveHandler::setLinkedLevel(m_firstLinkID, m_selectedLevelID);
+      if (m_firstLinkID == SaveHandler::getCurrentLevelID()) {
+        SaveHandler::loadSaveData();
+      }
+      str = fmt::format("Linked level: {} -> {}", m_firstLinkID, m_selectedLevelID);
+    } else {
+      // cancel
+      str = fmt::format("Cancelled linking");
+    }
+    m_firstLinkID = "";
+    m_isLinking = false;
+  } else {
+    if (SaveHandler::hasLinkedLevel(m_selectedLevelID)) {
+      // unlink
+      SaveHandler::removeLink(m_selectedLevelID);
+      if (m_selectedLevelID == SaveHandler::getCurrentLevelID()) {
+        SaveHandler::loadSaveData();
+      }
+      str = fmt::format("Removed linked level.");
+      loadLevelInfo(m_selectedLevelID, false);
+    } else {
+      // start link
+      m_firstLinkID = m_selectedLevelID;
+      m_isLinking = true;
+      str = fmt::format("Linking level: {} -> ?", m_firstLinkID);
+    }
+  }
 
-  const auto str = wasEnabled ? "" : fmt::format("Linking level: {}", m_selectedLevelID);
   m_popupStatusLabel->setString(str.c_str());
 }
 
 void RightPanel::onLoadCurrentButtonClicked(CCObject*) {
   if (!SaveHandler::isLevelSet()) return;
   loadLevelInfo(SaveHandler::getCurrentLevelID());
+}
+
+void RightPanel::onDTButtonClicked(CCObject*) {
+  if (m_selectedLevelID.empty()) return;
+  SaveHandler::mergeDTData(m_selectedLevelID);
+  if (m_selectedLevelID == SaveHandler::getCurrentLevelID()) {
+    SaveHandler::loadSaveData(true);
+  }
 }
 
 void RightPanel::onStatButtonClicked(CCObject*) {
@@ -228,7 +289,7 @@ void RightPanel::onDeleteButtonClicked(CCObject*) {
   );
 }
 
-void RightPanel::loadLevelInfo(std::string levelID) {
+void RightPanel::loadLevelInfo(std::string levelID, bool updateToggle) {
   m_selectedLevelID = levelID;
   const auto [numID, levelType, _1, _2] = LevelUtils::parseLevelID(m_selectedLevelID);
   const auto [savedID, name, link] = SaveHandler::getLevelInfoFromFile(m_selectedLevelID);
@@ -270,6 +331,7 @@ Last data update: {})",
     );
   }
 
+  if (updateToggle && !m_isLinking) m_linkingButton->toggle(!link.empty());
   m_infoTextArea->setText(textContent);
 
   if (m_scrollLayer) {
