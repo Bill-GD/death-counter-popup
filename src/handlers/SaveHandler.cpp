@@ -241,11 +241,16 @@ void SaveHandler::saveDiff() {
   if (linkedID.empty() || originalDeathDiff.empty()) return;
 
   auto data = getSavedData(currentLevelID, false);
+  const auto original100Count = data.contains("100") ? data.at("100").count : 0;
 
   bool changed = false;
   for (const auto& [runKey, runData] : originalDeathDiff) {
     if (!data.contains(runKey)) {
       data[runKey] = runData;
+      // edge case: original data might only have '100', can cause desync of completion count -> add to other variants
+      if (runKey != "100" && runKey.starts_with("100") && original100Count > 0) {
+        data[runKey].count = original100Count + runData.count;
+      }
       changed = true;
     } else {
       data[runKey].count += runData.count;
