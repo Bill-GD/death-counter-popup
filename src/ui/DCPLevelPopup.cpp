@@ -132,10 +132,14 @@ void DCPLevelPopup::load() {
     float startPercent = 0, endPercent = 0;
     if (key.contains('-') && !key.starts_with('-')) {
       const auto [start, end] = Utils::splitOnce(key, '-');
-      startPercent = std::stof(start);
-      endPercent = std::stof(end);
+      const auto startParseRes = numFromString<float>(start);
+      const auto endParseRes = numFromString<float>(end);
+
+      if (startParseRes.isOk()) startPercent = startParseRes.unwrap();
+      if (endParseRes.isOk()) endPercent = endParseRes.unwrap();
     } else {
-      endPercent = std::stof(key);
+      const auto endParseRes = numFromString<float>(key);
+      if (endParseRes.isOk()) endPercent = endParseRes.unwrap();
     }
 
     m_runData.push_back(
