@@ -8,6 +8,7 @@ class RightPanel : public CCNode {
   Label* m_popupStatusLabel = nullptr;
   ScrollLayer* m_scrollLayer = nullptr;
   std::string m_selectedLevelID;
+  std::string m_firstLinkID;
   bool m_isLinking = false;
 
   void onPlayButtonClicked(CCObject*);
@@ -22,6 +23,6 @@ protected:
 
 public:
   static RightPanel* create(float width, float controlHeight, float infoHeight, float gap);
-  void loadLevelInfo(std::string levelID);
+  void loadLevelInfo(std::string levelID, bool updateToggle = true);
   void unloadLevelInfo();
 };

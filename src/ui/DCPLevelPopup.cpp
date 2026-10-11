@@ -126,7 +126,7 @@ void DCPLevelPopup::load() {
   if (m_levelID.empty()) return;
 
   for (
-    const auto deathCounter = SaveHandler::getSavedData(m_levelID);
+    const auto deathCounter = SaveHandler::getSavedData(m_levelID, true);
     const auto& [key, runData] : deathCounter
   ) {
     float startPercent = 0, endPercent = 0;

@@ -202,12 +202,40 @@ void RightPanel::onPlayButtonClicked(CCObject*) {
 }
 
 void RightPanel::onLinkingButtonClicked(CCObject* sender) {
-  const auto toggle = static_cast<CCMenuItemToggler*>(sender);
-  const bool wasEnabled = toggle->isToggled(); // state is before
+  if (m_selectedLevelID.empty()) return;
 
-  if (!wasEnabled && m_selectedLevelID.empty()) return;
+  std::string str;
+  if (m_isLinking) {
+    if (m_selectedLevelID != m_firstLinkID) {
+      // link
+      SaveHandler::setLinkedLevel(m_firstLinkID, m_selectedLevelID);
+      if (m_firstLinkID == SaveHandler::getCurrentLevelID()) {
+        SaveHandler::loadSaveData();
+      }
+      str = fmt::format("Linked level: {} -> {}", m_firstLinkID, m_selectedLevelID);
+    } else {
+      // cancel
+      str = fmt::format("Cancelled linking");
+    }
+    m_firstLinkID = "";
+    m_isLinking = false;
+  } else {
+    if (SaveHandler::hasLinkedLevel(m_selectedLevelID)) {
+      // unlink
+      SaveHandler::removeLink(m_selectedLevelID);
+      if (m_selectedLevelID == SaveHandler::getCurrentLevelID()) {
+        SaveHandler::loadSaveData();
+      }
+      str = fmt::format("Removed linked level.");
+      loadLevelInfo(m_selectedLevelID, false);
+    } else {
+      // start link
+      m_firstLinkID = m_selectedLevelID;
+      m_isLinking = true;
+      str = fmt::format("Linking level: {} -> ?", m_firstLinkID);
+    }
+  }
 
-  const auto str = wasEnabled ? "" : fmt::format("Linking level: {}", m_selectedLevelID);
   m_popupStatusLabel->setString(str.c_str());
 }
 
@@ -219,6 +247,9 @@ void RightPanel::onLoadCurrentButtonClicked(CCObject*) {
 void RightPanel::onDTButtonClicked(CCObject*) {
   if (m_selectedLevelID.empty()) return;
   SaveHandler::mergeDTData(m_selectedLevelID);
+  if (m_selectedLevelID == SaveHandler::getCurrentLevelID()) {
+    SaveHandler::loadSaveData(true);
+  }
 }
 
 void RightPanel::onStatButtonClicked(CCObject*) {
@@ -258,7 +289,7 @@ void RightPanel::onDeleteButtonClicked(CCObject*) {
   );
 }
 
-void RightPanel::loadLevelInfo(std::string levelID) {
+void RightPanel::loadLevelInfo(std::string levelID, bool updateToggle) {
   m_selectedLevelID = levelID;
   const auto [numID, levelType, _1, _2] = LevelUtils::parseLevelID(m_selectedLevelID);
   const auto [savedID, name, link] = SaveHandler::getLevelInfoFromFile(m_selectedLevelID);
@@ -300,6 +331,7 @@ Last data update: {})",
     );
   }
 
+  if (updateToggle && !m_isLinking) m_linkingButton->toggle(!link.empty());
   m_infoTextArea->setText(textContent);
 
   if (m_scrollLayer) {

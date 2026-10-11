@@ -78,6 +78,12 @@ std::vector<std::filesystem::path> FileUtils::getAllDirectories(const std::files
   );
 }
 
+bool FileUtils::tryRemoveFile(const std::filesystem::path& filePath) {
+  std::error_code ec;
+  const auto success = std::filesystem::remove(filePath, ec) > 0;
+  return !ec && success;
+}
+
 bool FileUtils::tryRemoveDirectory(const std::filesystem::path& directoryPath) {
   std::error_code ec;
   const auto success = std::filesystem::remove_all(directoryPath, ec) > 0;
