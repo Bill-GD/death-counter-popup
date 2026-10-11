@@ -6,7 +6,14 @@
   - Level viewer popup (view runs of level & link)
     - List of saved runs
     - Filter runs by percentage precision & (not) from zero
+    - Runs are ordered by percentage (start, then end)
   - Add button to open data popup to level info, editor level info, pause menu, main level select (has setting option to toggle)
+- Add linking feature:
+  - Link & unlink is in UI, child-parent type of link (parent is unaware)
+  - Add legacy setting option for auto merging DT level data on load
+  - When linked:
+    - Play child level: load & save data to parent & diff for child data (save later)
+    - Play parent: load & save parent data (doesn't touch child, unaware)
 - Update handlers:
   - `SaveHandler`:
     - Methods for geting path by file purpose (data, link, info, dir) & path exists checks
@@ -14,10 +21,13 @@
     - `getSavedData` is public
     - Save level info on level load & save
     - Public getter for current level ID
+    - Methods for setting & removing link
+    - `saveData` overload for saving specific level with specified data
   - `FileUtils`:
     - Method to get all directories
     - Option to not log file reading failure
     - Add file path to file reading failure log message
+    - Add method to remove file
   - `LevelUtils`:
     - Methods to parse level ID & get game level from ID
 - Add several types/structs: `LevelInfo` (matjson serialization), `LevelIDParseResult`, `LevelTileInfo`, `KeyedRunData`
