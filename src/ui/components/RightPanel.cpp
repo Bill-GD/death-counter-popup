@@ -18,6 +18,7 @@ RightPanel* RightPanel::create(const float width, const float controlHeight, con
 
 bool RightPanel::init(float width, float controlHeight, float infoHeight, float gap) {
   if (!CCNode::init()) return false;
+  m_parentWidth = width / (7.f / 12.f);
   setContentSize({width, infoHeight + gap + controlHeight});
 
   const auto controlArea = CCScale9Sprite::create("GJ_square05.png");
@@ -141,7 +142,6 @@ bool RightPanel::init(float width, float controlHeight, float infoHeight, float 
   m_popupStatusLabel = Label::create("", "bigFont.fnt");
   m_popupStatusLabel->setID("popup-status-label");
   m_popupStatusLabel->setScale(0.5f);
-  m_popupStatusLabel->setAnchorPoint({0.5f, 1.f});
 
   const auto infoMenu = CCMenu::create();
   const auto infoButton = InfoAlertButton::create(
@@ -160,7 +160,7 @@ Fully deleted levels can't be loaded, I can't do anything about that.)",
     -scrollSize / 2.f - CCSize{5.f, 0}
   );
   infoArea->addChildAtPosition(scrollbar, Anchor::Right, {-3.f, 0});
-  infoArea->addChildAtPosition(m_popupStatusLabel, Anchor::BottomRight, {-width * (6.f / 7.f), -4.f});
+  infoArea->addChildAtPosition(m_popupStatusLabel, Anchor::BottomRight, {-width * (6.f / 7.f), -12.f});
 
   m_scrollLayer = scroll;
 
@@ -237,6 +237,10 @@ void RightPanel::onLinkingButtonClicked(CCObject* sender) {
   }
 
   m_popupStatusLabel->setString(str.c_str());
+  m_popupStatusLabel->setScale(0.5f);
+  if (m_popupStatusLabel->getScaledContentWidth() > m_parentWidth) {
+    m_popupStatusLabel->setScale(m_parentWidth / m_popupStatusLabel->getContentWidth());
+  }
 }
 
 void RightPanel::onLoadCurrentButtonClicked(CCObject*) {

@@ -11,6 +11,8 @@ class RightPanel : public CCNode {
   std::string m_firstLinkID;
   bool m_isLinking = false;
 
+  float m_parentWidth = 0.1f;
+
   void onPlayButtonClicked(CCObject*);
   void onLinkingButtonClicked(CCObject* sender);
   void onLoadCurrentButtonClicked(CCObject*);

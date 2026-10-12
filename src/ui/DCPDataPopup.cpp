@@ -3,8 +3,8 @@
 #include "ui/components/LeftPanel.hpp"
 #include "ui/components/RightPanel.hpp"
 
-inline constexpr float LEFT_RATIO = 12.f / 5.f;
-inline constexpr float RIGHT_RATIO = 12.f / 7.f;
+inline constexpr float LEFT_RATIO = 5.f / 12.f;
+inline constexpr float RIGHT_RATIO = 7.f / 12.f;
 
 DCPDataPopup* DCPDataPopup::create() {
   const auto ret = new DCPDataPopup();
@@ -29,8 +29,8 @@ bool DCPDataPopup::init() {
 
   const auto contentSize = m_mainLayer->getScaledContentSize();
 
-  const float leftWidth = contentSize.width / LEFT_RATIO - 15.f;
-  const float rightWidth = contentSize.width / RIGHT_RATIO - 15.f;
+  const float leftWidth = contentSize.width * LEFT_RATIO - 15.f;
+  const float rightWidth = contentSize.width * RIGHT_RATIO - 15.f;
   const float panelHeight = contentSize.height - 120.f;
   constexpr float controlHeight = 35.f;
   constexpr float panelGap = 15.f;
