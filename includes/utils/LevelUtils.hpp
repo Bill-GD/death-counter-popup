@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Geode/Geode.hpp"
+#include "types/types.hpp"
 
 using namespace geode::prelude;
 
@@ -24,6 +25,8 @@ public:
   static bool isDailyLevel(GJGameLevel* level);
 
   static std::string getLevelID(GJGameLevel* level);
+  static LevelIDParseResult parseLevelID(const std::string& levelID);
+  static FetchSavedLevelResult getLevel(const std::string& id);
   static bool isModLoaded(const std::string& modID);
   // static EndTriggerGameObject* getLastEndTrigger(const PlayLayer* layer);
   // static EndPortalObject* getEndWall(const PlayLayer* layer);

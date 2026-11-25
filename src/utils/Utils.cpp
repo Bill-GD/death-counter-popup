@@ -14,3 +14,15 @@ std::string Utils::padToPrecision(std::string str, const int len) {
   }
   return str;
 }
+
+std::string Utils::formatSizeString(int byte) {
+  const std::vector<std::string> suffixes = {"B", "KB", "MB"};
+  float result = static_cast<float>(byte);
+  size_t i = 0;
+
+  for (; i < suffixes.size() - 1; ++i) {
+    if (result < 1024.f) break;
+    result /= 1024.f;
+  }
+  return fmt::format("{:.2f} {}", result, suffixes[i]);
+}

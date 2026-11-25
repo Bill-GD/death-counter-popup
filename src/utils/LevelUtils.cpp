@@ -8,9 +8,9 @@ std::string LevelUtils::levelTypeToString(const GJLevelType type) {
   switch (type) {
     case GJLevelType::Main: return "Main";
     case GJLevelType::Editor: return "Editor";
-    case GJLevelType::Default: return "Default";
     case GJLevelType::Saved: return "Saved";
     case GJLevelType::SearchResult: return "SearchResult";
+    case GJLevelType::Default:
     default: return "Default";
   }
 }
@@ -18,7 +18,6 @@ std::string LevelUtils::levelTypeToString(const GJLevelType type) {
 GJLevelType LevelUtils::stringToLevelType(const std::string& typeString) {
   if (typeString == "Main") return GJLevelType::Main;
   if (typeString == "Editor") return GJLevelType::Editor;
-  if (typeString == "Default") return GJLevelType::Default;
   if (typeString == "Saved") return GJLevelType::Saved;
   if (typeString == "SearchResult") return GJLevelType::SearchResult;
   return GJLevelType::Default;
@@ -219,6 +218,67 @@ std::string LevelUtils::getLevelID(GJGameLevel* level) {
     }
   }
   return levelID;
+}
+
+LevelIDParseResult LevelUtils::parseLevelID(const std::string& levelID) {
+  int id = 0;
+  GJLevelType levelType = GJLevelType::Default;
+  bool isDaily = false;
+  bool isGauntlet = false;
+
+  if (!levelID.empty() && std::isdigit(levelID.at(0))) {
+    if (levelID.contains('-')) {
+      const auto [idStr, type] = Utils::splitOnce(levelID, '-');
+      id = std::stoi(idStr);
+
+      if (type == "local") levelType = GJLevelType::Main;
+      else if (type == "editor") levelType = GJLevelType::Editor;
+      else if (type == "daily" || type == "gauntlet") {
+        isDaily = type == "daily";
+        isGauntlet = type == "gauntlet";
+        levelType = GJLevelType::Saved;
+      }
+    } else {
+      id = std::stoi(levelID);
+      levelType = GJLevelType::Saved;
+    }
+  }
+  return LevelIDParseResult{
+    id,
+    levelType,
+    isDaily,
+    isGauntlet,
+  };
+}
+
+FetchSavedLevelResult LevelUtils::getLevel(const std::string& id) {
+  const auto [idNum, levelType, isDaily, isGauntlet] = parseLevelID(id);
+
+  const auto gameManager = GameLevelManager::sharedState();
+  GJGameLevel* level;
+  switch (levelType) {
+    case GJLevelType::Main: {
+      level = LevelTools::getLevel(idNum, true);
+      break;
+    }
+    case GJLevelType::Editor: {
+      level = EditorIDs::getLevelByID(idNum);
+      break;
+    }
+    case GJLevelType::SearchResult:
+    case GJLevelType::Saved: {
+      if (isDaily) level = gameManager->getSavedDailyLevelFromLevelID(idNum);
+      else if (isGauntlet) level = gameManager->getSavedGauntletLevel(idNum);
+      else level = gameManager->getSavedLevel(idNum);
+      break;
+    }
+    case GJLevelType::Default:
+    default: {
+      level = nullptr;
+      break;
+    }
+  }
+  return {idNum, levelType, level};
 }
 
 bool LevelUtils::isModLoaded(const std::string& modID) {

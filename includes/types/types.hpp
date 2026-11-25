@@ -2,6 +2,44 @@
 
 #include "RunData.hpp"
 
-typedef std::string RunKey;
-typedef std::map<RunKey, RunData> DeathCounter;
-typedef std::map<RunKey, int> OldDeathCounter;
+using RunKey = std::string;
+using DeathCounter = std::map<RunKey, RunData>;
+using OldDeathCounter = std::map<RunKey, int>;
+
+struct LevelTileInfo {
+  std::string id;
+  std::string name;
+};
+
+struct LevelInfoFromFileResult {
+  std::string id;
+  std::string name;
+  std::string link;
+};
+
+struct LevelSaveDataMetadata {
+  int size;
+  std::filesystem::file_time_type dataLastModified;
+};
+
+struct LevelIDParseResult {
+  int id;
+  GJLevelType type;
+  bool isDaily;
+  bool isGauntlet;
+};
+
+struct FetchSavedLevelResult {
+  int id;
+  GJLevelType type;
+  GJGameLevel* level;
+};
+
+struct KeyedRunData {
+  std::string run;
+  float start = 0;
+  float end = 0;
+  int count = 0;
+  int precision = 0;
+  std::string parent;
+};

@@ -8,7 +8,7 @@
   },
   "id": "billgd.death_counter_popup",
   "name": "Death Counter Popup",
-  "version": "v1.1.4",
+  "version": "v1.2.0",
   "developer": "BillGD",
   "description": "Shows a text popup of a run counter",
   "settings": {
@@ -127,6 +127,23 @@
       "type": "custom:dcp-setting-button",
       "name": "Migrate save data",
       "description": "For manual migration if the mod failed to migrate all on load"
+    },
+    "auto-merge-dt-data": {
+      "type": "bool",
+      "name": "Auto-merge Death Tracker data",
+      "description": "When loading level data, the mod utilizes the linking feature of Death Tracker. It does the following: load DCP data > check DT linked levels for newest DCP save > if none, load current DT save > merge with DCP data & save. Disable this to only load DCP data, and enable UI to manually do this merge with the DT button. Keep this ON if you don't care about UI & want nothing to change.",
+      "default": true
+    },
+    "data-popup": {
+      "type": "custom:dcp-setting-button",
+      "name": "Show data popup",
+      "description": "Show popup for managing/viewing all data saved"
+    },
+    "show-popup-button": {
+      "type": "bool",
+      "name": "Add Button for Data Popup",
+      "description": "Add button to open data popup to main level select, level info, editor level, pause screen. Level linking requires UI.",
+      "default": false
     },
     "extra-title": {
       "type": "title",

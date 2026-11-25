@@ -1,0 +1,100 @@
+#include "ui/DCPDataPopup.hpp"
+
+#include "ui/components/LeftPanel.hpp"
+#include "ui/components/RightPanel.hpp"
+
+inline constexpr float LEFT_RATIO = 5.f / 12.f;
+inline constexpr float RIGHT_RATIO = 7.f / 12.f;
+
+DCPDataPopup* DCPDataPopup::create() {
+  const auto ret = new DCPDataPopup();
+  if (ret->init()) {
+    ret->autorelease();
+    return ret;
+  }
+
+  delete ret;
+  return nullptr;
+}
+
+bool DCPDataPopup::init() {
+  if (!Popup::init(440.f, 280.f)) {
+    return false;
+  }
+
+  setID("all-data-viewer");
+  setTitle("Run Counter Data Viewer");
+
+  setAnchorPoint({0.5f, 0.5f});
+
+  const auto contentSize = m_mainLayer->getScaledContentSize();
+
+  const float leftWidth = contentSize.width * LEFT_RATIO - 15.f;
+  const float rightWidth = contentSize.width * RIGHT_RATIO - 15.f;
+  const float panelHeight = contentSize.height - 120.f;
+  constexpr float controlHeight = 35.f;
+  constexpr float panelGap = 15.f;
+
+  m_leftPanel = LeftPanel::create(leftWidth, controlHeight, panelHeight, panelGap);
+  m_leftPanel->setAnchorPoint({0.f, 0.5f});
+
+  m_rightPanel = RightPanel::create(rightWidth, controlHeight, panelHeight, panelGap);
+  m_rightPanel->setAnchorPoint({1.f, 0.5f});
+
+  m_mainLayer->addChildAtPosition(m_leftPanel, Anchor::Left, {10.f, -5.f});
+  m_mainLayer->addChildAtPosition(m_rightPanel, Anchor::Right, {-10.f, -5.f});
+  m_mainLayer->updateLayout();
+
+  const auto infoMenu = CCMenu::create();
+  infoMenu->setAnchorPoint({0.5f, 0.5f});
+  infoMenu->setContentSize(contentSize);
+
+  const auto infoButton = InfoAlertButton::create(
+    "General Data Viewer",
+    R"(Shows list of saved levels, can filter by name or ID (different from level ID).
+<cy>Play button</c>: open the level (only show the level selection for main levels).
+<cf>Link & unlink button</c>: link the data with another level.
+ID button: load the info for the current level (requires opening a level first).
+DT button (Death Tracker loaded): merge save data with DT data (check setting option for more detailed explanation).
+<cc>Stat button</c>: show saved data of selected level.
+<cr>Delete button</c>: delete the selected level saved data.)",
+    1.f
+  );
+
+  const auto reloadButton = CCMenuItemSpriteExtra::create(
+    CCSprite::createWithSpriteFrameName("GJ_getSongInfoBtn_001.png"),
+    this,
+    menu_selector(DCPDataPopup::onReload)
+  );
+
+  infoMenu->addChildAtPosition(infoButton, Anchor::TopRight);
+  infoMenu->addChildAtPosition(reloadButton, Anchor::BottomLeft);
+  m_mainLayer->addChildAtPosition(infoMenu, Anchor::Center);
+
+  return true;
+}
+
+void DCPDataPopup::onLevelSelected(const std::string& levelID) const {
+  if (!m_rightPanel) return;
+  m_rightPanel->loadLevelInfo(levelID);
+}
+
+void DCPDataPopup::onReload(CCObject*) {
+  m_rightPanel->unloadLevelInfo();
+  m_leftPanel->loadLevelList();
+}
+
+void DCPDataPopup::load() const {
+  if (!m_leftPanel) return;
+
+  m_leftPanel->setOnSelectedCallback([this](const std::string& levelID) { onLevelSelected(levelID); });
+  m_leftPanel->loadLevelList();
+}
+
+void DCPDataPopup::closePopup() {
+  const auto dataPopup = typeinfo_cast<DCPDataPopup*>(
+    CCDirector::sharedDirector()->getRunningScene()->getChildByIDRecursive("all-data-viewer")
+  );
+  if (!dataPopup) return;
+  dataPopup->m_closeBtn->activate();
+}

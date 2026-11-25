@@ -1,9 +1,11 @@
 #include "handlers/settings/CustomButtonSetting.hpp"
 
 #include "handlers/DataMigrationHandler.hpp"
+#include "ui/DCPDataPopup.hpp"
 
 const std::map<std::string_view, std::string> buttonTextMap = {
-  {MIGRATE_SETTING_KEY, "Migrate All"}
+  {MIGRATE_SETTING_KEY, "Migrate All"},
+  {DATA_POPUP_SETTING_KEY, "Open"}
 };
 
 const std::map<std::string_view, std::function<void()>> actionMap = {
@@ -14,6 +16,13 @@ const std::map<std::string_view, std::function<void()>> actionMap = {
       } else {
         Notification::create("Already migrated all data", NotificationIcon::Info)->show();
       }
+    }
+  },
+  {
+    DATA_POPUP_SETTING_KEY, [] {
+      const auto popup = DCPDataPopup::create();
+      popup->show();
+      popup->load();
     }
   }
 };
@@ -46,7 +55,7 @@ bool CustomButtonSettingNode::init(const std::shared_ptr<CustomButtonSetting>& s
     return false;
   }
 
-  const auto& settingKey = this->getSetting()->getKey();
+  const auto& settingKey = getSetting()->getKey();
   m_buttonSprite = ButtonSprite::create(
     buttonTextMap.at(settingKey).c_str(),
     "goldFont.fnt",
@@ -59,10 +68,10 @@ bool CustomButtonSettingNode::init(const std::shared_ptr<CustomButtonSetting>& s
     this,
     menu_selector(CustomButtonSettingNode::onButton)
   );
-  this->getButtonMenu()->addChildAtPosition(m_button, Anchor::Center);
-  this->getButtonMenu()->setContentWidth(60);
-  this->getButtonMenu()->updateLayout();
-  this->updateState(nullptr);
+  getButtonMenu()->addChildAtPosition(m_button, Anchor::Center);
+  getButtonMenu()->setContentWidth(60);
+  getButtonMenu()->updateLayout();
+  updateState(nullptr);
 
   return true;
 }
@@ -70,7 +79,7 @@ bool CustomButtonSettingNode::init(const std::shared_ptr<CustomButtonSetting>& s
 void CustomButtonSettingNode::updateState(CCNode* invoker) {
   SettingNodeV3::updateState(invoker);
 
-  const auto shouldEnable = this->getSetting()->shouldEnable();
+  const auto shouldEnable = getSetting()->shouldEnable();
   m_button->setEnabled(shouldEnable);
   m_buttonSprite->setCascadeColorEnabled(true);
   m_buttonSprite->setCascadeOpacityEnabled(true);
@@ -79,7 +88,7 @@ void CustomButtonSettingNode::updateState(CCNode* invoker) {
 }
 
 void CustomButtonSettingNode::onButton(CCObject*) {
-  const auto& settingKey = this->getSetting()->getKey();
+  const auto& settingKey = getSetting()->getKey();
   actionMap.at(settingKey)();
 }
 

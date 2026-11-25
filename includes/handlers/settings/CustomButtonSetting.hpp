@@ -5,6 +5,7 @@
 using namespace geode::prelude;
 
 inline constexpr std::string_view MIGRATE_SETTING_KEY = "migrate-all";
+inline constexpr std::string_view DATA_POPUP_SETTING_KEY = "data-popup";
 
 class CustomButtonSetting : public SettingV3 {
 public:
