@@ -208,11 +208,15 @@ void RightPanel::onLinkingButtonClicked(CCObject* sender) {
   if (m_isLinking) {
     if (m_selectedLevelID != m_firstLinkID) {
       // link
-      SaveHandler::setLinkedLevel(m_firstLinkID, m_selectedLevelID);
-      if (m_firstLinkID == SaveHandler::getCurrentLevelID()) {
-        SaveHandler::loadSaveData();
+      if (const auto linkedLevel = SaveHandler::getLinkedLevel(m_selectedLevelID); !linkedLevel.empty()) {
+        str = fmt::format("Cancelled. Target already linked: {} -> {}", m_selectedLevelID, linkedLevel);
+      } else {
+        SaveHandler::setLinkedLevel(m_firstLinkID, m_selectedLevelID);
+        if (m_firstLinkID == SaveHandler::getCurrentLevelID()) {
+          SaveHandler::loadSaveData();
+        }
+        str = fmt::format("Linked level: {} -> {}", m_firstLinkID, m_selectedLevelID);
       }
-      str = fmt::format("Linked level: {} -> {}", m_firstLinkID, m_selectedLevelID);
     } else {
       // cancel
       str = fmt::format("Cancelled linking");
